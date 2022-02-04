@@ -8,38 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:739874571718:android:727e4df4d20d34b7021ec7",
+        "mobilesdk_app_id": "1:739874571718:android:01433e04ae3734a5021ec7",
         "android_client_info": {
-          "package_name": "com.example.flutter_application_0"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "739874571718-9k1bulsveoio0pkel6rjoq8e6s7aiqdt.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAqiXyXcmVJ4wOxua8SkofPdbpPAnUNmFw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "739874571718-9k1bulsveoio0pkel6rjoq8e6s7aiqdt.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:739874571718:android:d5a9e06d59f2cfc6021ec7",
-        "android_client_info": {
-          "package_name": "com.example.vdp"
+          "package_name": "com.panth.vdp"
         }
       },
       "oauth_client": [

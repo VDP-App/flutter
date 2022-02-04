@@ -17,8 +17,26 @@ class RouteApp extends StatelessWidget {
     final auth = Provider.of<Auth>(context);
     if (auth.isLoggedIn) {
       final claims = auth.claims;
-      final isManager = auth.claims?.hasManagerAuthorization ?? false;
-      if (claims == null) return loadingWigit;
+      if (claims == null) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Vardayani Dairy Products'),
+            actions: [
+              IconButton(
+                onPressed: context.read<Auth>().logout,
+                icon: const Icon(
+                  Icons.exit_to_app_rounded,
+                  color: Colors.white,
+                  size: 35,
+                ),
+              ),
+              const SizedBox(width: 25),
+            ],
+          ),
+          body: const NoData(text: "No Authorization Found"),
+        );
+      }
+      final isManager = claims.hasManagerAuthorization;
       return MultiProvider(
         providers: [
           ChangeNotifierProvider<Config>(

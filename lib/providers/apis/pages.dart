@@ -92,7 +92,7 @@ extension Screen on Pages {
 }
 
 class PageProvider extends ChangeNotifier {
-  var _currentPage = Pages.bills;
+  var _currentPage = Pages.entry;
 
   int get pageIndex => _currentPage.index;
   Pages get currentPage => _currentPage;

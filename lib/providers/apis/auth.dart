@@ -54,16 +54,10 @@ class Auth extends Modal with ChangeNotifier {
       } else {
         _user = user;
         final res = await user.getIdTokenResult();
-        if (_user != null) {
-          final claims = res.claims;
-          if (claims == null) {
-            _logout();
-          } else {
-            _claims = Claims(claims);
-            _loadingAuth = false;
-            notifyListeners();
-          }
-        }
+        final claims = res.claims;
+        if (claims != null) _claims = Claims(claims);
+        _loadingAuth = false;
+        notifyListeners();
       }
     });
   }
