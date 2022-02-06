@@ -3,6 +3,7 @@ import 'package:vdp/documents/utils/config_info.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/utils/typography.dart';
 
 class EditShop extends StatelessWidget {
   const EditShop({Key? key}) : super(key: key);
@@ -34,16 +35,16 @@ class EditShop extends StatelessWidget {
       }
     }
     children.add(const Divider(thickness: 3));
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 20, 10, 17),
-      child: ListView(children: children),
-    );
+    return ListView(children: children);
   }
 
-  Padding cashCounterTile(
-      CashCounterInfo cashCounter, Config config, StockInfo stock) {
+  Widget cashCounterTile(
+    CashCounterInfo cashCounter,
+    Config config,
+    StockInfo stock,
+  ) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 50),
       child: ListTile(
         leading: FloatingActionButton(
           mini: true,
@@ -52,17 +53,14 @@ class EditShop extends StatelessWidget {
           backgroundColor: Colors.lightBlue,
           child: const Icon(Icons.edit_outlined),
         ),
-        title: Text(
-          cashCounter.name,
-          style: const TextStyle(fontSize: 30),
-        ),
+        title: P3(cashCounter.name),
       ),
     );
   }
 
-  Padding addCashCounterButton(Config config, StockInfo stock) {
+  Widget addCashCounterButton(Config config, StockInfo stock) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 50),
       child: ElevatedButton.icon(
         onPressed: () => config.createCashCounter(stock),
         style: ElevatedButton.styleFrom(
@@ -70,12 +68,12 @@ class EditShop extends StatelessWidget {
           primary: Colors.blue,
         ),
         icon: const Icon(Icons.add),
-        label: const Text("Add Cash Counter", style: TextStyle(fontSize: 35)),
+        label: const T1("Add Cash Counter"),
       ),
     );
   }
 
-  ListTile stockTile(StockInfo stock, Config config) {
+  Widget stockTile(StockInfo stock, Config config) {
     return ListTile(
       leading: FloatingActionButton(
         heroTag: stock,
@@ -83,14 +81,11 @@ class EditShop extends StatelessWidget {
         backgroundColor: Colors.greenAccent,
         child: const Icon(Icons.edit_outlined),
       ),
-      title: Text(
-        stock.name,
-        style: const TextStyle(fontSize: 35),
-      ),
+      title: T1(stock.name),
     );
   }
 
-  ElevatedButton addStockButton(Config config) {
+  Widget addStockButton(Config config) {
     return ElevatedButton.icon(
       onPressed: config.createStock,
       style: ElevatedButton.styleFrom(
@@ -98,11 +93,11 @@ class EditShop extends StatelessWidget {
         primary: Colors.green,
       ),
       icon: const Icon(Icons.add),
-      label: const Text("Add Stock", style: TextStyle(fontSize: 35)),
+      label: const T1("Add Stock"),
     );
   }
 
-  Visibility loading(Config config) {
+  Widget loading(Config config) {
     return Visibility(
       maintainAnimation: true,
       maintainSize: true,

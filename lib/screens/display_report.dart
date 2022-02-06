@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/utils/typography.dart';
 
 class DisplayReport extends StatelessWidget {
   const DisplayReport({Key? key}) : super(key: key);
@@ -6,10 +7,7 @@ class DisplayReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text(
-        "Comming Soon",
-        style: TextStyle(fontSize: 50),
-      ),
+      child: H1("Comming Soon"),
     );
   }
 }

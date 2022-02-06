@@ -3,58 +3,75 @@ import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/apis/pages.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/utils/typography.dart';
 
 class Layout extends StatelessWidget {
   const Layout({Key? key}) : super(key: key);
 
-  ListTile listTile(
+  Widget listTile(
     BuildContext context,
     Pages page,
     PageProvider pageProvider,
   ) {
     if (page == pageProvider.currentPage) {
       return ListTile(
-        leading: Icon(page.icon, size: 33, color: Colors.deepPurpleAccent),
-        title: Text(
-          page.text,
-          style: const TextStyle(fontSize: 33, color: Colors.deepPurpleAccent),
-        ),
+        style: ListTileStyle.drawer,
+        tileColor: Colors.grey[200],
+        leading: IconP3.bigger(page.icon, color: Colors.deepPurpleAccent),
+        title: P3.bigger(page.text, color: Colors.deepPurpleAccent),
       );
     }
     return ListTile(
+      style: ListTileStyle.drawer,
       onTap: () => pageProvider.changePageTo(page, context),
-      leading: Icon(page.icon, size: 30, color: Colors.black),
-      title: Text(page.text, style: const TextStyle(fontSize: 30)),
+      leading: IconP3(page.icon, color: Colors.black),
+      title: P3(page.text),
     );
   }
 
-  ListTile selectLocation(
-      void Function() onTap, String title, IconData iconData) {
-    return ListTile(
-      onTap: onTap,
-      leading: Icon(iconData, size: 30, color: Colors.blue),
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 30, color: Colors.blue),
+  Widget selectLocation(
+    void Function() onTap,
+    String title,
+    IconData iconData,
+  ) {
+    return TextButton(
+      onPressed: onTap,
+      child: Row(
+        children: [
+          Flexible(
+            flex: 2,
+            child: IconP3(iconData, color: Colors.blue),
+          ),
+          const Spacer(),
+          Flexible(
+            flex: 6,
+            child: P3(title, color: Colors.blue),
+          ),
+        ],
       ),
     );
   }
 
   Widget locationInfo(String? title, void Function() onTap) {
     if (title == null) return const SizedBox();
-    return Padding(
-      padding: const EdgeInsets.only(left: 20),
-      child: ListTile(
-        onTap: onTap,
-        leading: const Icon(
-          Icons.subdirectory_arrow_right_rounded,
-          size: 30,
-          color: Colors.red,
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 25, color: Colors.red),
-        ),
+    return TextButton(
+      onPressed: onTap,
+      child: Row(
+        children: [
+          const Spacer(),
+          const Flexible(
+            flex: 2,
+            child: IconP3(
+              Icons.subdirectory_arrow_right_rounded,
+              color: Colors.red,
+            ),
+          ),
+          const Spacer(),
+          Flexible(
+            flex: 6,
+            child: P2(title, color: Colors.red),
+          ),
+        ],
       ),
     );
   }
@@ -68,59 +85,53 @@ class Layout extends StatelessWidget {
     const divider = Divider(thickness: 1.5, height: 30);
     return Scaffold(
       drawer: Drawer(
-        child: SizedBox(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(color: Colors.deepPurple),
-                child: Center(
-                  child: Text(
-                    'Menu',
-                    style: TextStyle(fontSize: 50, color: Colors.white),
-                  ),
-                ),
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.deepPurple),
+              child: Center(
+                child: H1('Menu', color: Colors.white),
               ),
-              listTile(context, Pages.entry, page),
-              listTile(context, Pages.bills, page),
-              if (claims.hasManagerAuthorization) ...[
-                divider,
-                listTile(context, Pages.changes, page),
-                listTile(context, Pages.notifications, page)
-              ],
-              if (claims.hasAdminAuthorization) ...[
-                divider,
-                listTile(context, Pages.items, page),
-                listTile(context, Pages.logs, page),
-                listTile(context, Pages.summery, page),
-                divider,
-                listTile(context, Pages.profile, page),
-                listTile(context, Pages.shop, page),
-                listTile(context, Pages.users, page)
-              ],
-              const Divider(thickness: 3, height: 30),
-              if (claims.hasAdminAuthorization)
-                selectLocation(() {
-                  Navigator.pop(context);
-                  location.selectStock();
-                }, "Select Stock", Icons.location_on_outlined),
-              locationInfo(location.stockName, () {
-                Navigator.pop(context);
-                if (claims.hasAdminAuthorization) location.selectStock();
-              }),
-              if (claims.hasManagerAuthorization)
-                selectLocation(() {
-                  Navigator.pop(context);
-                  location.selectCashCounter();
-                }, "Select Counter", Icons.local_atm_outlined),
-              locationInfo(location.cashCounterName, () {
-                Navigator.pop(context);
-                if (claims.hasManagerAuthorization) {
-                  location.selectCashCounter();
-                }
-              }),
+            ),
+            listTile(context, Pages.entry, page),
+            listTile(context, Pages.bills, page),
+            if (claims.hasManagerAuthorization) ...[
+              divider,
+              listTile(context, Pages.changes, page),
+              listTile(context, Pages.notifications, page)
             ],
-          ),
+            if (claims.hasAdminAuthorization) ...[
+              divider,
+              listTile(context, Pages.items, page),
+              listTile(context, Pages.logs, page),
+              listTile(context, Pages.summery, page),
+              divider,
+              listTile(context, Pages.profile, page),
+              listTile(context, Pages.shop, page),
+              listTile(context, Pages.users, page)
+            ],
+            divider,
+            if (claims.hasAdminAuthorization)
+              selectLocation(() {
+                Navigator.pop(context);
+                location.selectStock();
+              }, "Select Stock", Icons.location_on_outlined),
+            locationInfo(location.stockName, () {
+              Navigator.pop(context);
+              if (claims.hasAdminAuthorization) location.selectStock();
+            }),
+            if (claims.hasManagerAuthorization)
+              selectLocation(() {
+                Navigator.pop(context);
+                location.selectCashCounter();
+              }, "Select Counter", Icons.local_atm_outlined),
+            locationInfo(location.cashCounterName, () {
+              Navigator.pop(context);
+              if (claims.hasManagerAuthorization) {
+                location.selectCashCounter();
+              }
+            }),
+          ],
         ),
       ),
       appBar: AppBar(
@@ -128,16 +139,15 @@ class Layout extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: context.read<Auth>().logout,
-            icon: const Icon(
-              Icons.exit_to_app_rounded,
-              color: Colors.white,
-              size: 35,
-            ),
+            icon: const IconT1(Icons.exit_to_app_rounded, color: Colors.white),
           ),
           const SizedBox(width: 25),
         ],
       ),
-      body: page.currentPage.screen,
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+        child: page.currentPage.screen,
+      ),
     );
   }
 }

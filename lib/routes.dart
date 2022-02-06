@@ -8,6 +8,7 @@ import 'package:vdp/providers/doc/stock.dart';
 import 'package:vdp/screens/login.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/utils/typography.dart';
 
 class RouteApp extends StatelessWidget {
   const RouteApp({Key? key}) : super(key: key);
@@ -24,10 +25,9 @@ class RouteApp extends StatelessWidget {
             actions: [
               IconButton(
                 onPressed: context.read<Auth>().logout,
-                icon: const Icon(
+                icon: const IconT1(
                   Icons.exit_to_app_rounded,
                   color: Colors.white,
-                  size: 35,
                 ),
               ),
               const SizedBox(width: 25),

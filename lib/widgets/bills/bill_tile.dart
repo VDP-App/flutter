@@ -3,6 +3,7 @@ import 'package:vdp/documents/utils/bill.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/apis/bill_provider.dart';
 import 'package:vdp/utils/loading.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/stocks/show_bill.dart';
 import 'package:provider/provider.dart';
 
@@ -40,10 +41,7 @@ class _BillTileState extends State<BillTile> {
         widget.stockID,
         widget.cashCounterID,
       ),
-      leading: Text(
-        (widget.bill.isWholeSell ? "( W )" : "( R )"),
-        style: const TextStyle(fontSize: 25),
-      ),
+      leading: P2((widget.bill.isWholeSell ? "( W )" : "( R )")),
       trailing: FloatingActionButton(
         heroTag: "Delete-${widget.bill.billNum}",
         onPressed: () async {
@@ -59,14 +57,8 @@ class _BillTileState extends State<BillTile> {
         backgroundColor: Colors.red,
         child: loading ? loadingIconWigit : const Icon(Icons.delete),
       ),
-      subtitle: Text(
-        rs_ + widget.bill.totalMoneyInString,
-        style: const TextStyle(fontSize: 30),
-      ),
-      title: Text(
-        parseCode(widget.bill.billNum),
-        style: const TextStyle(fontSize: 35),
-      ),
+      subtitle: P3(rs_ + widget.bill.totalMoneyInString),
+      title: T1(parseCode(widget.bill.billNum)),
     );
   }
 }
@@ -80,10 +72,7 @@ void openBill(
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return ChangeNotifierProvider(
       create: (context) => BillProvider(context, bill, stockID, cashCounterID),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: const ShowBill(),
-      ),
+      child: const ShowBill(),
     );
   }));
 }

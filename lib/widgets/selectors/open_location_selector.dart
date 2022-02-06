@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/providers/apis/location.dart';
+import 'package:vdp/utils/typography.dart';
 
 class SelectLocationButton extends StatelessWidget {
   const SelectLocationButton({
     Key? key,
     required this.action,
     required this.title,
+    required this.text,
   }) : super(key: key);
   final String title;
+  final String text;
   final void Function() action;
 
-  factory SelectLocationButton.fromLocation(Location location) {
+  factory SelectLocationButton.fromLocation(Location location, String title) {
     if (location.stockID == null) {
       return SelectLocationButton(
         action: location.selectStock,
-        title: "Select Stock",
+        title: title,
+        text: "Select Stock",
       );
     }
     return SelectLocationButton(
       action: location.selectCashCounter,
-      title: "Select Cash Counter",
+      title: title,
+      text: "Select Cash Counter",
     );
   }
 
@@ -28,10 +33,10 @@ class SelectLocationButton extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          const Text("To Make an entry", style: TextStyle(fontSize: 60)),
+          H2(title),
           const SizedBox(height: 50),
           ElevatedButton(
-            child: Text(title, style: const TextStyle(fontSize: 50)),
+            child: H1(text),
             onPressed: action,
           ),
           const SizedBox(height: 200),

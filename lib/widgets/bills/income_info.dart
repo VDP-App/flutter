@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/utils/loading.dart';
+import 'package:vdp/utils/typography.dart';
 
 enum CashIn { offline, online }
 
@@ -30,17 +31,10 @@ class IncomeInfo extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Text(
-                      isOffline ? "Offline" : "Online",
-                      style: const TextStyle(fontSize: 45, color: Colors.white),
-                    ),
+                    T3(isOffline ? "Offline" : "Online", color: Colors.white),
                     SizedBox(
                       height: 50,
-                      child: Text(
-                        rs_ + amount,
-                        style: const TextStyle(
-                            fontSize: 40, color: Colors.white70),
-                      ),
+                      child: T2(rs_ + amount, color: Colors.white70),
                     )
                   ],
                 ),

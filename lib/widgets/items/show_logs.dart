@@ -3,45 +3,33 @@ import 'package:vdp/documents/logs.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
+import 'package:vdp/utils/page_utils.dart';
 import 'package:vdp/utils/loading.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/items/display_item.dart';
 
 class ShowLogs extends StatelessWidget {
   const ShowLogs({Key? key, required this.log}) : super(key: key);
   final Log log;
 
-  Container infoCell(String lable, String? info) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-      child: Row(
-        children: [
-          Text(
-            "$lable:",
-            style: const TextStyle(fontSize: 30, color: Colors.purple),
-          ),
-          Text(info ?? "-- * --", style: const TextStyle(fontSize: 30)),
-        ],
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final time = log.createdAt.split("T");
     final map = log.remainingStock;
-    return ListView(
+    return BuildPageBody(
+      wrapScaffold: true,
+      title: log.oldProduct == null
+          ? log.isCreateItemLog
+              ? "Item Created"
+              : "Item Removed"
+          : "Item Updated",
+      badge: badge,
       children: [
-        badge,
-        const SizedBox(height: 20),
-        title,
-        const SizedBox(height: 20),
-        infoCell("Created By", getUserInfo(log.createdBy)?.name),
-        const SizedBox(height: 10),
-        infoCell("Date", time[0]),
-        const SizedBox(height: 10),
-        infoCell("Time", time[1].substring(0, 8)),
-        const SizedBox(height: 100),
+        InfoCell("Created By", getUserInfo(log.createdBy)?.name),
+        InfoCell("Date", time[0]),
+        InfoCell("Time", time[1].substring(0, 8)),
+      ],
+      trailing: [
         SizedBox(
           width: double.infinity,
           child: log.oldProduct == null
@@ -56,19 +44,6 @@ class ShowLogs extends StatelessWidget {
           _RemainingStockTable(remainingStock: map)
         ]
       ],
-    );
-  }
-
-  Center get title {
-    return Center(
-      child: Text(
-        log.oldProduct == null
-            ? log.isCreateItemLog
-                ? "Item Created"
-                : "Item Removed"
-            : "Item Updated",
-        style: const TextStyle(fontSize: 50),
-      ),
     );
   }
 
@@ -99,17 +74,14 @@ class _RemainingStockTable extends StatelessWidget {
     final rows = <DataRow>[];
     for (var stockEntry in remainingStock.entries) {
       rows.add(DataRow(cells: [
-        DataCell(Text(getStockInfo(stockEntry.key)?.name ?? "--*--")),
-        DataCell(Text(stockEntry.value.text)),
+        DataCell(P3(getStockInfo(stockEntry.key)?.name ?? "--*--")),
+        DataCell(P3(stockEntry.value.text)),
       ]));
     }
     return DataTable(
-      headingTextStyle: const TextStyle(fontSize: 40),
-      headingRowColor: MaterialStateProperty.resolveWith((_) => Colors.red),
-      dataTextStyle: const TextStyle(fontSize: 30, color: Colors.black),
       columns: const [
-        DataColumn(label: Text("Stock Unit")),
-        DataColumn(label: Text("Quntity On Remove")),
+        DataColumn(label: T2("Stock Unit", color: Colors.red)),
+        DataColumn(label: T2("Quntity On Remove", color: Colors.red)),
       ],
       rows: rows,
     );
@@ -128,21 +100,29 @@ class _CompareProductTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DataTable(
-      headingTextStyle: const TextStyle(fontSize: 40),
-      headingRowColor:
-          MaterialStateProperty.resolveWith((states) => Colors.purple),
-      dataTextStyle: const TextStyle(fontSize: 30, color: Colors.black),
       columns: const [
-        DataColumn(label: Text("Label")),
-        DataColumn(label: Text("Old Value")),
-        DataColumn(label: Text("New Value")),
+        DataColumn(
+            label: T2(
+          "Label",
+          color: Colors.purple,
+        )),
+        DataColumn(
+            label: T2(
+          "Old Value",
+          color: Colors.purple,
+        )),
+        DataColumn(
+            label: T2(
+          "New Value",
+          color: Colors.purple,
+        )),
       ],
       rows: [
         DataRow(
           cells: [
-            const DataCell(Text("Name")),
-            DataCell(Text(oldProduct.name)),
-            DataCell(Text(newProduct.name)),
+            const DataCell(P3("Name")),
+            DataCell(P3(oldProduct.name)),
+            DataCell(P3(newProduct.name)),
           ],
           color: oldProduct.name == newProduct.name
               ? null
@@ -150,9 +130,9 @@ class _CompareProductTable extends StatelessWidget {
         ),
         DataRow(
           cells: [
-            const DataCell(Text("Code")),
-            DataCell(Text(oldProduct.code ?? "--*--")),
-            DataCell(Text(newProduct.code ?? "--*--")),
+            const DataCell(P3("Code")),
+            DataCell(P3(oldProduct.code ?? "--*--")),
+            DataCell(P3(newProduct.code ?? "--*--")),
           ],
           color: oldProduct.code == newProduct.code
               ? null
@@ -160,9 +140,9 @@ class _CompareProductTable extends StatelessWidget {
         ),
         DataRow(
           cells: [
-            const DataCell(Text("Collection")),
-            DataCell(Text(oldProduct.collectionName ?? "--*--")),
-            DataCell(Text(newProduct.collectionName ?? "--*--")),
+            const DataCell(P3("Collection")),
+            DataCell(P3(oldProduct.collectionName ?? "--*--")),
+            DataCell(P3(newProduct.collectionName ?? "--*--")),
           ],
           color: oldProduct.collectionName == newProduct.collectionName
               ? null
@@ -170,9 +150,9 @@ class _CompareProductTable extends StatelessWidget {
         ),
         DataRow(
           cells: [
-            const DataCell(Text("Rate1")),
-            DataCell(Text(rs_ + oldProduct.rate1.toString())),
-            DataCell(Text(rs_ + newProduct.rate1.toString())),
+            const DataCell(P3("Rate1")),
+            DataCell(P3(rs_ + oldProduct.rate1.toString())),
+            DataCell(P3(rs_ + newProduct.rate1.toString())),
           ],
           color: oldProduct.rate1 == newProduct.rate1
               ? null
@@ -180,9 +160,9 @@ class _CompareProductTable extends StatelessWidget {
         ),
         DataRow(
           cells: [
-            const DataCell(Text("Rate2")),
-            DataCell(Text(rs_ + oldProduct.rate2.toString())),
-            DataCell(Text(rs_ + newProduct.rate2.toString())),
+            const DataCell(P3("Rate2")),
+            DataCell(P3(rs_ + oldProduct.rate2.toString())),
+            DataCell(P3(rs_ + newProduct.rate2.toString())),
           ],
           color: oldProduct.rate2 == newProduct.rate2
               ? null
@@ -190,9 +170,9 @@ class _CompareProductTable extends StatelessWidget {
         ),
         DataRow(
           cells: [
-            const DataCell(Text("cgst")),
-            DataCell(Text(oldProduct.cgst.toString() + " %")),
-            DataCell(Text(newProduct.cgst.toString() + " %")),
+            const DataCell(P3("cgst")),
+            DataCell(P3(oldProduct.cgst.toString() + " %")),
+            DataCell(P3(newProduct.cgst.toString() + " %")),
           ],
           color: oldProduct.cgst == newProduct.cgst
               ? null
@@ -200,9 +180,9 @@ class _CompareProductTable extends StatelessWidget {
         ),
         DataRow(
           cells: [
-            const DataCell(Text("sgst")),
-            DataCell(Text(oldProduct.sgst.toString() + " %")),
-            DataCell(Text(newProduct.sgst.toString() + " %")),
+            const DataCell(P3("sgst")),
+            DataCell(P3(oldProduct.sgst.toString() + " %")),
+            DataCell(P3(newProduct.sgst.toString() + " %")),
           ],
           color: oldProduct.sgst == newProduct.sgst
               ? null

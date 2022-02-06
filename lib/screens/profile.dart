@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/edit_config/show_profile.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/profile.dart';
@@ -18,10 +19,7 @@ class MyProfile extends StatelessWidget {
     var userInfo = doc.getUserInfo(auth.user?.uid);
     if (userInfo == null) {
       return const Center(
-        child: Text(
-          "No User Found",
-          style: TextStyle(fontSize: 50),
-        ),
+        child: H1("No User Found"),
       );
     }
     return ChangeNotifierProxyProvider<Config, EditProfile>(

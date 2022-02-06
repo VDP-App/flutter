@@ -24,10 +24,7 @@ class DisplayBills extends StatelessWidget {
         }
         return previous;
       },
-      child: const Padding(
-        padding: EdgeInsets.fromLTRB(8, 10, 8, 10),
-        child: _Bills(),
-      ),
+      child: const _Bills(),
     );
   }
 }
@@ -40,7 +37,7 @@ class _Bills extends StatelessWidget {
     final location = Provider.of<Location>(context);
     final stockID = location.stockID, cashCounterID = location.cashCounterID;
     if (stockID == null || cashCounterID == null) {
-      return SelectLocationButton.fromLocation(location);
+      return SelectLocationButton.fromLocation(location, "To See bills");
     }
     var cashCounter = Provider.of<CashCounter>(context);
     final doc = cashCounter.doc;

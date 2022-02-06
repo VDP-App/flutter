@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vdp/providers/apis/auth.dart';
+import 'package:vdp/utils/fontsize.dart';
 import 'package:vdp/providers/apis/pages.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +10,11 @@ import 'package:provider/provider.dart';
 import 'routes.dart';
 
 SharedPreferences? _sharedPreferences;
+var _fontSize = const FontSize.phone();
+bool _isTablet = false;
 
+FontSize get fontSizeOf => _fontSize;
+bool get isTablet => _isTablet;
 SharedPreferences get sharedPreferences {
   if (_sharedPreferences == null) throw "no local-storage enabled";
   return _sharedPreferences as SharedPreferences;
@@ -52,7 +58,17 @@ class App extends StatelessWidget {
               child: const RouteApp(),
             );
           }
-          return const Scaffold(body: loadingWigit);
+          final size = MediaQuery.of(context).size;
+          var diagonal =
+              sqrt((size.width * size.width) + (size.height * size.height));
+          if (diagonal > 1100.0) {
+            _isTablet = true;
+            _fontSize = const FontSize.tablet();
+          } else {
+            _isTablet = false;
+            _fontSize = const FontSize.phone();
+          }
+          return Scaffold(body: loadingWigit);
         },
       ),
     );

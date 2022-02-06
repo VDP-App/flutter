@@ -3,6 +3,7 @@ import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/doc/cash_counter.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/utils/loading.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/selectors/select_item.dart';
 import 'package:provider/provider.dart';
 
@@ -41,21 +42,19 @@ class _StockConsumedState extends State<StockConsumed> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item != null
-                        ? item.name
-                        : "Select Item for Quntity Consumed",
-                    style: const TextStyle(fontSize: 45, color: Colors.white),
-                  ),
+                  T3(
+                      item != null
+                          ? item.name
+                          : "Select Item for Quntity Consumed",
+                      color: Colors.white),
                   SizedBox(
                     height: 50,
-                    child: Text(
+                    child: T2(
                       item != null
                           ? (stockConsumed[item.id]?.text ?? "0") +
                               " Quntity Consumed"
                           : "Click on button -->",
-                      style:
-                          const TextStyle(fontSize: 40, color: Colors.white70),
+                      color: Colors.white70,
                     ),
                   )
                 ],

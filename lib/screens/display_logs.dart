@@ -3,6 +3,7 @@ import 'package:vdp/documents/logs.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/doc/logs.dart';
 import 'package:vdp/utils/loading.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/items/show_logs.dart';
 import 'package:provider/provider.dart';
 
@@ -19,10 +20,7 @@ class DisplayLogs extends StatelessWidget {
         if (pageNum != null) previous.update(pageNum);
         return previous;
       },
-      child: const Padding(
-        padding: EdgeInsets.fromLTRB(8, 10, 8, 10),
-        child: _Logs(),
-      ),
+      child: const _Logs(),
     );
   }
 }
@@ -58,27 +56,19 @@ class _Logs extends StatelessWidget {
               width: 10,
             ),
             minLeadingWidth: 20,
-            title: Text(
-              log.product.name,
-              style: const TextStyle(fontSize: 35),
-            ),
+            title: T1(log.product.name),
             trailing: log.isCreateItemLog
-                ? const Icon(Icons.add, color: Colors.green, size: 45)
+                ? const IconT3(Icons.add, color: Colors.green)
                 : log.isRemoveItemLog
-                    ? const Icon(
+                    ? const IconT3(
                         Icons.delete_outline_rounded,
                         color: Colors.red,
-                        size: 45,
                       )
-                    : const Icon(
+                    : const IconT3(
                         Icons.update_rounded,
                         color: Colors.blue,
-                        size: 45,
                       ),
-            subtitle: Text(
-              log.preview,
-              style: const TextStyle(fontSize: 25),
-            ),
+            subtitle: P2(log.preview),
           );
         });
   }
@@ -86,12 +76,6 @@ class _Logs extends StatelessWidget {
 
 openLog(BuildContext context, Log log) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ShowLogs(log: log),
-      ),
-    );
+    return ShowLogs(log: log);
   }));
 }

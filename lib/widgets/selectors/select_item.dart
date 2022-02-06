@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/selectors/grid_selector.dart';
 import 'package:vdp/widgets/selectors/select_collection.dart';
 import 'package:vdp/documents/product.dart';
@@ -52,10 +53,7 @@ class GetItem extends StatelessWidget {
     final itemsDoc = items;
     if (itemsDoc == null) {
       return const Center(
-        child: Text(
-          "No Data found",
-          style: TextStyle(fontSize: 25),
-        ),
+        child: P2("No Data found"),
       );
     }
     final modal = Modal(context);

@@ -90,9 +90,12 @@ class SelectEntryMode extends StatelessWidget {
     ));
     return Scaffold(
       appBar: AppBar(title: const Text("Select Mode")),
-      body: Container(
-        color: Colors.white70,
-        child: Column(children: arr),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          color: Colors.white70,
+          child: Column(children: arr),
+        ),
       ),
     );
   }

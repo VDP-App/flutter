@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
+import 'package:vdp/utils/typography.dart';
 
 const rs = "₹";
 const rs_ = "₹ ";
@@ -10,33 +12,24 @@ class NoData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Spacer(flex: 10),
-        const Icon(
-          Icons.search_off_rounded,
-          size: 100,
-          color: Colors.grey,
-        ),
-        const Spacer(),
+        const IconX1(Icons.search_off_rounded, color: Colors.grey),
         SizedBox(
           width: double.infinity,
           child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 55, color: Colors.pink),
-            ),
+            child: H2(text, color: Colors.pink),
           ),
         ),
-        const Spacer(flex: 20),
       ],
     );
   }
 }
 
-const loadingWigit = Center(
+final loadingWigit = Center(
   child: SizedBox.square(
-    dimension: 100,
-    child: FittedBox(
+    dimension: fontSizeOf.x1,
+    child: const FittedBox(
       fit: BoxFit.contain,
       child: CircularProgressIndicator(
         semanticsLabel: 'Circular progress indicator',
@@ -49,10 +42,10 @@ const loadingWigitLinier = LinearProgressIndicator(
   semanticsLabel: 'Linear progress indicator',
 );
 
-const loadingIconWigit = Center(
+final loadingIconWigit = Center(
   child: SizedBox.square(
-    dimension: 35,
-    child: FittedBox(
+    dimension: fontSizeOf.t1,
+    child: const FittedBox(
       fit: BoxFit.contain,
       child: CircularProgressIndicator(
         semanticsLabel: 'Circular Icon progress indicator',

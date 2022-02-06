@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/utils/typography.dart';
 
 class GridItem {
   final String title;
@@ -36,13 +37,10 @@ class GridSelector extends StatelessWidget {
                 primary: color,
               ),
               child: FractionallySizedBox(
-                child: Text(
+                child: T2(
                   gridItem.title,
+                  color: Colors.white,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 40,
-                  ),
                 ),
               ),
               onPressed: gridItem.onPress,

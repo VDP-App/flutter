@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/utils/typography.dart';
 
 enum KeybordKeyValue {
   num0,
@@ -59,19 +60,10 @@ class KeybordKey extends StatelessWidget {
         ),
         child: Center(
           child: icon != null
-              ? Icon(
-                  icon,
-                  size: 40,
-                  color: Colors.white,
-                )
-              : Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: color == null ? 25 : 30,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                ),
+              ? IconT2(icon, color: Colors.white)
+              : color == null
+                  ? P2(text, fontWeight: FontWeight.bold, color: color)
+                  : P3(text, fontWeight: FontWeight.bold, color: color),
         ),
       ),
     );

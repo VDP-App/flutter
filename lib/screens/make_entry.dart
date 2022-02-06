@@ -58,7 +58,7 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
     final location = Provider.of<Location>(context);
     final stockID = location.stockID, cashCounterID = location.cashCounterID;
     if (stockID == null || cashCounterID == null) {
-      return SelectLocationButton.fromLocation(location);
+      return SelectLocationButton.fromLocation(location, "To Make an entry");
     }
     if (selectedType.isBilling) {
       if (selectedType == SelectedType.wholeSellBill) {

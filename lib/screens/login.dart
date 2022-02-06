@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/utils/typography.dart';
 
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
@@ -37,10 +39,7 @@ class Login extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(),
-        child: const Text(
-          'Login',
-          style: TextStyle(fontSize: 40),
-        ),
+        child: const T2('Login'),
         onPressed: () {
           auth.login(
             email: emailController.text,
@@ -61,10 +60,7 @@ class Login extends StatelessWidget {
           email: emailController.text,
         );
       },
-      child: const Text(
-        'Forgot Password',
-        style: TextStyle(fontSize: 30),
-      ),
+      child: const P3('Forgot Password'),
     );
   }
 
@@ -74,7 +70,7 @@ class Login extends StatelessWidget {
       child: TextField(
         obscureText: true,
         controller: passwordController,
-        style: const TextStyle(fontSize: 40),
+        style: TextStyle(fontSize: fontSizeOf.t2),
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: 'Password',
@@ -88,7 +84,7 @@ class Login extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: TextField(
         controller: emailController,
-        style: const TextStyle(fontSize: 40),
+        style: TextStyle(fontSize: fontSizeOf.t2),
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: 'Email Address',
@@ -101,13 +97,10 @@ class Login extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.all(10),
-      child: const Text(
+      child: const P3(
         'Log in',
-        style: TextStyle(
-          color: Colors.deepPurple,
-          fontWeight: FontWeight.w500,
-          fontSize: 30,
-        ),
+        color: Colors.deepPurple,
+        fontWeight: FontWeight.w500,
       ),
     );
   }

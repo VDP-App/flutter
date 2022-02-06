@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/utils/cloud_functions.dart';
+import 'package:vdp/utils/typography.dart';
 
 class ModalListElement {
   final String id;
@@ -12,16 +14,15 @@ class ModalListElement {
 
   Widget toWidget(void Function() onClick, bool isSelected) {
     return Container(
-      height: 70,
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      width: double.infinity,
+      padding: isTablet
+          ? const EdgeInsets.symmetric(horizontal: 10)
+          : const EdgeInsets.symmetric(horizontal: 5),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: isSelected ? Colors.grey : null,
         ),
-        child: Text(
-          name,
-          style: const TextStyle(fontSize: 40),
-        ),
+        child: T2(name),
         onPressed: onClick,
       ),
     );
@@ -30,17 +31,24 @@ class ModalListElement {
 
 Future<String?> launchModal(
   BuildContext context,
-  Widget Function(BuildContext context) title,
-  Widget Function(BuildContext context) content,
+  Widget title,
+  Widget content,
   List<Widget> Function(BuildContext context) actionButtons,
 ) {
   return showDialog<String>(
     context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: title(context),
-      content: content(context),
-      actions: actionButtons(context),
-    ),
+    builder: (BuildContext context) {
+      var width = MediaQuery.of(context).size.width;
+      return AlertDialog(
+        title: title,
+        content: Container(
+          width: width - 50,
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          child: content,
+        ),
+        actions: actionButtons(context),
+      );
+    },
   );
 }
 
@@ -53,37 +61,27 @@ class Modal {
     final controller = TextEditingController(text: defaultName);
     return launchModal(
       context,
-      (context) => Text(
-        title,
-        style: const TextStyle(fontSize: 45),
+      T3(title),
+      TextField(
+        controller: controller,
+        style: TextStyle(fontSize: isTablet ? fontSizeOf.t2 : fontSizeOf.t1),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: "Name",
+        ),
       ),
-      (context) {
-        var width = MediaQuery.of(context).size.width;
-        return Container(
-          width: width - 50,
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(fontSize: 40),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Name",
-            ),
-          ),
-        );
-      },
       (context) => [
         TextButton(
           onPressed: () {
             Navigator.pop(context, controller.text);
           },
-          child: const Text('Done', style: TextStyle(fontSize: 25)),
+          child: const P2('Done'),
         ),
         TextButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Back', style: TextStyle(fontSize: 25)),
+          child: const P2('Back'),
         ),
       ],
     );
@@ -95,29 +93,24 @@ class Modal {
     required List<T> modalListElement,
     required void Function(T) onSelect,
   }) {
+    final children = <Widget>[];
+    for (var e in modalListElement) {
+      children.add(e.toWidget(() {
+        Navigator.pop(context, e.id);
+        onSelect(e);
+      }, e.id == currentlySelected?.id));
+      children.add(const SizedBox(height: 25));
+    }
     return launchModal(
       context,
-      (context) => Text(
-        "Select one of the below $title",
-        style: const TextStyle(fontSize: 45),
-      ),
-      (context) {
-        final children = <Widget>[];
-        for (var e in modalListElement) {
-          children.add(e.toWidget(() {
-            Navigator.pop(context, e.id);
-            onSelect(e);
-          }, e.id == currentlySelected?.id));
-          children.add(const SizedBox(height: 25));
-        }
-        return Column(children: children);
-      },
+      T3("Select one of the below $title"),
+      ListView(children: children),
       (context) => [
         TextButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Back', style: TextStyle(fontSize: 25)),
+          child: const P2('Back'),
         ),
       ],
     );
@@ -138,24 +131,18 @@ class Modal {
   Future<bool> shouldProceed() {
     return launchModal(
       context,
-      (context) => const Text(
-        "Do You Want to Proceed",
-        style: TextStyle(fontSize: 50),
-      ),
-      (context) => const Text(
-        "Go Ahead:",
-        style: TextStyle(fontSize: 45),
-      ),
+      const H1("Do You Want to Proceed"),
+      const T3("Go Ahead:"),
       (context) => [
         TextButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('No', style: TextStyle(fontSize: 35)),
+          child: const T1('No'),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, "Yes"),
-          child: const Text('Yes', style: TextStyle(fontSize: 35)),
+          child: const T1('Yes'),
         ),
       ],
     ).then((value) => value == "Yes");
@@ -169,22 +156,22 @@ class Modal {
   }) {
     return launchModal(
       context,
-      (context) => Text(title, style: const TextStyle(fontSize: 30)),
-      (context) => Text(content, style: const TextStyle(fontSize: 25)),
+      P3(title),
+      P2(content),
       (context) => [
         if (onOk != null)
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Back', style: TextStyle(fontSize: 25)),
+            child: const P2('Back'),
           ),
         TextButton(
           onPressed: () {
             Navigator.pop(context);
             onOk?.call();
           },
-          child: Text(okText ?? 'OK!', style: const TextStyle(fontSize: 25)),
+          child: P2(okText ?? 'OK!'),
         ),
       ],
     );
