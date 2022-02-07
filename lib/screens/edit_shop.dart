@@ -35,7 +35,10 @@ class EditShop extends StatelessWidget {
       }
     }
     children.add(const Divider(thickness: 3));
-    return ListView(children: children);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView(children: children),
+    );
   }
 
   Widget cashCounterTile(

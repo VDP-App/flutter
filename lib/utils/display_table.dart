@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/utils/typography.dart';
 
 class DisplayTableCell extends DataCell {
@@ -67,7 +68,7 @@ class DisplayTable extends StatelessWidget {
         DataTable(
           columns: columns1,
           rows: rows1,
-          border: TableBorder.all(width: .2),
+          border: TableBorder.all(width: isTablet ? 1 : .2),
         ),
         Expanded(
           child: SingleChildScrollView(

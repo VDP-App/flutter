@@ -60,9 +60,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
         MaterialPageRoute(builder: (context) {
           return ShowStockChanges<T>(
             changes: _changes,
-            onChangesSelect: (stockChanges) {
-              _onStockChangeSelect(stockChanges);
-            },
+            onChangesSelect: _onStockChangeSelect,
             deleteChanges: (stockChanges) {
               _changes.remove(stockChanges);
               _reset();
@@ -92,15 +90,13 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   void _onClick(KeybordKeyValue action) {
     switch (action) {
       case KeybordKeyValue.enter:
-        if (_lastKeyPressed == KeybordKeyValue.enter) {
+        if (_lastKeyPressed == KeybordKeyValue.enter && !_itemCode.hasItem) {
           if (_changes.isNotEmpty) {
             shouldProceed().then((x) {
               if (x) _applyChanges();
             });
           }
-        } else if (_focusedAt == Focuses.itemNum) {
-          _onClick(KeybordKeyValue.action2);
-        } else {
+        } else if (_focusedAt != Focuses.itemNum) {
           _addChanges();
         }
         break;
@@ -329,6 +325,14 @@ class TransferStock extends Stocking<TransferStockChanges> {
     ));
     _loading = false;
     notifyListeners();
+  }
+
+  @override
+  void _onStockChangeSelect(TransferStockChanges stockChanges) {
+    super._onStockChangeSelect(stockChanges);
+    _sendQuntity.assign(stockChanges.sendQuntity);
+    _afterSendQuntity.assign(stockChanges.afterSendQuntity);
+    _focusedAt = Focuses.addQuntity;
   }
 
   @override
