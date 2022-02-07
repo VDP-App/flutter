@@ -73,11 +73,17 @@ class P3 extends TypoText {
 }
 
 class T1 extends TypoText {
-  const T1(this.text, {Key? key}) : super(key: key);
+  const T1(this.text, {Key? key, this.color, this.textAlign}) : super(key: key);
   final String text;
+  final Color? color;
+  final TextAlign? textAlign;
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: TextStyle(fontSize: fontSizeOf.t1));
+    return Text(
+      text,
+      style: TextStyle(fontSize: fontSizeOf.t1, color: color),
+      textAlign: textAlign,
+    );
   }
 }
 
