@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
 
@@ -33,24 +34,25 @@ class IncomeInfo extends StatelessWidget {
                   children: [
                     T3(isOffline ? "Offline" : "Online", color: Colors.white),
                     SizedBox(
-                      height: 50,
+                      height: fontSizeOf.h1,
                       child: T2(rs_ + amount, color: Colors.white70),
                     )
                   ],
                 ),
               ),
             ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(
-                      "images/${isOffline ? "cash" : "google-pay-icon"}.png"),
-                  radius: 50,
-                  backgroundColor: Colors.deepPurpleAccent,
+            if (isTablet)
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage(
+                        "images/${isOffline ? "cash" : "google-pay-icon"}.png"),
+                    radius: fontSizeOf.h1,
+                    backgroundColor: Colors.deepPurpleAccent,
+                  ),
                 ),
-              ),
-            )
+              )
           ],
         ),
       ),

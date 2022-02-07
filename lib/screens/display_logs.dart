@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdp/documents/logs.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/doc/logs.dart';
+import 'package:vdp/utils/build_list_page.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/items/show_logs.dart';
@@ -25,39 +26,40 @@ class DisplayLogs extends StatelessWidget {
   }
 }
 
+class _OnEnd extends StatelessWidget {
+  const _OnEnd({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var logs = Provider.of<Logs>(context, listen: false);
+    if (!logs.isLoading) logs.loadNextPage();
+    return const Center(child: loadingWigitLinier, heightFactor: 10);
+  }
+}
+
 class _Logs extends StatelessWidget {
   const _Logs({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var logs = Provider.of<Logs>(context);
-    if (logs.isDone && logs.length == 0) {
-      return const NoData(text: "No Logs Found");
-    }
-    return ListView.builder(
-        itemCount: logs.length * 2 + (logs.isDone ? 0 : 1),
-        itemBuilder: (context, i) {
-          if (logs.isNotDone && i == logs.length * 2) {
-            if (!logs.isLoading) logs.loadNextPage();
-            return const Center(child: loadingWigitLinier, heightFactor: 10);
-          }
-          if (i.isOdd) return const Divider(thickness: 1.5);
-          final log = logs[i ~/ 2];
-          final isImp = log.isImportant;
-          return ListTile(
-            onTap: () => openLog(context, log),
-            leading: Container(
-              decoration: isImp == null
-                  ? null
-                  : BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      color: isImp ? Colors.red : Colors.green,
-                    ),
-              width: 10,
-            ),
-            minLeadingWidth: 20,
-            title: T1(log.product.name),
-            trailing: log.isCreateItemLog
+    return BuildListPage<Log>(
+      list: logs.list,
+      wrapScaffold: true,
+      noDataText: null,
+      buildChild: (context, log) {
+        final isImp = log.isImportant;
+        return ListTilePage(
+          onClick: () => openLog(context, log),
+          leadingWidgit: LeadingWidgit.badge(
+            color: isImp ? Colors.red : Colors.green,
+          ),
+          title: log.product.name,
+          preview: Preview.text(
+            P2(log.preview, color: isImp ? Colors.red : Colors.green),
+          ),
+          trailingWidgit: TrailingWidgit.icon(
+            log.isCreateItemLog
                 ? const IconT3(Icons.add, color: Colors.green)
                 : log.isRemoveItemLog
                     ? const IconT3(
@@ -68,9 +70,11 @@ class _Logs extends StatelessWidget {
                         Icons.update_rounded,
                         color: Colors.blue,
                       ),
-            subtitle: P2(log.preview),
-          );
-        });
+          ),
+        );
+      },
+      endWith: logs.isDone ? [] : const [_OnEnd()],
+    );
   }
 }
 

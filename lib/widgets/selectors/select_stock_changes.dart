@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/stock_changes.dart';
+import 'package:vdp/utils/build_list_page.dart';
 import 'package:vdp/utils/typography.dart';
 
 class ShowStockChanges<T extends Changes> extends StatelessWidget {
@@ -15,105 +15,67 @@ class ShowStockChanges<T extends Changes> extends StatelessWidget {
   final void Function(T changes) onChangesSelect;
   final void Function(T changes) deleteChanges;
 
-  Widget table(List<String> column1, List<String> column2) {
-    final children = <Widget>[];
-    for (var i = 0; i < min(column1.length, column2.length); i++) {
-      children.add(Flexible(
-        flex: 50,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            P2(column1[i]),
-            P2(column2[i]),
-          ],
-        ),
-      ));
-    }
-    children.add(const Spacer());
-    return Row(
-      children: children,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Select Changes")),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-            itemCount: changes.length * 2,
-            itemBuilder: (context, i) {
-              if (i.isOdd) return const Divider(thickness: 1);
-              i ~/= 2;
-              var change = changes.elementAt(i);
-              final ListTile listTile;
-              if (change is TransferStockChanges) {
-                listTile = ListTile(
-                  onTap: () {
-                    onChangesSelect(change);
-                    Navigator.pop(context);
-                  },
-                  subtitle: table([
-                    "Current Qun",
-                    "Send Qun",
-                    "Final Qun"
-                  ], [
-                    change.currentQuntity.text,
-                    change.sendQuntity.text,
-                    change.afterSendQuntity.text
-                  ]),
-                  title: T1(change.item.name),
-                );
-              } else if (change is StockSettingChanges) {
-                listTile = ListTile(
-                  onTap: () {
-                    onChangesSelect(change);
-                    Navigator.pop(context);
-                  },
-                  trailing: change.isSetStock
-                      ? const IconH1(Icons.error_rounded, color: Colors.red)
-                      : const IconH1(Icons.addchart_rounded,
-                          color: Colors.green),
-                  subtitle: table(
+    return BuildListPage<T>(
+      appBarTitle: "Select Order",
+      wrapScaffold: true,
+      buildChild: (context, change) {
+        return ListTilePage(
+          onClick: () {
+            onChangesSelect(change);
+            Navigator.pop(context);
+          },
+          title: change.item.name,
+          preview: change is TransferStockChanges
+              ? Preview.table([
+                  "Current Qun",
+                  "Send Qun",
+                  "Final Qun"
+                ], [
+                  change.currentQuntity.text,
+                  change.sendQuntity.text,
+                  change.afterSendQuntity.text
+                ])
+              : change is StockSettingChanges
+                  ? Preview.table(
                       change.isSetStock
                           ? ["Current Qun", "Changed Qun", "Set Qun"]
                           : ["Current Qun", "Added Qun", "Final Qun"],
                       [
-                        change.currentQuntity.text,
-                        change.addedQuntity.text,
-                        change.setQuntity.text
-                      ]),
-                  title: T1(change.item.name),
-                );
-              } else {
-                listTile = ListTile(
-                  onTap: () {
-                    onChangesSelect(change);
-                    Navigator.pop(context);
-                  },
-                  title: T1(change.item.name),
-                );
-              }
-              return Dismissible(
-                key: Key(change.itemId),
-                onDismissed: (direction) {
-                  deleteChanges(change);
-                  if (changes.isEmpty) Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Changes with id ${change.itemId} was removed',
-                      ),
-                    ),
-                  );
-                },
-                child: listTile,
-                background: Container(color: Colors.red),
-              );
-            }),
-      ),
+                          change.currentQuntity.text,
+                          change.addedQuntity.text,
+                          change.setQuntity.text
+                        ])
+                  : const Preview.empty(),
+          trailingWidgit: change is StockSettingChanges
+              ? TrailingWidgit.icon(
+                  change.isSetStock
+                      ? const IconH1(
+                          Icons.error_rounded,
+                          color: Colors.red,
+                        )
+                      : const IconH1(
+                          Icons.addchart_rounded,
+                          color: Colors.green,
+                        ),
+                )
+              : null,
+        );
+      },
+      onDismissed: (change) {
+        deleteChanges(change);
+        if (changes.isEmpty) Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Changes with id ${change.itemId} was removed',
+            ),
+          ),
+        );
+      },
+      noDataText: "No Order here",
+      list: changes,
     );
   }
 }

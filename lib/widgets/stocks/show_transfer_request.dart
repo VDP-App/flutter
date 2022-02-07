@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/transfer.dart';
 import 'package:vdp/providers/apis/accept_transfer.dart';
 import 'package:vdp/providers/doc/config.dart';
+import 'package:vdp/utils/display_table.dart';
 import 'package:vdp/utils/page_utils.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:provider/provider.dart';
-import 'package:vdp/utils/typography.dart';
 
 class ShowTransferRequest extends StatelessWidget {
   const ShowTransferRequest({Key? key}) : super(key: key);
@@ -47,17 +47,9 @@ class _TransferTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const [
-        DataColumn(label: T2("Product Name", color: Colors.purple)),
-        DataColumn(label: T2("Quntity Sent", color: Colors.purple)),
-      ],
-      rows: changes
-          .map((e) => DataRow(cells: [
-                DataCell(P3(e.item.name)),
-                DataCell(P3(e.quntitySent.text))
-              ]))
-          .toList(),
+    return DisplayTable.fromString(
+      titleNames: const ["Product Name", "Quntity Sent"],
+      data2D: changes.map((e) => [e.item.name, e.quntitySent.text]),
     );
   }
 }

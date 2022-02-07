@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/documents/utils/bill.dart';
+import 'package:vdp/documents/utils/product.dart';
+import 'package:vdp/providers/apis/bill_provider.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/doc/cash_counter.dart';
+import 'package:vdp/utils/build_list_page.dart';
 import 'package:vdp/utils/loading.dart';
-import 'package:vdp/widgets/bills/bill_tile.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/bills/income_info.dart';
 import 'package:vdp/widgets/bills/stock_consumed.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/widgets/stocks/show_bill.dart';
 
 class DisplayBills extends StatelessWidget {
   const DisplayBills({Key? key}) : super(key: key);
@@ -42,33 +47,48 @@ class _Bills extends StatelessWidget {
     var cashCounter = Provider.of<CashCounter>(context);
     final doc = cashCounter.doc;
     if (doc == null) return loadingWigit;
-    if (doc.bills.isEmpty) return const NoData(text: "No Bills Found");
-    return Column(
-      children: [
+    return BuildListPage<Bill>(
+      list: doc.bills,
+      noDataText: "No Bills Found",
+      wrapScaffold: true,
+      startWith: [
         const StockConsumed(),
-        const SizedBox(height: 10),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           IncomeInfo(amount: doc.offlineIncome.text, cashIn: CashIn.offline),
           IncomeInfo(amount: doc.onlineIncome.text, cashIn: CashIn.online)
         ]),
-        const Divider(thickness: 2, height: 50),
-        Expanded(
-          child: Scrollable(viewportBuilder: (context, _) {
-            return ListView.builder(
-                itemCount: doc.bills.length * 2,
-                itemBuilder: (context, i) {
-                  if (i.isOdd) return const Divider(thickness: 1.5);
-                  final bill = doc.bills.elementAt(i ~/ 2);
-                  return BillTile(
-                    bill: bill,
-                    cancelBill: cashCounter.cancelBill,
-                    cashCounterID: cashCounterID,
-                    stockID: stockID,
-                  );
-                });
-          }),
-        )
       ],
+      buildChild: (context, bill) {
+        return ListTilePage(
+          title: parseCode(bill.billNum),
+          onClick: () => openBill(context, bill, stockID, cashCounterID),
+          preview: Preview.text(P3(rs_ + bill.totalMoneyInString)),
+          leadingWidgit: LeadingWidgit.text(
+            P2((bill.isWholeSell ? "( W )" : "( R )")),
+          ),
+          trailingWidgit: TrailingWidgit.actionButton(
+            action: () {
+              return cashCounter.cancelBill(bill.billNum);
+            },
+            color: Colors.red,
+            icon: const Icon(Icons.delete),
+          ),
+        );
+      },
     );
   }
+}
+
+void openBill(
+  BuildContext context,
+  Bill bill,
+  String stockID,
+  String cashCounterID,
+) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return ChangeNotifierProvider(
+      create: (context) => BillProvider(context, bill, stockID, cashCounterID),
+      child: const ShowBill(),
+    );
+  }));
 }

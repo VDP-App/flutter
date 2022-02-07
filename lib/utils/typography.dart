@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/main.dart';
 
-class P1 extends StatelessWidget {
+abstract class TypoText extends StatelessWidget {
+  const TypoText({Key? key}) : super(key: key);
+}
+
+abstract class TypoIcon extends StatelessWidget {
+  const TypoIcon({Key? key}) : super(key: key);
+}
+
+class P1 extends TypoText {
   const P1(this.text, {Key? key}) : super(key: key);
   final String text;
 
@@ -11,7 +19,7 @@ class P1 extends StatelessWidget {
   }
 }
 
-class P2 extends StatelessWidget {
+class P2 extends TypoText {
   const P2(
     this.text, {
     Key? key,
@@ -34,7 +42,7 @@ class P2 extends StatelessWidget {
   }
 }
 
-class P3 extends StatelessWidget {
+class P3 extends TypoText {
   const P3(
     this.text, {
     Key? key,
@@ -64,7 +72,7 @@ class P3 extends StatelessWidget {
   }
 }
 
-class T1 extends StatelessWidget {
+class T1 extends TypoText {
   const T1(this.text, {Key? key}) : super(key: key);
   final String text;
   @override
@@ -73,7 +81,7 @@ class T1 extends StatelessWidget {
   }
 }
 
-class T2 extends StatelessWidget {
+class T2 extends TypoText {
   const T2(this.text, {Key? key, this.color, this.textAlign}) : super(key: key);
   final String text;
   final Color? color;
@@ -88,7 +96,7 @@ class T2 extends StatelessWidget {
   }
 }
 
-class T3 extends StatelessWidget {
+class T3 extends TypoText {
   const T3(this.text, {Key? key, this.color}) : super(key: key);
   final Color? color;
   final String text;
@@ -98,7 +106,7 @@ class T3 extends StatelessWidget {
   }
 }
 
-class H1 extends StatelessWidget {
+class H1 extends TypoText {
   const H1(this.text, {Key? key, this.color}) : super(key: key);
   final Color? color;
   final String text;
@@ -108,7 +116,7 @@ class H1 extends StatelessWidget {
   }
 }
 
-class H2 extends StatelessWidget {
+class H2 extends TypoText {
   const H2(this.text, {Key? key, this.color}) : super(key: key);
   final Color? color;
   final String text;
@@ -118,7 +126,7 @@ class H2 extends StatelessWidget {
   }
 }
 
-class IconP3 extends StatelessWidget {
+class IconP3 extends TypoIcon {
   const IconP3(this.icon, {Key? key, this.color}) : super(key: key);
   final IconData? icon;
   final Color? color;
@@ -136,7 +144,7 @@ class IconP3 extends StatelessWidget {
   }
 }
 
-class IconT1 extends StatelessWidget {
+class IconT1 extends TypoIcon {
   const IconT1(this.icon, {Key? key, this.color}) : super(key: key);
   final Color? color;
   final IconData? icon;
@@ -146,7 +154,7 @@ class IconT1 extends StatelessWidget {
   }
 }
 
-class IconT2 extends StatelessWidget {
+class IconT2 extends TypoIcon {
   const IconT2(this.icon, {Key? key, this.color}) : super(key: key);
   final IconData? icon;
   final Color? color;
@@ -156,7 +164,7 @@ class IconT2 extends StatelessWidget {
   }
 }
 
-class IconT3 extends StatelessWidget {
+class IconT3 extends TypoIcon {
   const IconT3(this.icon, {Key? key, this.color}) : super(key: key);
   final IconData? icon;
   final Color? color;
@@ -166,7 +174,7 @@ class IconT3 extends StatelessWidget {
   }
 }
 
-class IconH1 extends StatelessWidget {
+class IconH1 extends TypoIcon {
   const IconH1(this.icon, {Key? key, this.color}) : super(key: key);
   final IconData? icon;
   final Color? color;
@@ -176,7 +184,7 @@ class IconH1 extends StatelessWidget {
   }
 }
 
-class IconX1 extends StatelessWidget {
+class IconX1 extends TypoIcon {
   const IconX1(this.icon, {Key? key, this.color}) : super(key: key);
   final IconData? icon;
   final Color? color;

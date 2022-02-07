@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/stock_entry.dart';
 import 'package:vdp/providers/doc/config.dart';
+import 'package:vdp/utils/display_table.dart';
 import 'package:vdp/utils/page_utils.dart';
-import 'package:vdp/utils/typography.dart';
 
 class ShowStockChanges extends StatelessWidget {
   const ShowStockChanges({Key? key, required this.entry}) : super(key: key);
@@ -38,27 +38,19 @@ class _StockChangesTable extends StatelessWidget {
   final List<StockChangesInEntry> changes;
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const [
-        DataColumn(label: T2("Name", color: Colors.purple)),
-        DataColumn(label: T2("Before", color: Colors.purple)),
-        DataColumn(label: T2("+ Q", color: Colors.purple)),
-        DataColumn(label: T2("After", color: Colors.purple)),
-      ],
-      rows: changes
-          .map(
-            (e) => DataRow(
-                color: MaterialStateProperty.resolveWith(
-                  (_) => e.stockInc.val.isNegative ? Colors.red : Colors.green,
-                ),
-                cells: [
-                  DataCell(P3(e.item.name, color: Colors.white)),
-                  DataCell(P3(e.stockBefore.text, color: Colors.white)),
-                  DataCell(P3(e.stockInc.text, color: Colors.white)),
-                  DataCell(P3(e.stockAfter.text, color: Colors.white)),
-                ]),
-          )
-          .toList(),
+    return DisplayTable(
+      titleNames: const ["Name", "Before", "+ Q"],
+      data2D: changes.map(
+        (e) => [
+          DisplayTableCell(e.item.name),
+          DisplayTableCell(e.stockBefore.text),
+          DisplayTableCell(
+            e.stockInc.val.isNegative ? e.stockInc.text : "+" + e.stockInc.text,
+            color: e.stockInc.val.isNegative ? Colors.red : Colors.green[700],
+            fontWeight: FontWeight.w500,
+          ),
+        ],
+      ),
     );
   }
 }

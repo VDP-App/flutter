@@ -144,10 +144,7 @@ class Layout extends StatelessWidget {
           const SizedBox(width: 25),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
-        child: page.currentPage.screen,
-      ),
+      body: page.currentPage.screen,
     );
   }
 }

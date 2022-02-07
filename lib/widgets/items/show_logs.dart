@@ -3,6 +3,7 @@ import 'package:vdp/documents/logs.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
+import 'package:vdp/utils/display_table.dart';
 import 'package:vdp/utils/page_utils.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
@@ -78,12 +79,12 @@ class _RemainingStockTable extends StatelessWidget {
         DataCell(P3(stockEntry.value.text)),
       ]));
     }
-    return DataTable(
-      columns: const [
-        DataColumn(label: T2("Stock Unit", color: Colors.red)),
-        DataColumn(label: T2("Quntity On Remove", color: Colors.red)),
-      ],
-      rows: rows,
+    return DisplayTable.fromString(
+      titleNames: const ["Stock Unit", "Quntity On Remove"],
+      data2D: remainingStock.entries.map((stockEntry) => [
+            getStockInfo(stockEntry.key)?.name ?? "--*--",
+            stockEntry.value.text,
+          ]),
     );
   }
 }
@@ -99,95 +100,36 @@ class _CompareProductTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const [
-        DataColumn(
-            label: T2(
-          "Label",
-          color: Colors.purple,
-        )),
-        DataColumn(
-            label: T2(
-          "Old Value",
-          color: Colors.purple,
-        )),
-        DataColumn(
-            label: T2(
-          "New Value",
-          color: Colors.purple,
-        )),
-      ],
-      rows: [
-        DataRow(
-          cells: [
-            const DataCell(P3("Name")),
-            DataCell(P3(oldProduct.name)),
-            DataCell(P3(newProduct.name)),
-          ],
-          color: oldProduct.name == newProduct.name
-              ? null
-              : MaterialStateProperty.resolveWith((states) => Colors.green),
-        ),
-        DataRow(
-          cells: [
-            const DataCell(P3("Code")),
-            DataCell(P3(oldProduct.code ?? "--*--")),
-            DataCell(P3(newProduct.code ?? "--*--")),
-          ],
-          color: oldProduct.code == newProduct.code
-              ? null
-              : MaterialStateProperty.resolveWith((states) => Colors.green),
-        ),
-        DataRow(
-          cells: [
-            const DataCell(P3("Collection")),
-            DataCell(P3(oldProduct.collectionName ?? "--*--")),
-            DataCell(P3(newProduct.collectionName ?? "--*--")),
-          ],
-          color: oldProduct.collectionName == newProduct.collectionName
-              ? null
-              : MaterialStateProperty.resolveWith((states) => Colors.green),
-        ),
-        DataRow(
-          cells: [
-            const DataCell(P3("Rate1")),
-            DataCell(P3(rs_ + oldProduct.rate1.toString())),
-            DataCell(P3(rs_ + newProduct.rate1.toString())),
-          ],
-          color: oldProduct.rate1 == newProduct.rate1
-              ? null
-              : MaterialStateProperty.resolveWith((states) => Colors.pink),
-        ),
-        DataRow(
-          cells: [
-            const DataCell(P3("Rate2")),
-            DataCell(P3(rs_ + oldProduct.rate2.toString())),
-            DataCell(P3(rs_ + newProduct.rate2.toString())),
-          ],
-          color: oldProduct.rate2 == newProduct.rate2
-              ? null
-              : MaterialStateProperty.resolveWith((states) => Colors.pink),
-        ),
-        DataRow(
-          cells: [
-            const DataCell(P3("cgst")),
-            DataCell(P3(oldProduct.cgst.toString() + " %")),
-            DataCell(P3(newProduct.cgst.toString() + " %")),
-          ],
-          color: oldProduct.cgst == newProduct.cgst
-              ? null
-              : MaterialStateProperty.resolveWith((states) => Colors.pink),
-        ),
-        DataRow(
-          cells: [
-            const DataCell(P3("sgst")),
-            DataCell(P3(oldProduct.sgst.toString() + " %")),
-            DataCell(P3(newProduct.sgst.toString() + " %")),
-          ],
-          color: oldProduct.sgst == newProduct.sgst
-              ? null
-              : MaterialStateProperty.resolveWith((states) => Colors.pink),
-        ),
+    return DisplayTable.fromString(
+      titleNames: const ["Label", "Old Value", "New Value"],
+      data2D: [
+        ["Name", oldProduct.name, newProduct.name],
+        ["Code", oldProduct.code ?? "--*--", newProduct.code ?? "--*--"],
+        [
+          "Collection",
+          oldProduct.collectionName ?? "--*--",
+          newProduct.collectionName ?? "--*--"
+        ],
+        [
+          "Rate1",
+          rs_ + oldProduct.rate1.toString(),
+          rs_ + newProduct.rate1.toString()
+        ],
+        [
+          "Rate2",
+          rs_ + oldProduct.rate2.toString(),
+          rs_ + newProduct.rate2.toString()
+        ],
+        [
+          "cgst",
+          oldProduct.cgst.toString() + " %",
+          newProduct.cgst.toString() + " %"
+        ],
+        [
+          "sgst",
+          oldProduct.sgst.toString() + " %",
+          newProduct.sgst.toString() + " %"
+        ],
       ],
     );
   }

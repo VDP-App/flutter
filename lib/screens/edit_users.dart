@@ -5,6 +5,7 @@ import 'package:vdp/documents/utils/config_info.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/profile.dart';
 import 'package:vdp/providers/doc/config.dart';
+import 'package:vdp/utils/build_list_page.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/edit_config/add_profile.dart';
@@ -36,24 +37,20 @@ class EditUser extends StatelessWidget {
     final doc = config.doc;
     if (doc == null) return loadingWigit;
     final users = doc.users.where((element) => element.uid != uid);
-    const divider = Divider(thickness: 1.5);
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: users.length * 2,
-        itemBuilder: (context, i) {
-          if (i.isOdd) return divider;
-          i ~/= 2;
-          final user = users.elementAt(i);
-          return ListTile(
-            onTap: () => openUserPage(context, user, doc),
-            title: T1(user.name),
-            subtitle: table(
-              ["Email", "Role"],
-              [user.email, user.claims.roleIs],
-            ),
-          );
-        },
-      ),
+    return BuildListPage<UserInfo>(
+      wrapScaffold: true,
+      noDataText: "No User Found",
+      list: users,
+      buildChild: (context, user) {
+        return ListTilePage(
+          onClick: () => openUserPage(context, user, doc),
+          title: user.name,
+          preview: Preview.info(
+            ["Email", "Role"],
+            [user.email, user.claims.roleIs],
+          ),
+        );
+      },
       floatingActionButton: FloatingActionButton(
         onPressed: () => openCreateUesrPage(context, doc),
         child: const Icon(Icons.add),

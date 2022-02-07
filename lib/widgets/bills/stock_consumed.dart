@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/product.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/providers/doc/cash_counter.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/utils/loading.dart';
@@ -42,17 +43,13 @@ class _StockConsumedState extends State<StockConsumed> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  T3(
-                      item != null
-                          ? item.name
-                          : "Select Item for Quntity Consumed",
+                  T3(item != null ? item.name : "Select Item",
                       color: Colors.white),
                   SizedBox(
                     height: 50,
                     child: T2(
                       item != null
-                          ? (stockConsumed[item.id]?.text ?? "0") +
-                              " Quntity Consumed"
+                          ? (stockConsumed[item.id]?.text ?? "0") + " Quntity"
                           : "Click on button -->",
                       color: Colors.white70,
                     ),
@@ -64,16 +61,31 @@ class _StockConsumedState extends State<StockConsumed> {
           Flexible(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: FloatingActionButton.large(
-                heroTag: "item-selector",
-                backgroundColor: Colors.deepOrange,
-                child: const Icon(Icons.drive_folder_upload_outlined),
-                onPressed: () => selectItem(
-                  context,
-                  doc,
-                  (item) => setState(() => selectedItem = item),
-                ),
-              ),
+              child: isTablet
+                  ? FloatingActionButton.large(
+                      heroTag: "item-selector",
+                      backgroundColor: Colors.black,
+                      child: const Icon(Icons.drive_folder_upload_outlined),
+                      onPressed: () => selectItem(
+                        context,
+                        doc,
+                        (item) => setState(() => selectedItem = item),
+                      ),
+                    )
+                  : SizedBox.square(
+                      dimension: fontSizeOf.x1,
+                      child: ElevatedButton(
+                        onPressed: () => selectItem(
+                          context,
+                          doc,
+                          (item) => setState(() => selectedItem = item),
+                        ),
+                        child: const Icon(Icons.drive_folder_upload_outlined),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black,
+                        ),
+                      ),
+                    ),
             ),
           )
         ],

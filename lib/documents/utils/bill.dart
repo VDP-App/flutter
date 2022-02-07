@@ -60,7 +60,7 @@ class Order {
   final FixedNumber quntity;
   final FixedNumber amount;
   final FixedNumber rate;
-  late final String id;
+  // late final String id;
 
   Product get item {
     final a = productDoc?[itemId];
@@ -80,7 +80,7 @@ class Order {
     while (ids.contains(a)) {
       a = randomString;
     }
-    id = a;
+    // id = a;
   }
 
   Map<String, dynamic> toJson() {

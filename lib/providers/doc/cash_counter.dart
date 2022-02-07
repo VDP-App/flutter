@@ -49,21 +49,14 @@ class CashCounter extends Modal with ChangeNotifier {
 
   Future<void> cancelBill(
     String billNum,
-    void Function() onStart,
-    void Function() then,
   ) async {
     final stockID = _stockID, cashCounterID = _cashCounterID;
-    if (stockID == null || cashCounterID == null || !await shouldProceed()) {
-      return;
-    }
-    onStart();
-    await _cancleBillOnCloud
-        .cancleBill(
-          billNum,
-          stockID,
-          cashCounterID,
-        )
-        .then((_) => then());
+    if (stockID == null || cashCounterID == null) return;
+    await _cancleBillOnCloud.cancleBill(
+      billNum,
+      stockID,
+      cashCounterID,
+    );
   }
 
   @override

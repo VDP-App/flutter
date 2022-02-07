@@ -65,6 +65,7 @@ class Logs extends Modal with ChangeNotifier {
   bool get isDone => _logPage <= 0;
   bool get isNotDone => _logPage > 0;
   int get length => _logs.length;
+  List<Log> get list => _logs;
 
   @override
   void dispose() {

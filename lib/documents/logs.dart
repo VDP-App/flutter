@@ -23,9 +23,9 @@ class Log {
   bool get isRemoveItemLog => _type == "remove";
   bool get isUpdateItemLog => _type == "update";
 
-  bool? get isImportant {
+  bool get isImportant {
     final op = oldProduct;
-    if (op == null) return null;
+    if (op == null) return true;
     if (op.rate1 != product.rate1 ||
         op.rate2 != product.rate2 ||
         op.sgst != product.sgst ||
@@ -77,6 +77,4 @@ class LogDoc {
     }
     return LogDoc(logs);
   }
-
-  int get length => logs.length;
 }

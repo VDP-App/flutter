@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/bill.dart';
 import 'package:vdp/providers/apis/bill_provider.dart';
 import 'package:vdp/providers/doc/config.dart';
+import 'package:vdp/utils/display_table.dart';
 import 'package:vdp/utils/page_utils.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:provider/provider.dart';
-import 'package:vdp/utils/typography.dart';
 
 class ShowBill extends StatelessWidget {
   const ShowBill({Key? key}) : super(key: key);
@@ -50,39 +50,11 @@ class _BillOrderTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const [
-        DataColumn(
-            label: T2(
-          "Name",
-          color: Colors.purple,
-        )),
-        DataColumn(
-            label: T2(
-          "Quntity",
-          color: Colors.purple,
-        )),
-        DataColumn(
-            label: T2(
-          "Amount",
-          color: Colors.purple,
-        )),
-        DataColumn(
-            label: T2(
-          "Rate",
-          color: Colors.purple,
-        )),
-      ],
-      rows: orders
-          .map(
-            (e) => DataRow(cells: [
-              DataCell(P3(e.item.name)),
-              DataCell(P3(e.quntity.text)),
-              DataCell(P3(rs_ + e.amount.text)),
-              DataCell(P3(e.rate.text)),
-            ]),
-          )
-          .toList(),
+    return DisplayTable.fromString(
+      titleNames: const ["Name", "Quntity", "Amount", "Rate"],
+      data2D: orders.map(
+        (e) => [e.item.name, e.quntity.text, rs_ + e.amount.text, e.rate.text],
+      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/apis/edit_item.dart';
 import 'package:vdp/providers/doc/products.dart';
+import 'package:vdp/utils/build_list_page.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/items/edit_item.dart';
@@ -16,29 +17,26 @@ class ItemsPage extends StatelessWidget {
     var itemDoc = items.doc;
     if (itemDoc == null) return loadingWigit;
     var codeNumList = itemDoc.codeNums;
-    if (codeNumList.isEmpty) return const NoData(text: "No Items Found");
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: codeNumList.length * 2,
-        itemBuilder: (context, index) {
-          if (index.isOdd) return const Divider(thickness: 1);
-          index ~/= 2;
-          var item = itemDoc.getItemBy(code: codeNumList[index]);
-          if (item == null) return const SizedBox();
-          return ListTile(
-            trailing: P2(rs_ + item.rate1.toString()),
-            subtitle: P2(item.preview),
-            leading: P1("(${item.code})"),
-            title: T1(item.name),
-            onTap: () => openEditItem(
-              context,
-              item,
-              itemDoc.collectionNames,
-              codeNumList,
-            ),
-          );
-        },
-      ),
+    return BuildListPage<String>(
+      list: codeNumList,
+      wrapScaffold: true,
+      noDataText: "No Items Found",
+      buildChild: (context, code) {
+        var item = itemDoc.getItemBy(code: code);
+        if (item == null) return const ListTilePage.empty();
+        return ListTilePage(
+          onClick: () => openEditItem(
+            context,
+            item,
+            itemDoc.collectionNames,
+            codeNumList,
+          ),
+          title: item.name,
+          trailingWidgit: TrailingWidgit.text(P2(rs_ + item.rate1.toString())),
+          leadingWidgit: LeadingWidgit.text(P1("(${item.code})")),
+          preview: Preview.text(P2(item.preview)),
+        );
+      },
       floatingActionButton: FloatingActionButton(
         onPressed: () => openEditItem(
           context,
