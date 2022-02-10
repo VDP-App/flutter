@@ -19,8 +19,8 @@ class CashCounterDoc {
     final bills = <Bill>[];
     final stockConsumed = <String, int>{};
 
-    for (var rawBill in asList(data["bills"])) {
-      var bill = Bill.fromJson(rawBill);
+    for (var rawBill in asMap(data["bills"]).entries) {
+      var bill = Bill.fromJson(parseJson(rawBill.value), rawBill.key);
       for (var order in bill.orders) {
         stockConsumed[order.itemId] =
             (stockConsumed[order.itemId] ?? 0) + order.quntity.val;

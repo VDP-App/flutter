@@ -8,14 +8,16 @@ class ProductReport {
   var totalStockChanges = 0;
   var totalStockSend = 0;
   var totalStockRecive = 0;
+  final retail = <int, int>{};
   final wholeSell = <int, int>{};
   final stockChanges = <int, int>{};
   final stockSend = <int, int>{};
   final stockRecive = <int, int>{};
   ProductReport();
 
-  void addRetail(int x) {
-    totalRetail += x;
+  void addRetail(int q, int r) {
+    totalRetail += q;
+    retail[r] = q + (wholeSell[q] ?? 0);
   }
 
   void addWholeSell(int x, int i) {
@@ -45,12 +47,14 @@ class FixedProductReport {
   final FixedNumber totalStockChanges;
   final FixedNumber totalStockSend;
   final FixedNumber totalStockRecive;
+  final Map<FixedNumber, FixedNumber> retail;
   final Map<int, FixedNumber> wholeSell;
   final Map<int, FixedNumber> stockChanges;
   final Map<int, FixedNumber> stockSend;
   final Map<int, FixedNumber> stockRecive;
   final String itemId;
   const FixedProductReport({
+    required this.retail,
     required this.stockChanges,
     required this.stockRecive,
     required this.stockSend,
@@ -74,6 +78,10 @@ class FixedProductReport {
     String itemId,
   ) {
     return FixedProductReport(
+      retail: productReport.retail.map(
+        (key, value) =>
+            MapEntry(FixedNumber.fromInt(key), FixedNumber.fromInt(value)),
+      ),
       stockChanges: productReport.stockChanges.map(
         (key, value) => MapEntry(key, FixedNumber.fromInt(value)),
       ),

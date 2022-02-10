@@ -2,17 +2,18 @@ import 'package:vdp/documents/utils/bill.dart';
 import 'package:vdp/documents/utils/parsing.dart';
 import 'package:vdp/documents/utils/report.dart';
 import 'package:vdp/documents/utils/stock_entry.dart';
+import 'package:vdp/providers/make_entries/custom/number.dart';
 
 class SummeryDoc {
-  final List<Bill> bills;
+  final List<Bill> wholeSellBills;
   final List<Entry> entries;
   final Map<String, int> stockAtEnd;
   final Map<String, FixedProductReport> productReports;
-  final int totalOnlineIncome;
-  final int totalOfflineIncome;
+  final FixedNumber totalOnlineIncome;
+  final FixedNumber totalOfflineIncome;
 
   const SummeryDoc(
-    this.bills,
+    this.wholeSellBills,
     this.entries,
     this.stockAtEnd,
     this.productReports,
@@ -21,13 +22,14 @@ class SummeryDoc {
   );
 
   factory SummeryDoc.fromJson(Map<String, dynamic> data) {
+    final _wholeSell = parseJson(data["wholeSell"]);
+    final _retail = parseJson(data["retail"]);
+    final _entry = parseJson(data["entry"]);
+    final _stockSnapShot = parseJson(data["stockSnapShot"]);
     final productReports = <String, ProductReport>{};
     final bills = <Bill>[];
     final entries = <Entry>[];
-    int onlineIncome = 0;
-    int offlineIncome = 0;
     var i = 0;
-    int amount;
     dynamic e;
     Bill bill;
     Order order;
@@ -35,30 +37,21 @@ class SummeryDoc {
     StockChangesInEntry changes;
     getProductReport(String id) => productReports[id] ??= ProductReport();
 
-    for (e in asList(data["entry"])) {
-      amount = 0;
-      bill = Bill.fromJson(asMap(e));
+    for (var e in asMap(_retail).entries) {
+      final v = asMap(e.value);
+      getProductReport(e.key).addRetail(asInt(v["q"]), asInt(v["r"]));
+    }
+
+    for (e in asList(_wholeSell)) {
+      bill = Bill.fromJson(asMap(e), "--*--");
       bills.add(bill);
-      if (bill.isWholeSell) {
-        for (order in bill.orders) {
-          amount += order.amount.val;
-          getProductReport(order.itemId).addWholeSell(order.quntity.val, i);
-        }
-      } else {
-        for (order in bill.orders) {
-          amount += order.amount.val;
-          getProductReport(order.itemId).addRetail(order.quntity.val);
-        }
-      }
-      if (bill.inCash) {
-        offlineIncome += amount;
-      } else {
-        onlineIncome += amount;
+      for (order in bill.orders) {
+        getProductReport(order.itemId).addWholeSell(order.quntity.val, i);
       }
       i++;
     }
     i = 0;
-    for (e in asList(data["entry"])) {
+    for (e in asList(_entry)) {
       entry = Entry.fromJson(asMap(e));
       entries.add(entry);
       if (entry.transferFrom != null) {
@@ -85,10 +78,11 @@ class SummeryDoc {
       }
       i++;
     }
+    final _income = asMap(data["income"]);
     return SummeryDoc(
       bills,
       entries,
-      asMap(data["currentStocks"]).map(
+      asMap(_stockSnapShot).map(
         (key, value) => MapEntry(key, asInt(value)),
       ),
       productReports.map(
@@ -97,8 +91,8 @@ class SummeryDoc {
           FixedProductReport.fromProductReport(value, key),
         ),
       ),
-      offlineIncome,
-      onlineIncome,
+      FixedNumber.fromInt(asInt(_income["offline"])),
+      FixedNumber.fromInt(asInt(_income["online"])),
     );
   }
 }

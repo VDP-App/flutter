@@ -178,7 +178,7 @@ class CancleBillOnCloud {
         "stockID": stockID,
         "cashCounterID": cashCounterID,
       },
-      (x) => Bill.fromJson(Map<String, dynamic>.from(x)),
+      (x) => Bill.fromJson(Map<String, dynamic>.from(x), "--*--"),
     );
   }
 }

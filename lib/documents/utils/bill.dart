@@ -21,13 +21,13 @@ class Bill {
     required this.uid,
   });
 
-  factory Bill.fromJson(Map<String, dynamic> data) {
+  factory Bill.fromJson(Map<String, dynamic> data, String billNum) {
     return Bill(
       inCash: asBool(data["inC"]),
       isWholeSell: asBool(data["inWS"]),
       moneyGiven: FixedNumber.fromInt(asInt(data["mG"])),
       orders: asList(data["o"]).map((e) => Order.fromJson(asMap(e))).toList(),
-      billNum: data["n"]?.toString() ?? "--*--",
+      billNum: billNum,
       uid: asString(data["uid"]),
     );
   }

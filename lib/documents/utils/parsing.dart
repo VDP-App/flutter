@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 Map<String, dynamic> asMap(dynamic val) {
   if (val is Map<String, dynamic>) return val;
   return const {};
@@ -24,3 +26,5 @@ String? asNullOrString(dynamic val) {
 }
 
 bool asBool(dynamic val) => val is bool ? val : false;
+
+dynamic parseJson(dynamic e) => e is String ? jsonDecode(e) : e;

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:vdp/documents/utils/parsing.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
@@ -73,7 +75,7 @@ class LogDoc {
   factory LogDoc.fromJson(Map<String, dynamic> data) {
     final logs = <Log>[];
     for (var log in asList(data["logs"])) {
-      logs.insert(0, Log.fromJson(asMap(log)));
+      logs.insert(0, Log.fromJson(asMap(parseJson(log))));
     }
     return LogDoc(logs);
   }

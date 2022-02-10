@@ -12,17 +12,16 @@ class StockDoc {
 
   factory StockDoc.fromJson(Map<String, dynamic> data) {
     return StockDoc(
-      asList(data["entry"]).map((e) => Entry.fromJson(e)).fold([],
+      asList(data["entry"]).map((e) => Entry.fromJson(parseJson(e))).fold([],
           (previousValue, element) {
         previousValue.insert(0, element);
         return previousValue;
       }),
       asMap(data["currentStocks"]).map(
           (key, value) => MapEntry(key, FixedNumber.fromInt(asInt(value)))),
-      asMap(data["transferNotifications"])
-          .entries
-          .map((e) => TransferNotifications.fromJson(asMap(e.value), e.key))
-          .fold([], (previousValue, element) {
+      asMap(data["transferNotifications"]).entries.map((e) {
+        return TransferNotifications.fromJson(asMap(parseJson(e.value)), e.key);
+      }).fold([], (previousValue, element) {
         previousValue.insert(0, element);
         return previousValue;
       }),
