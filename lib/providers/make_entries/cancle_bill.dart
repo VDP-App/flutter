@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/widgets/make_entry/keybord/builder.dart';
-import 'package:vdp/main.dart';
 import 'package:vdp/utils/cloud_functions.dart';
 import 'package:vdp/utils/modal.dart';
-import 'package:intl/intl.dart';
-
-String get billNumKey => DateFormat('bill-yyyy-MM-dd').format(DateTime.now());
 
 class CancleBill extends Modal with ChangeNotifier {
   final _cancleBillOnCloud = CancleBillOnCloud();
-  var _billNum = sharedPreferences.getInt(billNumKey)?.toString() ?? "";
-  final String? _stockID;
-  final String? _cashCounterID;
+  String _billNum = "";
+  final String stockID;
+  final String cashCounterID;
   var _loading = false;
 
   CancleBill(
     BuildContext context,
-    this._stockID,
-    this._cashCounterID,
+    this.stockID,
+    this.cashCounterID,
   ) : super(context);
 
   void _cancleBill() async {
     if (!await shouldProceed()) return;
-    final stockID = _stockID, cashCounterID = _cashCounterID;
-    if (stockID == null || cashCounterID == null) return;
     _loading = true;
     notifyListeners();
     await handleCloudCall(
@@ -35,6 +29,10 @@ class CancleBill extends Modal with ChangeNotifier {
     _loading = false;
     _billNum = "";
     notifyListeners();
+  }
+
+  void clear() {
+    onClick(KeybordKeyValue.action1);
   }
 
   void _onClick(KeybordKeyValue key) {

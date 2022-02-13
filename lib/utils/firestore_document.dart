@@ -6,33 +6,33 @@ enum GetDocFrom {
   serverIfNotThenCache,
 }
 
+Future<Map<String, dynamic>?> _getDoc(String docPath, Source source) {
+  return FirebaseFirestore.instance
+      .doc(docPath)
+      .get(GetOptions(source: source))
+      .then((value) => value.data());
+}
+
 Future<T?> getDoc<T>({
   required String docPath,
   GetDocFrom getDocFrom = GetDocFrom.serverIfNotThenCache,
   required FutureOr<T?> Function(Map<String, dynamic> data) converter,
 }) async {
-  Future<Map<String, dynamic>?> _getDoc(Source source) {
-    return FirebaseFirestore.instance
-        .doc(docPath)
-        .get(GetOptions(source: source))
-        .then((value) => value.data());
-  }
-
   Map<String, dynamic>? data;
 
   switch (getDocFrom) {
     case GetDocFrom.cacheIfNotThenServer:
       try {
-        data = await _getDoc(Source.cache);
+        data = await _getDoc(docPath, Source.cache);
       } catch (_) {
-        data = await _getDoc(Source.server);
+        data = await _getDoc(docPath, Source.server);
       }
       break;
     case GetDocFrom.serverIfNotThenCache:
       try {
-        data = await _getDoc(Source.server);
+        data = await _getDoc(docPath, Source.server);
       } catch (_) {
-        data = await _getDoc(Source.cache);
+        data = await _getDoc(docPath, Source.cache);
       }
       break;
   }

@@ -130,6 +130,8 @@ class EditProduct extends Modal with ChangeNotifier {
     _deleteLoading = true;
     notifyListeners();
     await handleCloudCall(_editItemOnCloud.remove(_product));
+    _deleteLoading = false;
+    notifyListeners();
     Navigator.pop(context);
   }
 }

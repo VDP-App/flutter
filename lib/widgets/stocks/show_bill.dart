@@ -51,7 +51,7 @@ class _BillOrderTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DisplayTable.fromString(
-      titleNames: const ["Name", "Quntity", "Amount", "Rate"],
+      titleNames: const ["Name", "Q", "A", "R"],
       data2D: orders.map(
         (e) => [e.item.name, e.quntity.text, rs_ + e.amount.text, e.rate.text],
       ),

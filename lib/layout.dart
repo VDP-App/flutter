@@ -100,11 +100,13 @@ class Layout extends StatelessWidget {
               listTile(context, Pages.changes, page),
               listTile(context, Pages.notifications, page)
             ],
-            if (claims.hasAdminAuthorization) ...[
+            if (claims.hasManagerAuthorization) ...[
               divider,
               listTile(context, Pages.items, page),
               listTile(context, Pages.logs, page),
               listTile(context, Pages.summery, page),
+            ],
+            if (claims.hasAdminAuthorization) ...[
               divider,
               listTile(context, Pages.profile, page),
               listTile(context, Pages.shop, page),

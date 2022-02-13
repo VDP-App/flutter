@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/utils/fontsize.dart';
-import 'package:vdp/providers/apis/pages.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -50,11 +49,8 @@ class App extends StatelessWidget {
                 ),
               );
             }
-            return MultiProvider(
-              providers: [
-                ChangeNotifierProvider(create: (context) => Auth(context)),
-                ChangeNotifierProvider(create: (context) => PageProvider()),
-              ],
+            return ChangeNotifierProvider(
+              create: (context) => Auth(context),
               child: const RouteApp(),
             );
           }

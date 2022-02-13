@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdp/layout.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/location.dart';
+import 'package:vdp/providers/apis/pages.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/doc/stock.dart';
@@ -39,6 +40,7 @@ class RouteApp extends StatelessWidget {
       final isManager = claims.hasManagerAuthorization;
       return MultiProvider(
         providers: [
+          ChangeNotifierProvider(create: (context) => PageProvider()),
           ChangeNotifierProvider<Config>(
             create: (_context) => Config(_context),
             lazy: false,

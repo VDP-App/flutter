@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/utils/modal.dart';
 
 class Claims {
@@ -99,6 +100,7 @@ class Auth extends Modal with ChangeNotifier {
     _loadingAuth = true;
     notifyListeners();
     try {
+      await sharedPreferences.clear();
       await _auth.signOut();
     } on FirebaseAuthException catch (e) {
       _loadingAuth = false;

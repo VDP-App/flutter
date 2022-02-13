@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:vdp/documents/utils/parsing.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';

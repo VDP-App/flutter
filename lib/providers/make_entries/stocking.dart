@@ -101,7 +101,11 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
         }
         break;
       case KeybordKeyValue.esc:
-        if (_lastKeyPressed == KeybordKeyValue.esc) _changes.clear();
+        if (_lastKeyPressed == KeybordKeyValue.esc) {
+          shouldProceed().then((value) {
+            if (value) _changes.clear();
+          });
+        }
         _reset();
         break;
       case KeybordKeyValue.action1:
@@ -259,16 +263,20 @@ class StockSetting extends Stocking<StockSettingChanges> {
 
   @override
   void _onAction3Press() {
-    _processAction_2_3();
-    _focusedAt = Focuses.setQuntity;
-    _updateSetQuntity("", 0);
+    if (_itemCode.hasItem) {
+      _processAction_2_3();
+      _focusedAt = Focuses.setQuntity;
+      _updateSetQuntity("", 0);
+    }
   }
 
   @override
   void _onAction2Press() {
-    _processAction_2_3();
-    _focusedAt = Focuses.addQuntity;
-    _updateAddedQuntity("", 0);
+    if (_itemCode.hasItem) {
+      _processAction_2_3();
+      _focusedAt = Focuses.addQuntity;
+      _updateAddedQuntity("", 0);
+    }
   }
 
   @override
@@ -312,17 +320,20 @@ class TransferStock extends Stocking<TransferStockChanges> {
     if (stocks.isEmpty) return;
     _loading = true;
     notifyListeners();
-    final sendStockId = await selectOne<StockInfo>(
-      title: "Stock",
-      currentlySelected: null,
-      modalListElement: stocks,
-      onSelect: (x) {},
-    );
-    if (sendStockId == null) return;
-    await handleCloudCall(_transferStockOnCloud.sendTransfer(
-      sendStockId,
-      StockChanges([..._changes], _stockID),
-    ));
+    final sendStockId = stocks.length == 1
+        ? stocks.first.id
+        : await selectOne<StockInfo>(
+            title: "Stock",
+            currentlySelected: null,
+            modalListElement: stocks,
+            onSelect: (x) {},
+          );
+    if (sendStockId != null) {
+      await handleCloudCall(_transferStockOnCloud.sendTransfer(
+        sendStockId,
+        StockChanges([..._changes], _stockID),
+      ));
+    }
     _loading = false;
     notifyListeners();
   }
@@ -379,9 +390,11 @@ class TransferStock extends Stocking<TransferStockChanges> {
 
   @override
   void _onAction2Press() {
-    _processAction_2_3();
-    _focusedAt = Focuses.addQuntity;
-    _updateSendQuntity("", 0);
+    if (_itemCode.hasItem) {
+      _processAction_2_3();
+      _focusedAt = Focuses.addQuntity;
+      _updateSendQuntity("", 0);
+    }
   }
 
   @override

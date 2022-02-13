@@ -10,6 +10,7 @@ class DisplayCell extends StatelessWidget {
     this.active = false,
     this.widget,
     this.flex = 1,
+    this.onClick,
   }) : super(key: key);
 
   final String lable;
@@ -17,6 +18,7 @@ class DisplayCell extends StatelessWidget {
   final bool active;
   final Widget? widget;
   final int flex;
+  final void Function()? onClick;
 
   Widget activeWidget() {
     String? val, chr;
@@ -63,6 +65,7 @@ class DisplayCell extends StatelessWidget {
         "$lable: ",
         style: const TextStyle(color: Colors.black87),
       ),
+      onClick: onClick,
     );
   }
 
@@ -73,7 +76,12 @@ class DisplayCell extends StatelessWidget {
       child: Row(
         children: [
           if (lable.isNotEmpty) lableWidget(),
-          if (widget != null) Expanded(child: Container(child: widget)),
+          if (widget != null)
+            Expanded(
+                child: TextButton(
+              child: widget!,
+              onPressed: onClick,
+            )),
           if (value.isNotEmpty || active)
             Flexible(
               child: active ? activeWidget() : unactiveWidget(),

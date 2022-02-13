@@ -20,6 +20,7 @@ class CancleBillDisplay extends DisplayClass {
             lable: "BillNum",
             value: cancleBill.billNum,
             active: true,
+            onClick: cancleBill.clear,
           ),
         ],
         const [],

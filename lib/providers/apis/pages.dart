@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/screens/screen.dart';
 
 enum Pages {
@@ -92,7 +93,8 @@ extension Screen on Pages {
 }
 
 class PageProvider extends ChangeNotifier {
-  var _currentPage = Pages.entry;
+  var _currentPage =
+      Pages.values.elementAt(sharedPreferences.getInt("page") ?? 0);
 
   int get pageIndex => _currentPage.index;
   Pages get currentPage => _currentPage;
@@ -100,6 +102,7 @@ class PageProvider extends ChangeNotifier {
   void changePageTo(Pages newPage, BuildContext context) {
     if (newPage != currentPage) {
       _currentPage = newPage;
+      sharedPreferences.setInt("page", newPage.index);
       notifyListeners();
     }
   }

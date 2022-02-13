@@ -2,8 +2,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:vdp/documents/utils/bill.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/documents/utils/stock_changes.dart';
-import 'package:vdp/main.dart';
-import 'package:vdp/providers/make_entries/cancle_bill.dart';
 
 class CloudError {
   final String code;
@@ -153,9 +151,6 @@ class BillingOnCloud {
       "stockID": stockID,
       "cashCounterID": cashCounterID,
       "bill": bill.toJson(),
-    }).then((value) {
-      sharedPreferences.setInt(billNumKey, value);
-      return value;
     });
   }
 }
@@ -168,9 +163,6 @@ class CancleBillOnCloud {
     String stockID,
     String cashCounterID,
   ) {
-    if (sharedPreferences.getInt(billNumKey) == int.parse(billNum)) {
-      sharedPreferences.remove(billNumKey);
-    }
     return _callApi<Bill>(
       _api,
       {

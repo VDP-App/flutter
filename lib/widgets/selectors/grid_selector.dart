@@ -5,8 +5,9 @@ import 'package:vdp/utils/typography.dart';
 class GridItem {
   final String title;
   final void Function() onPress;
+  final Color? color;
 
-  GridItem({required this.onPress, required this.title});
+  GridItem({required this.onPress, required this.title, this.color});
 }
 
 class GridSelector extends StatelessWidget {
@@ -35,7 +36,7 @@ class GridSelector extends StatelessWidget {
           return SizedBox.expand(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: color,
+                primary: gridItem.color ?? color,
               ),
               child: FractionallySizedBox(
                 child: isTablet

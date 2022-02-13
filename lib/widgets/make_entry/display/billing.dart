@@ -19,6 +19,8 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
     required String total,
     required void Function() selectItem,
     required void Function() showOrders,
+    required void Function() selectQuntity,
+    required void Function() selectAmount,
   }) {
     return [
       itemLine(
@@ -30,9 +32,17 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
       [DisplayCell(lable: "Name", value: name)],
       [
         DisplayCell(
-            lable: "Q", value: quntity, active: focusedAt == Focuses.quntity),
+          lable: "Q",
+          value: quntity,
+          active: focusedAt == Focuses.quntity,
+          onClick: selectQuntity,
+        ),
         DisplayCell(
-            lable: "P", value: price, active: focusedAt == Focuses.price),
+          lable: "A",
+          value: price,
+          active: focusedAt == Focuses.price,
+          onClick: selectAmount,
+        ),
       ],
       [
         DisplayCell(lable: "Rate", value: rate),
@@ -47,6 +57,7 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
     required bool inCash,
     required String returnCash,
     required void Function() showOrders,
+    required void Function() changePaymentType,
   }) {
     return [
       [
@@ -58,6 +69,7 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
               fit: BoxFit.contain,
             ),
           ),
+          onClick: changePaymentType,
         ),
       ],
       [DisplayCell(lable: "Transfer", value: transfer, active: true)],
@@ -89,6 +101,8 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
               total: billing.total,
               selectItem: billing.openItemSelector,
               showOrders: billing.openOrders,
+              selectAmount: billing.selectAmount,
+              selectQuntity: billing.selectQuntity,
             )
           : summerize(
               inCash: billing.inCash,
@@ -96,6 +110,7 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
               transfer: billing.transfer,
               total: billing.total,
               showOrders: billing.openOrders,
+              changePaymentType: billing.changePaymentType,
             ),
     );
   }

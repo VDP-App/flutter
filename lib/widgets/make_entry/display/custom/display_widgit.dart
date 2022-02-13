@@ -4,14 +4,15 @@ import 'package:provider/provider.dart';
 import 'custom.dart';
 
 class DisplayText extends StatelessWidget {
-  const DisplayText(this.text, {Key? key, this.bgColor}) : super(key: key);
+  const DisplayText(this.text, {Key? key, this.bgColor, this.onClick})
+      : super(key: key);
 
   final Color? bgColor;
   final Text text;
-
+  final void Function()? onClick;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    final widget = SizedBox(
       height: double.infinity,
       child: FittedBox(
         fit: BoxFit.fill,
@@ -21,6 +22,8 @@ class DisplayText extends StatelessWidget {
         ),
       ),
     );
+    if (onClick != null) TextButton(child: widget, onPressed: onClick);
+    return widget;
   }
 }
 

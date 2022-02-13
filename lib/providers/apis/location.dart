@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/config.dart';
 import 'package:vdp/documents/utils/config_info.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/utils/modal.dart';
 
@@ -12,15 +13,34 @@ class Location extends Modal with ChangeNotifier {
 
   Location(BuildContext context, this.claims) : super(context);
 
+  void _updateStorage() {
+    final stockID = _stockInfo?.id, cashCounterID = _cashCounterInfo?.id;
+    if (stockID != null) {
+      sharedPreferences.setString("stockID", stockID);
+    } else {
+      sharedPreferences.remove("stockID");
+    }
+    if (cashCounterID != null) {
+      sharedPreferences.setString("cashCounterID", cashCounterID);
+    } else {
+      sharedPreferences.remove("cashCounterID");
+    }
+  }
+
   void update(ConfigDoc configDoc) {
     _configDoc = configDoc;
-    _stockInfo ??= _configDoc?.getStockInfo(claims.defaultStockId);
-    _cashCounterInfo ??=
-        _stockInfo?.getCashCounterInfo(claims.defaultCashCouterId);
+    _stockInfo = _configDoc?.getStockInfo(
+        claims.defaultStockId ?? sharedPreferences.getString("stockID"));
+    _cashCounterInfo = _stockInfo?.getCashCounterInfo(
+            claims.defaultCashCouterId ??
+                sharedPreferences.getString("stockID")) ??
+        _stockInfo?.defaultCashCounter();
+    _updateStorage();
     notifyListeners();
   }
 
-  bool get isEmpty => _stockInfo == null || _cashCounterInfo == null;
+  bool get isEmpty => _configDoc == null;
+  bool get isNotEmpty => _configDoc != null;
 
   String? get stockID => _stockInfo?.stockID;
   String? get stockName => _stockInfo?.name;
@@ -38,7 +58,7 @@ class Location extends Modal with ChangeNotifier {
     ).then((_) {
       _cashCounterInfo = _stockInfo?.defaultCashCounter();
       if (_stockInfo != null) notifyListeners();
-    });
+    }).whenComplete(() => _updateStorage());
   }
 
   Future<void> selectCashCounter() async {
@@ -50,7 +70,7 @@ class Location extends Modal with ChangeNotifier {
       currentlySelected: _cashCounterInfo,
       modalListElement: stockInfo.cashCounters,
       onSelect: (e) => _cashCounterInfo = e,
-    );
+    ).whenComplete(() => _updateStorage());
     notifyListeners();
   }
 }

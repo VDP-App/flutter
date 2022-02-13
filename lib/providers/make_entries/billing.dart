@@ -199,22 +199,30 @@ abstract class Billing extends Modal with ChangeNotifier {
           }
         } else {
           if (_itemCode.isEmpty) {
-            _orders.clear();
-            _total.val = 0;
-            _fixedTotal.val = 0;
+            shouldProceed().then((value) {
+              if (value) {
+                _orders.clear();
+                _total.val = 0;
+                _fixedTotal.val = 0;
+              }
+            });
           }
           _resetOrder();
         }
         break;
       case KeybordKeyValue.action1:
-        _processAction_1_2();
-        _focusedAt = Focuses.quntity;
-        _changeQuntityTo("", val: 0);
+        if (_itemCode.hasItem) {
+          _processAction_1_2();
+          _focusedAt = Focuses.quntity;
+          _changeQuntityTo("", val: 0);
+        }
         break;
       case KeybordKeyValue.action2:
-        _processAction_1_2();
-        _focusedAt = Focuses.price;
-        _changeAmountTo("", val: 0);
+        if (_itemCode.hasItem) {
+          _processAction_1_2();
+          _focusedAt = Focuses.price;
+          _changeAmountTo("", val: 0);
+        }
         break;
       case KeybordKeyValue.action3:
         if (_focusedAt == Focuses.transfer) {
@@ -259,6 +267,18 @@ abstract class Billing extends Modal with ChangeNotifier {
   }
 
   void _processAction_1_2() {}
+
+  void selectQuntity() {
+    onClick(KeybordKeyValue.action1);
+  }
+
+  void selectAmount() {
+    onClick(KeybordKeyValue.action2);
+  }
+
+  void changePaymentType() {
+    onClick(KeybordKeyValue.action3);
+  }
 
   void onClick(KeybordKeyValue action) {
     if (_loading) return;

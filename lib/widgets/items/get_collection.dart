@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/documents/product.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/selectors/select_collection.dart';
 
@@ -38,13 +39,15 @@ class _GetCollectionNameState extends State<GetCollectionName> {
 
   @override
   Widget build(BuildContext context) {
+    final collectionNames = [...widget.collectionNames];
+    collectionNames.remove(allCollectionNameKey);
     return TextButton(
       onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SelectCollection(
-              collectionNames: widget.collectionNames,
+              collectionNames: collectionNames,
               onSelect: setCollectionName,
               editMode: true,
             ),

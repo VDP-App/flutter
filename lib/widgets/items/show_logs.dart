@@ -80,7 +80,7 @@ class _RemainingStockTable extends StatelessWidget {
       ]));
     }
     return DisplayTable.fromString(
-      titleNames: const ["Stock Unit", "Quntity On Remove"],
+      titleNames: const ["Unit", "Q"],
       data2D: remainingStock.entries.map((stockEntry) => [
             getStockInfo(stockEntry.key)?.name ?? "--*--",
             stockEntry.value.text,
@@ -101,7 +101,18 @@ class _CompareProductTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DisplayTable.fromString(
-      titleNames: const ["Label", "Old Value", "New Value"],
+      titleNames: const ["Label", "Old", "New"],
+      colorRow: [
+        oldProduct.name == newProduct.name ? null : Colors.green,
+        oldProduct.code == newProduct.code ? null : Colors.green,
+        oldProduct.collectionName == newProduct.collectionName
+            ? null
+            : Colors.green,
+        oldProduct.rate1 == newProduct.rate1 ? null : Colors.red,
+        oldProduct.rate2 == newProduct.rate2 ? null : Colors.red,
+        oldProduct.cgst == newProduct.cgst ? null : Colors.red,
+        oldProduct.sgst == newProduct.sgst ? null : Colors.red,
+      ],
       data2D: [
         ["Name", oldProduct.name, newProduct.name],
         ["Code", oldProduct.code ?? "--*--", newProduct.code ?? "--*--"],

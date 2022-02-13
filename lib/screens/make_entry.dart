@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/widgets/make_entry/ui.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
@@ -18,7 +19,8 @@ class MakeEntryPage extends StatefulWidget {
 }
 
 class _MakeEntryPageState extends State<MakeEntryPage> {
-  SelectedType _selectedType = SelectedType.retailBill;
+  SelectedType _selectedType =
+      SelectedType.values.elementAt(sharedPreferences.getInt("entry") ?? 0);
 
   void selectMode(bool isAccountent) async {
     final selectedType = await Navigator.push(
@@ -35,6 +37,7 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
     if (selectedType is SelectedType && selectedType != _selectedType) {
       setState(() {
         _selectedType = selectedType;
+        sharedPreferences.setInt("entry", selectedType.index);
       });
     }
   }

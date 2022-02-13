@@ -48,7 +48,7 @@ class _TransferTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DisplayTable.fromString(
-      titleNames: const ["Product Name", "Quntity Sent"],
+      titleNames: const ["Name", "Sent"],
       data2D: changes.map((e) => [e.item.name, e.quntitySent.text]),
     );
   }

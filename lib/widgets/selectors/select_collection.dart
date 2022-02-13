@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/documents/product.dart';
 import 'package:vdp/widgets/selectors/grid_selector.dart';
 
 class SelectCollection extends StatelessWidget {
@@ -41,15 +42,26 @@ class SelectCollection extends StatelessWidget {
       body: GridSelector(
         color: Colors.pink,
         count: 3,
-        length: collectionNames.length,
+        length: collectionNames.length + 1,
         builder: (index) {
-          var item = collectionNames.elementAt(index);
+          if (index == 0) {
+            return GridItem(
+              onPress: () {
+                onSelect(allCollectionNameKey);
+                if (canPop) Navigator.pop(context);
+              },
+              title: allCollectionNameKey,
+              color: Colors.blue,
+            );
+          }
+          index -= 1;
+          var collName = collectionNames.elementAt(index);
           return GridItem(
             onPress: () {
-              onSelect(item);
+              onSelect(collName);
               if (canPop) Navigator.pop(context);
             },
-            title: item,
+            title: collName,
           );
         },
       ),
@@ -84,29 +96,27 @@ class CustomDelegate extends SearchDelegate<String?> {
   @override
   Widget buildResults(BuildContext context) {
     final queryInLowerCase = query.toLowerCase();
-    if (queryInLowerCase.isNotEmpty) {
+    if (!queryInLowerCase.contains("#")) {
       final _matchQuery = [
-        ListTile(
-          onTap: () => close(context, query),
-          title: Text(
-            query,
-            style: const TextStyle(color: Colors.green),
+        if (queryInLowerCase.isNotEmpty)
+          GridItem(
+            onPress: () => close(context, query),
+            title: query,
+            color: Colors.blue,
           ),
-        )
       ];
-      for (var element in _searchTerms.entries) {
-        if (element.key.contains(queryInLowerCase)) {
+      for (var e in _searchTerms.entries) {
+        if (e.key.contains(queryInLowerCase)) {
           _matchQuery.add(
-            ListTile(
-              onTap: () => close(context, element.value),
-              title: Text(element.value),
-            ),
+            GridItem(onPress: () => close(context, e.value), title: e.value),
           );
         }
       }
-      return ListView.builder(
-        itemCount: _matchQuery.length,
-        itemBuilder: (context, index) => _matchQuery[index],
+      return GridSelector(
+        color: Colors.pink,
+        count: 3,
+        length: _matchQuery.length,
+        builder: (index) => _matchQuery[index],
       );
     }
     return const SizedBox();
