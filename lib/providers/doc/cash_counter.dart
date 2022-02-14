@@ -17,7 +17,7 @@ class CashCounter extends Modal with ChangeNotifier {
   String? _stockID;
   String? _cashCounterID;
   CashCounterDoc? _doc;
-  final _cancleBillOnCloud = CancleBillOnCloud();
+  final _cancleEntryOnCloud = CancleEntryOnCloud();
 
   CashCounter(BuildContext context) : super(context);
 
@@ -52,7 +52,7 @@ class CashCounter extends Modal with ChangeNotifier {
   ) async {
     final stockID = _stockID, cashCounterID = _cashCounterID;
     if (stockID == null || cashCounterID == null) return;
-    await _cancleBillOnCloud.cancleBill(
+    await _cancleEntryOnCloud.cancleBill(
       billNum,
       stockID,
       cashCounterID,

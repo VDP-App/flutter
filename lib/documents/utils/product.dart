@@ -72,6 +72,8 @@ class Product {
   String get preview =>
       (collectionName ?? "--*--") + (rate2 > 0 ? "\t\t\t\t [$rs$rate2]" : "");
 
+  bool get isDeleted => collectionName == null || code == null;
+
   bool isEqualTo(Product item) =>
       id == item.id &&
       code == item.code &&

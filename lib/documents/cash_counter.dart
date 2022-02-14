@@ -1,5 +1,6 @@
 import 'package:vdp/documents/utils/bill.dart';
 import 'package:vdp/documents/utils/parsing.dart';
+import 'package:vdp/documents/utils/sorted_list.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
 
 class CashCounterDoc {
@@ -16,22 +17,17 @@ class CashCounterDoc {
 
   factory CashCounterDoc.fromJson(Map<String, dynamic> data) {
     final income = asMap(data["income"]);
-    final bills = <Bill>[];
-    final stockConsumed = <String, int>{};
-
-    for (var rawBill in asMap(data["bills"]).entries) {
-      var bill = Bill.fromJson(parseJson(rawBill.value), rawBill.key);
-      for (var order in bill.orders) {
-        stockConsumed[order.itemId] =
-            (stockConsumed[order.itemId] ?? 0) + order.quntity.val;
-      }
-      bills.insert(0, bill);
-    }
     return CashCounterDoc(
-      bills,
+      SortedList<Bill>(
+        inAscending: false,
+      ).customAdd<MapEntry<String, dynamic>>(
+        asMap(data["bills"]).entries,
+        (x) => Bill.fromMapEntry(x),
+      ),
       FixedNumber.fromInt(asInt(income["offline"])),
       FixedNumber.fromInt(asInt(income["online"])),
-      stockConsumed.map((key, i) => MapEntry(key, FixedNumber.fromInt(i))),
+      asMap(data["stockConsumed"]).map(
+          (key, value) => MapEntry(key, FixedNumber.fromInt(asInt(value)))),
     );
   }
 

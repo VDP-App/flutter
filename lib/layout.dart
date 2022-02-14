@@ -52,6 +52,25 @@ class Layout extends StatelessWidget {
     );
   }
 
+  Widget logout(void Function() logoutFn) {
+    return TextButton(
+      onPressed: logoutFn,
+      child: Row(
+        children: const [
+          Flexible(
+            flex: 2,
+            child: IconP3(Icons.exit_to_app_rounded, color: Colors.red),
+          ),
+          Spacer(),
+          Flexible(
+            flex: 6,
+            child: P3("LogOut", color: Colors.red),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget locationInfo(String? title, void Function() onTap) {
     if (title == null) return const SizedBox();
     return TextButton(
@@ -133,19 +152,12 @@ class Layout extends StatelessWidget {
                 location.selectCashCounter();
               }
             }),
+            divider,
+            logout(context.read<Auth>().logout),
           ],
         ),
       ),
-      appBar: AppBar(
-        title: const Text('Vardayani Dairy Products'),
-        actions: [
-          IconButton(
-            onPressed: context.read<Auth>().logout,
-            icon: const IconT1(Icons.exit_to_app_rounded, color: Colors.white),
-          ),
-          const SizedBox(width: 25),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Vardayani Dairy Products')),
       body: page.currentPage.screen,
     );
   }

@@ -65,29 +65,29 @@ class DisplayCell extends StatelessWidget {
         "$lable: ",
         style: const TextStyle(color: Colors.black87),
       ),
-      onClick: onClick,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final _widget = Row(
+      children: [
+        if (lable.isNotEmpty) lableWidget(),
+        if (widget != null) Expanded(child: widget!),
+        if (value.isNotEmpty || active)
+          Flexible(
+            child: active ? activeWidget() : unactiveWidget(),
+          ),
+      ],
+    );
     return Expanded(
       flex: flex,
-      child: Row(
-        children: [
-          if (lable.isNotEmpty) lableWidget(),
-          if (widget != null)
-            Expanded(
-                child: TextButton(
-              child: widget!,
+      child: onClick == null
+          ? _widget
+          : TextButton(
               onPressed: onClick,
-            )),
-          if (value.isNotEmpty || active)
-            Flexible(
-              child: active ? activeWidget() : unactiveWidget(),
+              child: _widget,
             ),
-        ],
-      ),
     );
   }
 }

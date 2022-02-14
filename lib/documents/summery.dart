@@ -29,7 +29,6 @@ class SummeryDoc {
     final productReports = <String, ProductReport>{};
     final bills = <Bill>[];
     final entries = <Entry>[];
-    var i = 0;
     dynamic e;
     Bill bill;
     Order order;
@@ -42,8 +41,9 @@ class SummeryDoc {
       getProductReport(e.key).addRetail(asInt(v["q"]), asInt(v["r"]));
     }
 
+    var i = 0;
     for (e in asList(_wholeSell)) {
-      bill = Bill.fromJson(asMap(e), "--*--");
+      bill = Bill.fromJson(asMap(e), i.toString());
       bills.add(bill);
       for (order in bill.orders) {
         getProductReport(order.itemId).addWholeSell(order.quntity.val, i);
@@ -52,7 +52,7 @@ class SummeryDoc {
     }
     i = 0;
     for (e in asList(_entry)) {
-      entry = Entry.fromJson(asMap(e));
+      entry = Entry.fromJson(asMap(e), i.toString());
       entries.add(entry);
       if (entry.transferFrom != null) {
         for (changes in entry.stockChanges) {

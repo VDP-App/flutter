@@ -48,6 +48,15 @@ class Number extends NumClass {
     return false;
   }
 
+  void negate() {
+    if (_text.startsWith("-")) {
+      _text = _text.substring(1);
+    } else {
+      _text = "-$_text";
+    }
+    _val = -val;
+  }
+
   void appendDigit(String digit) {
     final trailingNum = _trailingNum;
     if (trailingNum == null) {

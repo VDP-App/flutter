@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/screens/screen.dart';
@@ -103,6 +104,7 @@ class PageProvider extends ChangeNotifier {
     if (newPage != currentPage) {
       _currentPage = newPage;
       sharedPreferences.setInt("page", newPage.index);
+      Navigator.pop(context);
       notifyListeners();
     }
   }

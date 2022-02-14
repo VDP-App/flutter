@@ -9,79 +9,70 @@ enum Focuses { itemNum, quntity, price, transfer }
 class BillingDisplay<T extends Billing> extends DisplayClass {
   const BillingDisplay({Key? key}) : super(key: key);
 
-  List<List<DisplayCell>> order({
-    required Focuses focusedAt,
-    required String itemNum,
-    required String name,
-    required String quntity,
-    required String rate,
-    required String price,
-    required String total,
-    required void Function() selectItem,
-    required void Function() showOrders,
-    required void Function() selectQuntity,
-    required void Function() selectAmount,
-  }) {
+  List<List<DisplayCell>> order(Billing billing) {
     return [
       itemLine(
-        active: focusedAt == Focuses.itemNum,
-        itemNum: itemNum,
-        selectItem: selectItem,
-        showOrders: showOrders,
+        resetItemCode: billing.resetItemCode,
+        length: billing.length,
+        active: billing.focusedAt == Focuses.itemNum,
+        itemNum: billing.itemCode,
+        selectItem: billing.openItemSelector,
+        showOrders: billing.openOrders,
       ),
-      [DisplayCell(lable: "Name", value: name)],
+      [DisplayCell(lable: "Name", value: billing.name)],
       [
         DisplayCell(
           lable: "Q",
-          value: quntity,
-          active: focusedAt == Focuses.quntity,
-          onClick: selectQuntity,
+          value: billing.quntity,
+          active: billing.focusedAt == Focuses.quntity,
+          onClick: billing.selectQuntity,
         ),
         DisplayCell(
           lable: "A",
-          value: price,
-          active: focusedAt == Focuses.price,
-          onClick: selectAmount,
+          value: billing.price,
+          active: billing.focusedAt == Focuses.price,
+          onClick: billing.selectAmount,
         ),
       ],
       [
-        DisplayCell(lable: "Rate", value: rate),
-        DisplayCell(lable: "Total", value: total),
+        DisplayCell(lable: "Rate", value: billing.rate),
+        DisplayCell(lable: "Total", value: billing.total),
       ],
     ];
   }
 
-  List<List<DisplayCell>> summerize({
-    required String total,
-    required String transfer,
-    required bool inCash,
-    required String returnCash,
-    required void Function() showOrders,
-    required void Function() changePaymentType,
-  }) {
+  List<List<DisplayCell>> summerize(Billing billing) {
     return [
       [
         DisplayCell(
           lable: "Payment in",
           widget: SizedBox(
             child: Image(
-              image: AssetImage("images/${inCash ? "cash" : "google-pay"}.png"),
+              image: AssetImage(
+                  "images/${billing.inCash ? "cash" : "google-pay"}.png"),
               fit: BoxFit.contain,
             ),
           ),
-          onClick: changePaymentType,
+          onClick: billing.changePaymentType,
         ),
       ],
-      [DisplayCell(lable: "Transfer", value: transfer, active: true)],
+      [
+        DisplayCell(
+          lable: "Transfer",
+          value: billing.transfer,
+          active: true,
+          onClick: billing.resetTransfer,
+        )
+      ],
       [
         DisplayCell(
           lable: "Total",
-          value: total,
+          value: billing.total,
           flex: 3,
         ),
-        showListButton(showOrders: showOrders)
+        showListButton(showOrders: billing.openOrders, length: billing.length)
       ],
-      [DisplayCell(lable: "Return", value: returnCash)],
+      [DisplayCell(lable: "Return", value: billing.returnCash)],
     ];
   }
 
@@ -91,27 +82,8 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
     if (billing.loading) return loadingWigit;
     return DisplayBuilder(
       cellsIn2d: billing.focusedAt != Focuses.transfer
-          ? order(
-              focusedAt: billing.focusedAt,
-              itemNum: billing.itemCode,
-              name: billing.name,
-              quntity: billing.quntity,
-              rate: billing.rate,
-              price: billing.price,
-              total: billing.total,
-              selectItem: billing.openItemSelector,
-              showOrders: billing.openOrders,
-              selectAmount: billing.selectAmount,
-              selectQuntity: billing.selectQuntity,
-            )
-          : summerize(
-              inCash: billing.inCash,
-              returnCash: billing.returnCash,
-              transfer: billing.transfer,
-              total: billing.total,
-              showOrders: billing.openOrders,
-              changePaymentType: billing.changePaymentType,
-            ),
+          ? order(billing)
+          : summerize(billing),
     );
   }
 }

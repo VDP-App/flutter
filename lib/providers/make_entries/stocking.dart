@@ -19,7 +19,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   StockDoc? _stockDoc;
   final String _stockID;
 
-  var _focusedAt = Focuses.addQuntity;
+  var _focusedAt = Focuses.itemNum;
   var _lastKeyPressed = KeybordKeyValue.enter;
   FixedNumber _currentQuntity = _fN0;
   final ItemCode _itemCode = ItemCode();
@@ -35,8 +35,6 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   ) {
     _itemCode.update(items);
     _stockDoc = stockDoc;
-    _changes.clear();
-    _reset();
     notifyListeners();
   }
 
@@ -71,6 +69,11 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
     }
   }
 
+  void resetItemCode() {
+    _reset();
+    notifyListeners();
+  }
+
   void _reset([Product? item]) {
     if (item == null) _itemCode.changeCodeTo("");
     _currentQuntity = _fN0;
@@ -92,8 +95,11 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
       case KeybordKeyValue.enter:
         if (_lastKeyPressed == KeybordKeyValue.enter && !_itemCode.hasItem) {
           if (_changes.isNotEmpty) {
-            shouldProceed().then((x) {
-              if (x) _applyChanges();
+            shouldProceed("Apply Changes").then((x) {
+              if (x) {
+                _applyChanges();
+                notifyListeners();
+              }
             });
           }
         } else if (_focusedAt != Focuses.itemNum) {
@@ -101,9 +107,12 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
         }
         break;
       case KeybordKeyValue.esc:
-        if (_lastKeyPressed == KeybordKeyValue.esc) {
-          shouldProceed().then((value) {
-            if (value) _changes.clear();
+        if (_itemCode.isEmpty) {
+          shouldProceed("Clear all Changes").then((x) {
+            if (x) {
+              _changes.clear();
+              notifyListeners();
+            }
           });
         }
         _reset();
@@ -150,7 +159,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
     _changes.removeWhere((e) => e.itemId == itemId);
   }
 
-  void onClick(KeybordKeyValue action) {
+  void onClick(KeybordKeyValue action) async {
     if (_stockDoc == null || _loading) return;
     _onClick(action);
     _lastKeyPressed = action;
@@ -163,6 +172,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   String get currentQuntity => _currentQuntity.text;
   String get addedQuntity;
   String get setQuntity;
+  int get length => _changes.length;
 }
 
 class StockSetting extends Stocking<StockSettingChanges> {
@@ -171,8 +181,56 @@ class StockSetting extends Stocking<StockSettingChanges> {
   final _stockChangesOnCloud = StockChangesOnCloud();
   StockSetting(BuildContext context, String stockID) : super(context, stockID);
 
-  void _updateSetQuntity(String digit, [int? val]) {
-    if (val == null) {
+  @override
+  void update(StockDoc stockDoc, ProductDoc items) {
+    final product = _itemCode.item;
+    if (product != null) {
+      final p = items.getItemBy(id: product.id);
+      if (p == null || p.isDeleted || p.code != product.code) _reset();
+      _currentQuntity = stockDoc.currentStock[_itemCode.item?.id] ?? _fN0;
+      if (_focusedAt == Focuses.addQuntity) {
+        _updateAddedQuntity("", _addedQuntity.val);
+      } else if (_focusedAt == Focuses.setQuntity) {
+        _updateAddedQuntity("", _setQuntity.val);
+      }
+    }
+    var i = 0;
+    for (var change in _changes) {
+      if (items[change.itemId]?.isDeleted ?? true) {
+        _changes.removeAt(i);
+        continue;
+      }
+      final newCurrentQuntity = stockDoc.currentStock[change.itemId] ?? _fN0;
+      if (change.currentQuntity.val != newCurrentQuntity.val) {
+        if (change.isSetStock) {
+          _changes[i] = StockSettingChanges(
+            addedQuntity:
+                FixedNumber.fromInt(change.setQuntity - newCurrentQuntity),
+            currentQuntity: newCurrentQuntity,
+            isSetStock: true,
+            itemId: change.itemId,
+            setQuntity: change.setQuntity,
+          );
+        } else {
+          _changes[i] = StockSettingChanges(
+            setQuntity:
+                FixedNumber.fromInt(change.addedQuntity + newCurrentQuntity),
+            currentQuntity: newCurrentQuntity,
+            isSetStock: false,
+            itemId: change.itemId,
+            addedQuntity: change.addedQuntity,
+          );
+        }
+      }
+      i++;
+    }
+    super.update(stockDoc, items);
+  }
+
+  void _updateSetQuntity(String digit, [int? val, bool negat = false]) {
+    if (negat) {
+      _setQuntity.negate();
+    } else if (val == null) {
       _setQuntity.appendDigit(digit);
     } else {
       _setQuntity.val = val;
@@ -180,8 +238,10 @@ class StockSetting extends Stocking<StockSettingChanges> {
     _addedQuntity.val = _setQuntity - _currentQuntity;
   }
 
-  void _updateAddedQuntity(String digit, [int? val]) {
-    if (val == null) {
+  void _updateAddedQuntity(String digit, [int? val, bool negat = false]) {
+    if (negat) {
+      _addedQuntity.negate();
+    } else if (val == null) {
       _addedQuntity.appendDigit(digit);
     } else {
       _addedQuntity.val = val;
@@ -282,9 +342,9 @@ class StockSetting extends Stocking<StockSettingChanges> {
   @override
   void _onAction1Press() {
     if (_focusedAt == Focuses.addQuntity) {
-      _updateAddedQuntity("", -_addedQuntity.val);
+      _updateAddedQuntity("", 0, true);
     } else if (_focusedAt == Focuses.setQuntity) {
-      _updateSetQuntity("", -_setQuntity.val);
+      _updateSetQuntity("", 0, true);
     }
   }
 
@@ -309,6 +369,36 @@ class TransferStock extends Stocking<TransferStockChanges> {
   ) {
     _configDoc = configDoc;
     update(stockDoc, items);
+  }
+
+  @override
+  void update(StockDoc stockDoc, ProductDoc items) {
+    final product = _itemCode.item;
+    if (product != null) {
+      final p = items.getItemBy(id: product.id);
+      if (p == null || p.isDeleted || p.code != product.code) _reset();
+      _currentQuntity = stockDoc.currentStock[_itemCode.item?.id] ?? _fN0;
+      _updateSendQuntity("", _sendQuntity.val);
+    }
+    var i = 0;
+    for (var change in _changes) {
+      if (items[change.itemId]?.isDeleted ?? true) {
+        _changes.removeAt(i);
+        continue;
+      }
+      final newCurrentQuntity = stockDoc.currentStock[change.itemId] ?? _fN0;
+      if (change.currentQuntity.val != newCurrentQuntity.val) {
+        _changes[i] = TransferStockChanges(
+          currentQuntity: newCurrentQuntity,
+          afterSendQuntity:
+              FixedNumber.fromInt(newCurrentQuntity - change.sendQuntity),
+          itemId: change.itemId,
+          sendQuntity: change.sendQuntity,
+        );
+      }
+      i++;
+    }
+    super.update(stockDoc, items);
   }
 
   @override
@@ -349,11 +439,13 @@ class TransferStock extends Stocking<TransferStockChanges> {
   @override
   void _onAction1Press() {
     if (_focusedAt == Focuses.itemNum) return;
-    _updateSendQuntity("", -_sendQuntity.val);
+    _updateSendQuntity("", 0, true);
   }
 
-  void _updateSendQuntity(String digit, [int? val]) {
-    if (val == null) {
+  void _updateSendQuntity(String digit, [int? val, bool negat = false]) {
+    if (negat) {
+      _sendQuntity.negate();
+    } else if (val == null) {
       _sendQuntity.appendDigit(digit);
     } else {
       _sendQuntity.val = val;

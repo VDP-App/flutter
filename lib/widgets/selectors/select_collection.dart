@@ -42,19 +42,21 @@ class SelectCollection extends StatelessWidget {
       body: GridSelector(
         color: Colors.pink,
         count: 3,
-        length: collectionNames.length + 1,
+        length: collectionNames.length + (editMode ? 0 : 1),
         builder: (index) {
-          if (index == 0) {
-            return GridItem(
-              onPress: () {
-                onSelect(allCollectionNameKey);
-                if (canPop) Navigator.pop(context);
-              },
-              title: allCollectionNameKey,
-              color: Colors.blue,
-            );
+          if (!editMode) {
+            if (index == 0) {
+              return GridItem(
+                onPress: () {
+                  onSelect(allCollectionNameKey);
+                  if (canPop) Navigator.pop(context);
+                },
+                title: allCollectionNameKey,
+                color: Colors.blue,
+              );
+            }
+            index -= 1;
           }
-          index -= 1;
           var collName = collectionNames.elementAt(index);
           return GridItem(
             onPress: () {

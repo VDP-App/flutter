@@ -1,11 +1,12 @@
 import 'package:vdp/documents/utils/parsing.dart';
 import 'package:vdp/documents/utils/product.dart';
+import 'package:vdp/documents/utils/sorted_list.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/make_entries/custom/formate.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
 import 'package:vdp/utils/random.dart';
 
-class Bill {
+class Bill extends CompareClass<Bill> {
   final bool isWholeSell;
   final bool inCash;
   final FixedNumber moneyGiven;
@@ -20,6 +21,10 @@ class Bill {
     required this.billNum,
     required this.uid,
   });
+
+  factory Bill.fromMapEntry(MapEntry<String, dynamic> e) {
+    return Bill.fromJson(asMap(parseJson(e.value)), e.key);
+  }
 
   factory Bill.fromJson(Map<String, dynamic> data, String billNum) {
     return Bill(
@@ -52,6 +57,15 @@ class Bill {
   @override
   String toString() {
     return toJson().toString();
+  }
+
+  @override
+  Comparator compare(Bill e) {
+    if (billNum == e.billNum) return Comparator.isEqual;
+    if ((int.tryParse(billNum) ?? 0) > (int.tryParse(e.billNum) ?? 0)) {
+      return Comparator.isGreater;
+    }
+    return Comparator.isLess;
   }
 }
 

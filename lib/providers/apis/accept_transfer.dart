@@ -20,7 +20,7 @@ class AcceptTransfer extends Modal with ChangeNotifier {
 
   Future<void> acceptTransfer() async {
     if (_loading) return;
-    if (await shouldProceed()) {
+    if (await shouldProceed("Accept Transfer?")) {
       _loading = true;
       notifyListeners();
       await handleCloudCall(

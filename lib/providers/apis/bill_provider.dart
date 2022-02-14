@@ -6,7 +6,7 @@ import 'package:vdp/utils/modal.dart';
 class BillProvider extends Modal with ChangeNotifier {
   final Bill bill;
   var _loading = false;
-  final _cancleBillOnCloud = CancleBillOnCloud();
+  final _cancleEntryOnCloud = CancleEntryOnCloud();
   final String cashCounterID;
   final String stockID;
 
@@ -20,11 +20,11 @@ class BillProvider extends Modal with ChangeNotifier {
   get loading => _loading;
 
   void deleteBill() async {
-    if (_loading || !await shouldProceed()) return;
+    if (_loading || !await shouldProceed("Cancle Bill?")) return;
     _loading = true;
     notifyListeners();
     await handleCloudCall(
-      _cancleBillOnCloud.cancleBill(bill.billNum, stockID, cashCounterID),
+      _cancleEntryOnCloud.cancleBill(bill.billNum, stockID, cashCounterID),
     );
     Navigator.pop(context);
   }

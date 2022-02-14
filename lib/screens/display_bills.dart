@@ -64,9 +64,10 @@ class _Bills extends StatelessWidget {
           onClick: () => openBill(context, bill, stockID, cashCounterID),
           preview: Preview.text(P3(rs_ + bill.totalMoneyInString)),
           leadingWidgit: LeadingWidgit.text(
-            P2((bill.isWholeSell ? "( W )" : "( R )")),
+            P2(bill.isWholeSell ? "( W )" : "( R )"),
           ),
           trailingWidgit: TrailingWidgit.actionButton(
+            question: "Cencle Bill?",
             action: () {
               return cashCounter.cancelBill(bill.billNum);
             },

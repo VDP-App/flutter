@@ -4,23 +4,25 @@ import 'package:vdp/utils/modal.dart';
 import 'package:vdp/utils/random.dart';
 import 'package:vdp/utils/typography.dart';
 
-class _ActionButton extends StatefulWidget {
-  const _ActionButton({
+class ActionButton extends StatefulWidget {
+  const ActionButton({
     Key? key,
     required this.action,
     required this.color,
     required this.icon,
+    required this.question,
   }) : super(key: key);
 
   final Future<void> Function() action;
   final Icon icon;
   final Color color;
+  final String question;
 
   @override
-  State<_ActionButton> createState() => _ActionButtonState();
+  State<ActionButton> createState() => _ActionButtonState();
 }
 
-class _ActionButtonState extends State<_ActionButton> {
+class _ActionButtonState extends State<ActionButton> {
   var loading = false;
   var disable = false;
   @override
@@ -30,7 +32,7 @@ class _ActionButtonState extends State<_ActionButton> {
       heroTag: widget.key,
       onPressed: () async {
         if (loading || disable) return;
-        if (!await modal.shouldProceed()) return;
+        if (!await modal.shouldProceed(widget.question)) return;
         setState(() => loading = true);
         await widget.action();
         setState(() {
@@ -51,7 +53,13 @@ class TrailingWidgit {
     required Future<void> Function() action,
     required Color color,
     required Icon icon,
-  }) : widget = _ActionButton(action: action, color: color, icon: icon);
+    required String question,
+  }) : widget = ActionButton(
+          action: action,
+          color: color,
+          icon: icon,
+          question: question,
+        );
   TrailingWidgit.icon(TypoIcon icon) : widget = icon;
   TrailingWidgit.text(TypoText text) : widget = text;
 }

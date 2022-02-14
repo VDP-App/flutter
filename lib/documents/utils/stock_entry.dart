@@ -1,14 +1,16 @@
 import 'package:vdp/documents/utils/parsing.dart';
 import 'package:vdp/documents/utils/product.dart';
+import 'package:vdp/documents/utils/sorted_list.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
 
-class Entry {
+class Entry extends CompareClass<Entry> {
   final List<StockChangesInEntry> stockChanges;
   final String? transferFrom;
   final String? transferTo;
   final String uid;
   final String? senderUid;
+  final String entryNum;
 
   const Entry(
     this.senderUid,
@@ -16,6 +18,7 @@ class Entry {
     this.transferFrom,
     this.transferTo,
     this.uid,
+    this.entryNum,
   );
 
   String get preview {
@@ -28,14 +31,28 @@ class Entry {
     return "${first.item.name}: ${first.stockInc.text}, ${second.item.name}: ${second.stockInc.text} ${stockChanges.length > 2 ? "..." : ""}";
   }
 
-  factory Entry.fromJson(Map<String, dynamic> data) {
+  factory Entry.fromMapEntry(MapEntry<String, dynamic> e) {
+    return Entry.fromJson(asMap(parseJson(e.value)), e.key);
+  }
+
+  factory Entry.fromJson(Map<String, dynamic> data, String entryNum) {
     return Entry(
       asNullOrString(data["sUid"]),
       asList(data["sC"]).map((e) => StockChangesInEntry.fromJson(e)).toList(),
       asNullOrString(data["tF"]),
       asNullOrString(data["tT"]),
       asString(data["uid"]),
+      entryNum,
     );
+  }
+
+  @override
+  Comparator compare(e) {
+    if (entryNum == e.entryNum) return Comparator.isEqual;
+    if ((int.tryParse(entryNum) ?? 0) > (int.tryParse(e.entryNum) ?? 0)) {
+      return Comparator.isGreater;
+    }
+    return Comparator.isLess;
   }
 }
 

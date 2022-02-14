@@ -39,15 +39,13 @@ class _GetCollectionNameState extends State<GetCollectionName> {
 
   @override
   Widget build(BuildContext context) {
-    final collectionNames = [...widget.collectionNames];
-    collectionNames.remove(allCollectionNameKey);
     return TextButton(
       onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SelectCollection(
-              collectionNames: collectionNames,
+              collectionNames: widget.collectionNames,
               onSelect: setCollectionName,
               editMode: true,
             ),

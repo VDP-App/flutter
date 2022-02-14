@@ -1,7 +1,9 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:vdp/documents/utils/bill.dart';
+import 'package:vdp/documents/utils/parsing.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/documents/utils/stock_changes.dart';
+import 'package:vdp/documents/utils/stock_entry.dart';
 
 class CloudError {
   final String code;
@@ -16,16 +18,16 @@ Future<T> _callApi<T>(
   Map<String, dynamic> req, [
   T Function(dynamic)? parser,
 ]) async {
-  dynamic data;
+  final Map<String, dynamic> data;
   try {
-    data = (await _api.call(req)).data;
+    data = asMap((await _api.call(req)).data);
   } catch (err) {
     throw CloudError(message: err.toString());
   }
-  if (data["err"]) {
+  if (data["err"] ?? false) {
     throw CloudError(
-      message: data?["val"]?["message"] ?? "Responce got wrong",
-      code: data?["val"]?["code"],
+      message: data["val"]?["message"] ?? "Responce got wrong",
+      code: data["val"]?["code"],
     );
   }
   return parser?.call(data["val"]) ?? data["val"];
@@ -155,8 +157,8 @@ class BillingOnCloud {
   }
 }
 
-class CancleBillOnCloud {
-  final _api = _cloudFunction.httpsCallable('cancleBill');
+class CancleEntryOnCloud {
+  final _api = _cloudFunction.httpsCallable('cancleEntry');
 
   Future<Bill> cancleBill(
     String billNum,
@@ -166,11 +168,20 @@ class CancleBillOnCloud {
     return _callApi<Bill>(
       _api,
       {
-        "billNum": int.parse(billNum),
+        "num": int.parse(billNum),
         "stockID": stockID,
         "cashCounterID": cashCounterID,
+        "type": "bill",
       },
       (x) => Bill.fromJson(Map<String, dynamic>.from(x), "--*--"),
+    );
+  }
+
+  Future<Entry> cancleStockChanges(String entryNum, String stockID) {
+    return _callApi<Entry>(
+      _api,
+      {"num": int.parse(entryNum), "stockID": stockID, "type": "stockChanges"},
+      (x) => Entry.fromJson(Map<String, dynamic>.from(x), "--*--"),
     );
   }
 }

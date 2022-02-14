@@ -29,13 +29,16 @@ class DisplayStockChanges extends StatelessWidget {
       wrapScaffold: true,
       buildChild: (context, entry) {
         return ListTilePage(
+          leadingWidgit: LeadingWidgit.text(
+            P2(entry.entryNum),
+          ),
           title: entry.transferTo != null
               ? "Stock Sent"
               : entry.transferFrom != null
                   ? "Stock Recive"
                   : "Stock Changed",
           preview: Preview.text(P2(entry.preview)),
-          onClick: () => openEntry(context, entry),
+          onClick: () => openEntry(context, entry, stockID),
           trailingWidgit: TrailingWidgit.icon(
             entry.transferTo != null
                 ? const IconT1(Icons.send, color: Colors.blue)
@@ -57,8 +60,8 @@ class DisplayStockChanges extends StatelessWidget {
   }
 }
 
-void openEntry(BuildContext context, Entry entry) {
+void openEntry(BuildContext context, Entry entry, String stockID) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return ShowStockChanges(entry: entry);
+    return ShowStockChanges(entry: entry, stockID: stockID);
   }));
 }

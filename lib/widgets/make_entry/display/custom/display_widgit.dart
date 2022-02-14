@@ -4,15 +4,13 @@ import 'package:provider/provider.dart';
 import 'custom.dart';
 
 class DisplayText extends StatelessWidget {
-  const DisplayText(this.text, {Key? key, this.bgColor, this.onClick})
-      : super(key: key);
+  const DisplayText(this.text, {Key? key, this.bgColor}) : super(key: key);
 
   final Color? bgColor;
   final Text text;
-  final void Function()? onClick;
   @override
   Widget build(BuildContext context) {
-    final widget = SizedBox(
+    return SizedBox(
       height: double.infinity,
       child: FittedBox(
         fit: BoxFit.fill,
@@ -22,8 +20,6 @@ class DisplayText extends StatelessWidget {
         ),
       ),
     );
-    if (onClick != null) TextButton(child: widget, onPressed: onClick);
-    return widget;
   }
 }
 
@@ -54,6 +50,7 @@ abstract class DisplayClass extends StatelessWidget {
 
   DisplayCell showListButton({
     required void Function() showOrders,
+    required int length,
   }) {
     return DisplayCell(
       widget: ElevatedButton(
@@ -61,12 +58,7 @@ abstract class DisplayClass extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           primary: Colors.black,
         ),
-        child: const SizedBox.expand(
-          child: FittedBox(
-            fit: BoxFit.contain,
-            child: Icon(Icons.list_rounded),
-          ),
-        ),
+        child: DisplayText(Text(length.toString())),
       ),
     );
   }
@@ -76,6 +68,8 @@ abstract class DisplayClass extends StatelessWidget {
     required String itemNum,
     required void Function() selectItem,
     required void Function() showOrders,
+    required int length,
+    required void Function() resetItemCode,
   }) {
     return [
       DisplayCell(
@@ -93,12 +87,13 @@ abstract class DisplayClass extends StatelessWidget {
         ),
       ),
       DisplayCell(
+        onClick: resetItemCode,
         lable: "Item No",
         value: itemNum,
         active: active,
         flex: 3,
       ),
-      showListButton(showOrders: showOrders),
+      showListButton(showOrders: showOrders, length: length),
     ];
   }
 }

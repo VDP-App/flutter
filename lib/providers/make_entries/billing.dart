@@ -74,15 +74,18 @@ abstract class Billing extends Modal with ChangeNotifier {
             deleteOrder: (order) {
               _orders.remove(order);
               _fixedTotal.val -= order.amount.val;
-              if (_focusedAt == Focuses.transfer) {
-                _resetTransfer();
-              } else {
-                _resetOrder();
-              }
             },
           );
         }),
-      ).then((value) => notifyListeners());
+      ).then((value) {
+        _total.assign(_fixedTotal);
+        if (_focusedAt == Focuses.transfer && _orders.isNotEmpty) {
+          _resetTransfer();
+        } else {
+          _resetOrder();
+        }
+        notifyListeners();
+      });
     }
   }
 
@@ -199,7 +202,7 @@ abstract class Billing extends Modal with ChangeNotifier {
           }
         } else {
           if (_itemCode.isEmpty) {
-            shouldProceed().then((value) {
+            shouldProceed("Clear Order?").then((value) {
               if (value) {
                 _orders.clear();
                 _total.val = 0;
@@ -269,15 +272,33 @@ abstract class Billing extends Modal with ChangeNotifier {
   void _processAction_1_2() {}
 
   void selectQuntity() {
-    onClick(KeybordKeyValue.action1);
+    if (_loading) return;
+    _onClick(KeybordKeyValue.action1);
+    notifyListeners();
   }
 
   void selectAmount() {
-    onClick(KeybordKeyValue.action2);
+    if (_loading) return;
+    _onClick(KeybordKeyValue.action2);
+    notifyListeners();
   }
 
   void changePaymentType() {
-    onClick(KeybordKeyValue.action3);
+    if (_loading) return;
+    _onClick(KeybordKeyValue.action3);
+    notifyListeners();
+  }
+
+  void resetTransfer() {
+    if (_loading) return;
+    _transfer.val = 0;
+    _returnCash.val = _transfer - _fixedTotal;
+    notifyListeners();
+  }
+
+  void resetItemCode() {
+    _resetOrder();
+    notifyListeners();
   }
 
   void onClick(KeybordKeyValue action) {
@@ -300,6 +321,7 @@ abstract class Billing extends Modal with ChangeNotifier {
   bool get inCash => _inCash;
   String get returnCash => _returnCash.text;
   String get transfer => _transfer.text;
+  int get length => _orders.length;
 }
 
 class RetailBilling extends Billing {

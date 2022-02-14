@@ -128,10 +128,10 @@ class Modal {
     }
   }
 
-  Future<bool> shouldProceed() {
+  Future<bool> shouldProceed(String question) {
     return launchModal(
       context,
-      const H1("Do You Want to Proceed"),
+      H1(question),
       const T3("Go Ahead:"),
       (context) => [
         TextButton(

@@ -69,11 +69,20 @@ class ProductDoc {
 
   Set<Product> get deleatedItems => _deletedItem;
 
-  Set<Product>? getItemInCollection(String? collectionName) {
-    return _collection[collectionName];
+  List<Product>? getItemInCollection(String? collectionName) {
+    final x = _collection[collectionName]?.toList();
+    if (x == null) return null;
+    x.sort((p1, p2) {
+      return (p1.code ?? "").compareTo(p2.code ?? "");
+    });
+    return x;
   }
 
-  Iterable<String> get collectionNames => _collection.keys;
+  Iterable<String> get collectionNames {
+    final x = [..._collection.keys];
+    x.remove(allCollectionNameKey);
+    return x;
+  }
 
   List<String> get codeNums {
     final arr = _codes.keys.toList();

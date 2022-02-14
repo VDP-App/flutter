@@ -126,7 +126,10 @@ class EditProduct extends Modal with ChangeNotifier {
 
   Future<void> removeItem() async {
     final _product = product;
-    if (_loading || _deleteLoading || _product == null) return;
+    if (_loading ||
+        _deleteLoading ||
+        _product == null ||
+        !await shouldProceed("Delete Item?")) return;
     _deleteLoading = true;
     notifyListeners();
     await handleCloudCall(_editItemOnCloud.remove(_product));
