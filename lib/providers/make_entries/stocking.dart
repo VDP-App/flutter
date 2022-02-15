@@ -108,12 +108,14 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
         break;
       case KeybordKeyValue.esc:
         if (_itemCode.isEmpty) {
-          shouldProceed("Clear all Changes").then((x) {
-            if (x) {
-              _changes.clear();
-              notifyListeners();
-            }
-          });
+          if (_changes.isNotEmpty) {
+            shouldProceed("Clear all Changes").then((x) {
+              if (x) {
+                _changes.clear();
+                notifyListeners();
+              }
+            });
+          }
         }
         _reset();
         break;
@@ -259,6 +261,7 @@ class StockSetting extends Stocking<StockSettingChanges> {
         _stockID,
       )),
     );
+    _changes.clear();
     _loading = false;
     notifyListeners();
   }
@@ -424,6 +427,7 @@ class TransferStock extends Stocking<TransferStockChanges> {
         StockChanges([..._changes], _stockID),
       ));
     }
+    _changes.clear();
     _loading = false;
     notifyListeners();
   }

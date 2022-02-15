@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vdp/documents/product.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/selectors/select_collection.dart';
 

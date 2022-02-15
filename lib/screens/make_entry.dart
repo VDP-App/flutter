@@ -43,16 +43,34 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
   }
 
   Widget Function(Auth auth) modeSelector(BuildContext context) {
-    return (auth) => TextButton(
-          onPressed: () => selectMode(auth.claims?.isAccountent ?? false),
-          style: TextButton.styleFrom(primary: Colors.black),
-          child: SizedBox.expand(
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: _selectedType.build(),
-            ),
-          ),
-        );
+    return (auth) {
+      final child = SizedBox.expand(
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: _selectedType.build(),
+        ),
+      );
+      return TextButton(
+        onPressed: () => selectMode(auth.claims?.isAccountent ?? false),
+        style: TextButton.styleFrom(
+          primary: Colors.black,
+          backgroundColor: Colors.grey[300],
+        ),
+        child: isTablet
+            ? Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.deepPurple,
+                    style: BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.all(10),
+                child: child,
+              )
+            : child,
+      );
+    };
   }
 
   @override

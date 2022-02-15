@@ -8,16 +8,18 @@ class FontSize {
   final double h1;
   final double h2;
   final double x1;
+  final double x2;
   const FontSize.tablet()
-      : p1 = 20 - 5,
-        p2 = 25 - 5,
-        p3 = 30 - 5,
-        t1 = 35 - 5,
-        t2 = 40 - 5,
-        t3 = 45 - 5,
-        h1 = 50 - 5,
-        h2 = 55 - 5,
-        x1 = 100 - 5;
+      : p1 = 15,
+        p2 = 20,
+        p3 = 25,
+        t1 = 30,
+        t2 = 35,
+        t3 = 40,
+        h1 = 45,
+        h2 = 50,
+        x1 = 95,
+        x2 = 500;
 
   const FontSize.phone()
       : p1 = 15,
@@ -28,5 +30,6 @@ class FontSize {
         t3 = 27.5,
         h1 = 30,
         h2 = 32.5,
-        x1 = 55;
+        x1 = 55,
+        x2 = 300;
 }

@@ -3,41 +3,60 @@ import 'package:vdp/main.dart';
 import 'package:vdp/utils/cloud_functions.dart';
 import 'package:vdp/utils/typography.dart';
 
-class ModalListElement {
-  final String id;
-  final String name;
-
-  const ModalListElement({
-    required this.id,
-    required this.name,
-  });
-
-  Widget toWidget(void Function() onClick, bool isSelected) {
-    return Container(
-      width: double.infinity,
-      padding: isTablet
-          ? const EdgeInsets.symmetric(horizontal: 10)
-          : const EdgeInsets.symmetric(horizontal: 5),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: isSelected ? Colors.grey : null,
-        ),
-        child: T2(name),
-        onPressed: onClick,
-      ),
-    );
-  }
-}
-
 Future<String?> launchModal(
   BuildContext context,
   Widget title,
   Widget content,
-  List<Widget> Function(BuildContext context) actionButtons,
-) {
+  List<ModalButton> actionButtons, [
+  bool asBootomDrawer = false,
+  bool isScrollControlled = false,
+]) {
+  if (asBootomDrawer) {
+    return showModalBottomSheet<String>(
+      isScrollControlled: isScrollControlled,
+      context: context,
+      builder: (context) {
+        var height = MediaQuery.of(context).size.height / (isTablet ? 2.3 : 3);
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Center(child: title),
+              ),
+              const Divider(thickness: 1.5),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.deepPurple,
+                    style: BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.all(10),
+                height: height - (isTablet ? 50 : 10),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: content,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: actionButtons,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
   return showDialog<String>(
     context: context,
-    builder: (BuildContext context) {
+    builder: (context) {
       var width = MediaQuery.of(context).size.width;
       return AlertDialog(
         title: title,
@@ -46,10 +65,58 @@ Future<String?> launchModal(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
           child: content,
         ),
-        actions: actionButtons(context),
+        actions: actionButtons,
       );
     },
   );
+}
+
+void launchWidgit(BuildContext context, String title, Widget content) {
+  launchModal(
+    context,
+    H2(title),
+    content,
+    const [ModalButton('Done!')],
+    true,
+  );
+}
+
+class ModalListElement {
+  final String id;
+  final String name;
+
+  const ModalListElement({
+    required this.id,
+    required this.name,
+  });
+}
+
+class ModalButton extends StatelessWidget {
+  final void Function()? onPressed;
+  final String Function()? sendWithPop;
+  final String text;
+
+  const ModalButton(
+    this.text, {
+    this.onPressed,
+    this.sendWithPop,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+        style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
+        onPressed: () {
+          onPressed?.call();
+          Navigator.pop(context, sendWithPop?.call());
+        },
+        child: T3(text, color: Colors.black),
+      ),
+    );
+  }
 }
 
 class Modal {
@@ -61,7 +128,7 @@ class Modal {
     final controller = TextEditingController(text: defaultName);
     return launchModal(
       context,
-      T3(title),
+      H2(title),
       TextField(
         controller: controller,
         style: TextStyle(fontSize: isTablet ? fontSizeOf.t2 : fontSizeOf.t1),
@@ -70,20 +137,15 @@ class Modal {
           labelText: "Name",
         ),
       ),
-      (context) => [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context, controller.text);
-          },
-          child: const P2('Done'),
+      [
+        ModalButton(
+          "Done",
+          sendWithPop: () => controller.text,
         ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const P2('Back'),
-        ),
+        const ModalButton("Back"),
       ],
+      true,
+      true,
     );
   }
 
@@ -93,26 +155,37 @@ class Modal {
     required List<T> modalListElement,
     required void Function(T) onSelect,
   }) {
-    final children = <Widget>[];
-    for (var e in modalListElement) {
-      children.add(e.toWidget(() {
-        Navigator.pop(context, e.id);
-        onSelect(e);
-      }, e.id == currentlySelected?.id));
-      children.add(const SizedBox(height: 25));
-    }
     return launchModal(
       context,
-      T3("Select one of the below $title"),
-      ListView(children: children),
-      (context) => [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
+      H2("Select one of the below $title"),
+      Center(
+        child: DropdownButton<T>(
+          borderRadius: BorderRadius.circular(10),
+          value: currentlySelected,
+          icon: const IconH1(
+            Icons.location_on_outlined,
+            color: Colors.deepPurple,
+          ),
+          elevation: 16,
+          style: TextStyle(color: Colors.deepPurple, fontSize: fontSizeOf.h1),
+          itemHeight: fontSizeOf.x1,
+          onChanged: (e) {
+            if (e == null) return;
+            Navigator.pop(context, e.id);
+            onSelect(e);
           },
-          child: const P2('Back'),
+          items: modalListElement
+              .map(
+                (e) => DropdownMenuItem(
+                  value: e,
+                  child: Center(child: H1(e.name)),
+                ),
+              )
+              .toList(),
         ),
-      ],
+      ),
+      const [ModalButton("Back")],
+      true,
     );
   }
 
@@ -133,18 +206,7 @@ class Modal {
       context,
       H1(question),
       const T3("Go Ahead:"),
-      (context) => [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const T1('No'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, "Yes"),
-          child: const T1('Yes'),
-        ),
-      ],
+      [const ModalButton("No"), ModalButton("Yes", sendWithPop: () => "Yes")],
     ).then((value) => value == "Yes");
   }
 
@@ -158,21 +220,9 @@ class Modal {
       context,
       P3(title),
       P2(content),
-      (context) => [
-        if (onOk != null)
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const P2('Back'),
-          ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            onOk?.call();
-          },
-          child: P2(okText ?? 'OK!'),
-        ),
+      [
+        if (onOk != null) const ModalButton("Back"),
+        ModalButton(okText ?? "OK1", onPressed: onOk),
       ],
     );
   }

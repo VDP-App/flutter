@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/apis/pages.dart';
@@ -82,13 +83,15 @@ class Layout extends StatelessWidget {
             flex: 2,
             child: IconP3(
               Icons.subdirectory_arrow_right_rounded,
-              color: Colors.red,
+              color: Colors.brown,
             ),
           ),
           const Spacer(),
           Flexible(
             flex: 6,
-            child: P2(title, color: Colors.red),
+            child: isTablet
+                ? P3(title, color: Colors.brown)
+                : P2(title, color: Colors.brown),
           ),
         ],
       ),
@@ -106,12 +109,14 @@ class Layout extends StatelessWidget {
       drawer: Drawer(
         child: ListView(
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.deepPurple),
-              child: Center(
-                child: H1('Menu', color: Colors.white),
+            if (isTablet)
+              const DrawerHeader(
+                decoration: BoxDecoration(color: Colors.deepPurple),
+                child: Center(
+                  child: H1('Menu', color: Colors.white),
+                ),
               ),
-            ),
+            if (!isTablet) const SizedBox(height: 20),
             listTile(context, Pages.entry, page),
             listTile(context, Pages.bills, page),
             if (claims.hasManagerAuthorization) ...[

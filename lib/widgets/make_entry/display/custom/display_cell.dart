@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/main.dart';
 import 'cursor.dart';
 import 'display_widgit.dart';
 
@@ -84,10 +85,15 @@ class DisplayCell extends StatelessWidget {
       flex: flex,
       child: onClick == null
           ? _widget
-          : TextButton(
-              onPressed: onClick,
-              child: _widget,
-            ),
+          : isTablet
+              ? TextButton(
+                  onPressed: onClick,
+                  child: _widget,
+                )
+              : GestureDetector(
+                  child: _widget,
+                  onTap: onClick,
+                ),
     );
   }
 }

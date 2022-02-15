@@ -202,13 +202,15 @@ abstract class Billing extends Modal with ChangeNotifier {
           }
         } else {
           if (_itemCode.isEmpty) {
-            shouldProceed("Clear Order?").then((value) {
-              if (value) {
-                _orders.clear();
-                _total.val = 0;
-                _fixedTotal.val = 0;
-              }
-            });
+            if (_orders.isNotEmpty) {
+              shouldProceed("Clear Order?").then((value) {
+                if (value) {
+                  _orders.clear();
+                  _total.val = 0;
+                  _fixedTotal.val = 0;
+                }
+              });
+            }
           }
           _resetOrder();
         }
