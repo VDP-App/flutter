@@ -19,7 +19,7 @@ class ShowLogs extends StatelessWidget {
     final map = log.remainingStock;
     return BuildPageBody(
       wrapScaffold: true,
-      title: log.oldProduct == null
+      topic: log.oldProduct == null
           ? log.isCreateItemLog
               ? "Item Created"
               : "Item Removed"

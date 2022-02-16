@@ -89,4 +89,7 @@ class ProductDoc {
     arr.sort();
     return arr;
   }
+
+  Iterable<Product> get allProducts =>
+      getItemInCollection(allCollectionNameKey)!;
 }

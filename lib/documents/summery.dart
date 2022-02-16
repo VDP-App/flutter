@@ -7,18 +7,16 @@ import 'package:vdp/providers/make_entries/custom/number.dart';
 class SummeryDoc {
   final List<Bill> wholeSellBills;
   final List<Entry> entries;
-  final Map<String, int> stockAtEnd;
+  final Map<String, FixedNumber> stockAtEnd;
   final Map<String, FixedProductReport> productReports;
-  final FixedNumber totalOnlineIncome;
-  final FixedNumber totalOfflineIncome;
+  final FixedNumber totalRetailIncome;
 
   const SummeryDoc(
     this.wholeSellBills,
     this.entries,
     this.stockAtEnd,
     this.productReports,
-    this.totalOfflineIncome,
-    this.totalOnlineIncome,
+    this.totalRetailIncome,
   );
 
   factory SummeryDoc.fromJson(Map<String, dynamic> data) {
@@ -34,18 +32,22 @@ class SummeryDoc {
     Order order;
     Entry entry;
     StockChangesInEntry changes;
+    final _income = asMap(data["income"]);
+    var _totalIncome = asInt(_income["offline"]) + asInt(_income["online"]);
     getProductReport(String id) => productReports[id] ??= ProductReport();
 
     for (var e in asMap(_retail).entries) {
-      final v = asMap(e.value);
-      getProductReport(e.key).addRetail(asInt(v["q"]), asInt(v["r"]));
+      for (var _v in asList(e.value)) {
+        final v = asMap(_v);
+        getProductReport(e.key).addRetail(asInt(v["q"]), asInt(v["r"]));
+      }
     }
-
     var i = 0;
     for (e in asList(_wholeSell)) {
       bill = Bill.fromJson(asMap(e), i.toString());
       bills.add(bill);
       for (order in bill.orders) {
+        _totalIncome -= order.amount.val;
         getProductReport(order.itemId).addWholeSell(order.quntity.val, i);
       }
       i++;
@@ -78,12 +80,11 @@ class SummeryDoc {
       }
       i++;
     }
-    final _income = asMap(data["income"]);
     return SummeryDoc(
       bills,
       entries,
       asMap(_stockSnapShot).map(
-        (key, value) => MapEntry(key, asInt(value)),
+        (key, value) => MapEntry(key, FixedNumber.fromInt(asInt(value))),
       ),
       productReports.map(
         (key, value) => MapEntry(
@@ -91,8 +92,7 @@ class SummeryDoc {
           FixedProductReport.fromProductReport(value, key),
         ),
       ),
-      FixedNumber.fromInt(asInt(_income["offline"])),
-      FixedNumber.fromInt(asInt(_income["online"])),
+      FixedNumber.fromInt(_totalIncome),
     );
   }
 }

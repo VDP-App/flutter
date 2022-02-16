@@ -8,6 +8,7 @@ abstract class NumClass {
   int operator -(NumClass n) => val - n.val;
   int operator +(NumClass n) => val + n.val;
   int operator /(NumClass n) => n.val == 0 ? 0 : (1000 * val ~/ n.val);
+  int operator *(NumClass n) => val * n.val ~/ 1000;
 }
 
 class Number extends NumClass {
@@ -98,6 +99,12 @@ class FixedNumber extends NumClass {
 
   factory FixedNumber.fromInt(int i) {
     return FixedNumber(text: formate(i / 1000), val: i);
+  }
+
+  String get negateText {
+    if (val > 0) return "-" + text;
+    if (val < 0) return text.substring(1);
+    return "0";
   }
 
   @override

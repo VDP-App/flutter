@@ -63,12 +63,13 @@ void openBill(
   BuildContext context,
   Bill bill,
   String stockID,
-  String cashCounterID,
-) {
+  String cashCounterID, [
+  bool isFixed = false,
+]) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return ChangeNotifierProvider(
       create: (context) => BillProvider(context, bill, stockID, cashCounterID),
-      child: const ShowBill(),
+      child: ShowBill(isFixed: isFixed),
     );
   }));
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/product.dart';
+import 'package:vdp/layout.dart';
 import 'package:vdp/widgets/selectors/grid_selector.dart';
 
 class SelectCollection extends StatelessWidget {
@@ -19,7 +20,7 @@ class SelectCollection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Collection Name"),
+        title: appBarTitle("Select Collection Name"),
         actions: [
           if (editMode)
             IconButton(

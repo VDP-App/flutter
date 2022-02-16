@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/layout.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/utils/typography.dart';
 
@@ -71,14 +72,14 @@ class BuildPageBody extends StatelessWidget {
   const BuildPageBody({
     Key? key,
     required this.children,
-    required this.title,
+    required this.topic,
     required this.wrapScaffold,
     this.badge,
     this.trailing,
     this.floatingActionButton,
   }) : super(key: key);
 
-  final String title;
+  final String topic;
   final Widget? floatingActionButton;
   final bool wrapScaffold;
   final Widget? badge;
@@ -101,7 +102,7 @@ class BuildPageBody extends StatelessWidget {
     }
     if (wrapScaffold) {
       return Scaffold(
-        appBar: AppBar(title: Text(title)),
+        appBar: AppBar(title: appBarTitle(topic)),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListView(children: _list),

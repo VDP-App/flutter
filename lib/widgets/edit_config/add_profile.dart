@@ -14,7 +14,7 @@ class AddProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     var createProfile = Provider.of<CreateProfile>(context, listen: false);
     return BuildPageBody(
-      title: "Create Profile",
+      topic: "Create Profile",
       wrapScaffold: true,
       children: [
         InputField(onChange: createProfile.onNameChange, lable: "Name"),

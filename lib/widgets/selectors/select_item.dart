@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/layout.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/selectors/grid_selector.dart';
 import 'package:vdp/widgets/selectors/select_collection.dart';
@@ -18,7 +19,7 @@ class SelectItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Select Item Name")),
+      appBar: AppBar(title: appBarTitle("Select Item")),
       body: GridSelector(
         color: Colors.teal,
         count: 3,

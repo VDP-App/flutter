@@ -17,13 +17,11 @@ class ItemsPage extends StatelessWidget {
     var itemDoc = items.doc;
     if (itemDoc == null) return loadingWigit;
     var codeNumList = itemDoc.codeNums;
-    return BuildListPage<String>(
-      list: codeNumList,
+    return BuildListPage<Product>(
+      list: itemDoc.allProducts,
       wrapScaffold: true,
       noDataText: "No Items Found",
-      buildChild: (context, code) {
-        var item = itemDoc.getItemBy(code: code);
-        if (item == null) return const ListTilePage.empty();
+      buildChild: (context, item) {
         return ListTilePage(
           onClick: () => openEditItem(
             context,

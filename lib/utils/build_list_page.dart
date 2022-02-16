@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/layout.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/modal.dart';
 import 'package:vdp/utils/random.dart';
@@ -175,7 +176,7 @@ class BuildListPage<T> extends StatelessWidget {
     this.startWith = const [],
     this.endWith = const [],
     this.floatingActionButton,
-    this.appBarTitle,
+    this.topic,
     this.onDismissed,
   }) : super(key: key);
 
@@ -186,7 +187,7 @@ class BuildListPage<T> extends StatelessWidget {
   final Iterable<Widget> endWith;
   final Widget? floatingActionButton;
   final String? noDataText;
-  final String? appBarTitle;
+  final String? topic;
   final void Function(T element)? onDismissed;
 
   @override
@@ -233,7 +234,7 @@ class BuildListPage<T> extends StatelessWidget {
     );
     if (wrapScaffold) {
       widget = Scaffold(
-        appBar: appBarTitle != null ? AppBar(title: Text(appBarTitle!)) : null,
+        appBar: topic != null ? AppBar(title: appBarTitle(topic!)) : null,
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: widget,

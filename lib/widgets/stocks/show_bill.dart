@@ -8,7 +8,11 @@ import 'package:vdp/utils/loading.dart';
 import 'package:provider/provider.dart';
 
 class ShowBill extends StatelessWidget {
-  const ShowBill({Key? key}) : super(key: key);
+  const ShowBill({
+    Key? key,
+    required this.isFixed,
+  }) : super(key: key);
+  final bool isFixed;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,7 @@ class ShowBill extends StatelessWidget {
     var bill = billProvider.bill;
     return BuildPageBody(
       wrapScaffold: true,
-      title: "Bill Num: ${bill.billNum}",
+      topic: "Bill Num: ${bill.billNum}",
       children: [
         InfoCell("Payment Done in", bill.inCash ? "Cash" : "G-Pay"),
         InfoCell("Bill Type", bill.isWholeSell ? "WholeSell" : "Retail"),
@@ -24,7 +28,7 @@ class ShowBill extends StatelessWidget {
         InfoCell("Money Given", rs_ + bill.moneyGiven.text),
       ],
       trailing: [_BillOrderTable(orders: bill.orders)],
-      floatingActionButton: const _DeleteButton(),
+      floatingActionButton: isFixed ? null : const _DeleteButton(),
     );
   }
 }

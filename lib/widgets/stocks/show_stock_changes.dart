@@ -7,10 +7,15 @@ import 'package:vdp/utils/display_table.dart';
 import 'package:vdp/utils/page_utils.dart';
 
 class ShowStockChanges extends StatelessWidget {
-  const ShowStockChanges({Key? key, required this.entry, required this.stockID})
-      : super(key: key);
+  const ShowStockChanges({
+    Key? key,
+    required this.entry,
+    required this.stockID,
+    required this.isFixed,
+  }) : super(key: key);
   final Entry entry;
   final String stockID;
+  final bool isFixed;
 
   static final _cancleStockChanges = CancleEntryOnCloud().cancleStockChanges;
 
@@ -20,7 +25,7 @@ class ShowStockChanges extends StatelessWidget {
     final sendFrom = entry.transferFrom;
     final sendTo = entry.transferTo;
     return BuildPageBody(
-      title: entry.transferTo != null
+      topic: entry.transferTo != null
           ? "Stock Send"
           : entry.transferFrom != null
               ? "Stock Recive"
@@ -35,12 +40,18 @@ class ShowStockChanges extends StatelessWidget {
         if (sendTo != null) InfoCell("Send To", getStockInfo(sendTo)?.name),
       ],
       trailing: [_StockChangesTable(changes: entry.stockChanges)],
-      floatingActionButton: ActionButton(
-        action: () => _cancleStockChanges(entry.entryNum, stockID),
-        color: Colors.red,
-        icon: const Icon(Icons.delete),
-        question: "Are You sure you like to delete Stock",
-      ),
+      floatingActionButton: isFixed ||
+              entry.senderUid != null ||
+              entry.transferFrom != null ||
+              entry.transferTo != null
+          ? null
+          : ActionButton(
+              action: () => _cancleStockChanges(entry.entryNum, stockID)
+                  .whenComplete(() => Navigator.pop(context)),
+              color: Colors.red,
+              icon: const Icon(Icons.delete),
+              question: "Are You sure you like to delete Stock",
+            ),
     );
   }
 }
@@ -51,7 +62,7 @@ class _StockChangesTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DisplayTable(
-      titleNames: const ["Name", "B", "+ Q", "A"],
+      titleNames: const ["Name", "B", "+Q", "A"],
       data2D: changes.map(
         (e) => [
           DisplayTableCell(e.item.name),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdp/documents/summery.dart';
 import 'package:vdp/utils/firestore_document.dart';
 import 'package:vdp/utils/modal.dart';
+import 'package:intl/intl.dart';
 
 String _path(String stockID, String date) => "stocks/$stockID/summery/$date";
 
@@ -9,11 +10,16 @@ SummeryDoc _computeFn(Map<String, dynamic> data) {
   return SummeryDoc.fromJson(data);
 }
 
+final format = DateFormat("yyyy-MM-dd").format;
+
+String? formateDateTime(DateTime? dateTime) =>
+    dateTime == null ? null : format(dateTime);
+
 class Summery extends Modal with ChangeNotifier {
   String? _stockID;
-  String? _date;
+  DateTime? _date;
   SummeryDoc? _doc;
-  bool? _isEmpty;
+  bool? _isEmpty = false;
 
   static final _docs = <String, SummeryDoc?>{};
 
@@ -25,8 +31,8 @@ class Summery extends Modal with ChangeNotifier {
     _getDoc();
   }
 
-  void changeDate(String date) {
-    if (_date == date) return;
+  void changeDate(DateTime date) {
+    if (dateInString == formateDateTime(date)) return;
     _date = date;
     _getDoc();
   }
@@ -35,8 +41,11 @@ class Summery extends Modal with ChangeNotifier {
     _doc = null;
     _isEmpty = null;
     notifyListeners();
-    final stockID = _stockID, date = _date;
-    if (stockID == null || date == null) return;
+    final stockID = _stockID, date = dateInString;
+    if (stockID == null || date == null) {
+      _isEmpty = false;
+      return;
+    }
     final path = _path(stockID, date);
     SummeryDoc? doc;
     if (_docs.containsKey(path)) {
@@ -49,12 +58,14 @@ class Summery extends Modal with ChangeNotifier {
       );
       _docs[path] = doc;
     }
-    if (stockID != _stockID || date != _date) return;
+    if (stockID != _stockID || date != dateInString) return;
     _doc = doc;
     _isEmpty = doc == null;
+    notifyListeners();
   }
 
-  String? get date => _date;
+  DateTime? get date => _date;
+  String? get dateInString => formateDateTime(_date);
   SummeryDoc? get doc => _doc;
   bool? get isEmpty => _isEmpty;
 

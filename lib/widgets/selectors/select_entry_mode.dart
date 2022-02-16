@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/layout.dart';
 
 enum SelectedType { retailBill, wholeSellBill, setStock, transfer, cancleBill }
 
@@ -89,7 +90,7 @@ class SelectEntryMode extends StatelessWidget {
       flex: arr.length ~/ 2,
     ));
     return Scaffold(
-      appBar: AppBar(title: const Text("Select Mode")),
+      appBar: AppBar(title: appBarTitle("Select Mode")),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

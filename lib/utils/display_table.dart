@@ -4,12 +4,18 @@ import 'package:vdp/utils/typography.dart';
 
 class DisplayTableCell extends DataCell {
   final String text;
-  DisplayTableCell(this.text, {Color? color, FontWeight? fontWeight})
-      : super(P3(
-          text,
-          color: color,
-          fontWeight: fontWeight,
-        ));
+  DisplayTableCell(
+    this.text, {
+    Color? color,
+    FontWeight? fontWeight,
+    void Function()? onTap,
+  }) : super(
+          P3(text, color: color, fontWeight: fontWeight),
+          onTap: onTap,
+        );
+  const DisplayTableCell.empty()
+      : text = "",
+        super(const SizedBox());
 }
 
 class DisplayTable extends StatelessWidget {
@@ -82,7 +88,13 @@ class DisplayTable extends StatelessWidget {
               _color == null
                   ? DataRow(cells: [cell])
                   : DataRow(
-                      cells: [DisplayTableCell(cell.text, color: Colors.white)],
+                      cells: [
+                        DisplayTableCell(
+                          cell.text,
+                          color: Colors.white,
+                          onTap: cell.onTap,
+                        )
+                      ],
                       color: MaterialStateProperty.resolveWith((_) => _color),
                     ),
             );

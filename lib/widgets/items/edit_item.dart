@@ -13,7 +13,7 @@ class EditItem extends StatelessWidget {
     var editProduct = Provider.of<EditProduct>(context, listen: false);
     final item = editProduct.product;
     return BuildPageBody(
-      title: item?.name ?? "New Item",
+      topic: item?.name ?? "New Item",
       wrapScaffold: true,
       children: [
         GetCollectionName(

@@ -17,7 +17,7 @@ class ProductReport {
 
   void addRetail(int q, int r) {
     totalRetail += q;
-    retail[r] = q + (wholeSell[q] ?? 0);
+    retail[r] = q + (retail[q] ?? 0);
   }
 
   void addWholeSell(int x, int i) {
@@ -66,6 +66,13 @@ class FixedProductReport {
     required this.wholeSell,
     required this.itemId,
   });
+
+  int get netQuntityChange =>
+      totalStockChanges.val +
+      totalStockSend.val +
+      totalStockRecive.val -
+      totalWholeSell.val -
+      totalRetail.val;
 
   Product get item {
     final a = productDoc?[itemId];

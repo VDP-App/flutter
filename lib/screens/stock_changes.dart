@@ -60,8 +60,13 @@ class DisplayStockChanges extends StatelessWidget {
   }
 }
 
-void openEntry(BuildContext context, Entry entry, String stockID) {
+void openEntry(
+  BuildContext context,
+  Entry entry,
+  String stockID, [
+  bool isFixed = false,
+]) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return ShowStockChanges(entry: entry, stockID: stockID);
+    return ShowStockChanges(entry: entry, stockID: stockID, isFixed: isFixed);
   }));
 }

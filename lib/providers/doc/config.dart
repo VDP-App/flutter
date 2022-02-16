@@ -13,8 +13,8 @@ ConfigDoc _computeFn(Map<String, dynamic> data) {
   return ConfigDoc.fromJson(data);
 }
 
-UserInfo? getUserInfo(String uid) => Config._currentDoc?.getUserInfo(uid);
-StockInfo? getStockInfo(String stockID) =>
+UserInfo? getUserInfo(String? uid) => Config._currentDoc?.getUserInfo(uid);
+StockInfo? getStockInfo(String? stockID) =>
     Config._currentDoc?.getStockInfo(stockID);
 
 class Config extends Modal with ChangeNotifier {

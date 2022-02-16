@@ -46,7 +46,7 @@ class BillingKeybord<T extends Billing> extends StatelessWidget {
       act: billing.onClick,
       actions: [
         KeyAction.quntity.keyBordKey(text: "Quntity", color: Colors.blue),
-        KeyAction.price.keyBordKey(text: "Price", color: Colors.blue),
+        KeyAction.price.keyBordKey(text: "Amount", color: Colors.blue),
         KeyAction.transfer.keyBordKey(text: "Transfer", color: Colors.blue),
       ],
     );

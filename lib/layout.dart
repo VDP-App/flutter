@@ -4,6 +4,7 @@ import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/apis/pages.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/utils/typography.dart';
 
 class Layout extends StatelessWidget {
@@ -162,8 +163,36 @@ class Layout extends StatelessWidget {
           ],
         ),
       ),
-      appBar: AppBar(title: const Text('Vardayani Dairy Products')),
+      appBar: AppBar(
+        title: appBarTitle(isTablet ? "Vardayani Dairy Products" : "VDP"),
+        actions: claims.isAdmin
+            ? [
+                TextButton(
+                  onPressed: location.selectStock,
+                  child: const IconT3(
+                    Icons.location_on,
+                    color: Colors.white,
+                  ),
+                )
+              ]
+            : null,
+      ),
       body: page.currentPage.screen,
     );
   }
+}
+
+String? get currentStockID => sharedPreferences.getString("stockID");
+
+Widget appBarTitle(String string) {
+  if (string.length > 11 && !isTablet) return Text(string);
+  return Row(
+    children: [
+      Text(string + " - "),
+      Text(
+        getStockInfo(currentStockID)?.name ?? "NONE",
+        style: const TextStyle(color: Colors.amber),
+      ),
+    ],
+  );
 }

@@ -74,18 +74,16 @@ abstract class Billing extends Modal with ChangeNotifier {
             deleteOrder: (order) {
               _orders.remove(order);
               _fixedTotal.val -= order.amount.val;
+              _total.assign(_fixedTotal);
+              if (_focusedAt == Focuses.transfer && _orders.isNotEmpty) {
+                _resetTransfer();
+              } else {
+                _resetOrder();
+              }
             },
           );
         }),
-      ).then((value) {
-        _total.assign(_fixedTotal);
-        if (_focusedAt == Focuses.transfer && _orders.isNotEmpty) {
-          _resetTransfer();
-        } else {
-          _resetOrder();
-        }
-        notifyListeners();
-      });
+      ).whenComplete(notifyListeners);
     }
   }
 
@@ -208,6 +206,7 @@ abstract class Billing extends Modal with ChangeNotifier {
                   _orders.clear();
                   _total.val = 0;
                   _fixedTotal.val = 0;
+                  notifyListeners();
                 }
               });
             }

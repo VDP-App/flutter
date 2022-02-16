@@ -222,7 +222,7 @@ class Modal {
       P2(content),
       [
         if (onOk != null) const ModalButton("Back"),
-        ModalButton(okText ?? "OK1", onPressed: onOk),
+        ModalButton(okText ?? "OK!", onPressed: onOk),
       ],
     );
   }

@@ -19,7 +19,7 @@ class ShowOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BuildListPage<Order>(
-      appBarTitle: "Select Order",
+      topic: "Select Order",
       wrapScaffold: true,
       buildChild: (context, order) {
         return ListTilePage(

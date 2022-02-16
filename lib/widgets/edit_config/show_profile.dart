@@ -36,7 +36,7 @@ class ShowProfile extends StatelessWidget {
     var cashCounterInfo =
         stockInfo?.getCashCounterInfo(claims.defaultCashCouterId);
     return BuildPageBody(
-      title: "Edit Profile",
+      topic: "Edit Profile",
       wrapScaffold: !myProfile,
       children: [
         InputField(

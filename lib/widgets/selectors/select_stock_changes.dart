@@ -18,7 +18,7 @@ class ShowStockChanges<T extends Changes> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BuildListPage<T>(
-      appBarTitle: "Select Order",
+      topic: "Select Order",
       wrapScaffold: true,
       buildChild: (context, change) {
         return ListTilePage(

@@ -7,6 +7,7 @@ import 'package:vdp/providers/doc/cash_counter.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/doc/stock.dart';
+import 'package:vdp/providers/doc/summery.dart';
 import 'package:vdp/screens/login.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:provider/provider.dart';
@@ -79,6 +80,15 @@ class RouteApp extends StatelessWidget {
               if (stockID != null && cashCounterID != null) {
                 previous.update(stockID, cashCounterID);
               }
+              return previous;
+            },
+          ),
+          ChangeNotifierProxyProvider<Location, Summery>(
+            create: (context) => Summery(context),
+            update: (context, location, previous) {
+              previous ??= Summery(context);
+              final stockID = location.stockID;
+              if (stockID != null) previous.update(stockID);
               return previous;
             },
           )

@@ -15,7 +15,7 @@ class ShowTransferRequest extends StatelessWidget {
     var acceptTransfer = Provider.of<AcceptTransfer>(context, listen: false);
     final transfer = acceptTransfer.transfer;
     return BuildPageBody(
-      title: "Recive Transfer ?",
+      topic: "Recive Transfer ?",
       wrapScaffold: true,
       children: [
         InfoCell("Created By", getUserInfo(transfer.senderUid)?.name),
