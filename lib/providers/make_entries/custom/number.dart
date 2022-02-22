@@ -9,6 +9,25 @@ abstract class NumClass {
   int operator +(NumClass n) => val + n.val;
   int operator /(NumClass n) => n.val == 0 ? 0 : (1000 * val ~/ n.val);
   int operator *(NumClass n) => val * n.val ~/ 1000;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is NumClass && val == other.val;
+  }
+
+  @override
+  int get hashCode => toString().hashCode;
+
+  @override
+  String toString() {
+    var buffer = StringBuffer();
+    buffer.write("NumClass {");
+    buffer.write("val=$val, ");
+    buffer.write("text=$text, ");
+    buffer.write("}");
+    return buffer.toString();
+  }
 }
 
 class Number extends NumClass {
@@ -27,7 +46,7 @@ class Number extends NumClass {
   }
 
   void _parse() {
-    _val = (double.parse(_text.replaceAll(",", "")) * 1000).toInt();
+    _val = parser(_text);
   }
 
   void assign(NumClass n) {
@@ -79,9 +98,6 @@ class Number extends NumClass {
       _formate();
     }
   }
-
-  @override
-  String toString() => {"text": _text, "val": _val}.toString();
 
   FixedNumber toFixedNumber() => FixedNumber(text: _text, val: _val);
 }

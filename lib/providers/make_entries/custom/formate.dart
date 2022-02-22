@@ -49,3 +49,12 @@ String formate(double val) {
   }
   return _formated + _trailing;
 }
+
+int parser(String val) {
+  val = val.replaceAll(",", "");
+  final i = val.indexOf(".");
+  var trailing = i >= 0 ? val.substring(i + 1) : "";
+  trailing = trailing.padRight(3, "0");
+  var initial = i >= 0 ? val.substring(0, i) : val;
+  return int.tryParse(initial + trailing) ?? 0;
+}
