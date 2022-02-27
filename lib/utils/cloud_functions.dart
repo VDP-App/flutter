@@ -15,7 +15,7 @@ FirebaseFunctions get _cloudFunction =>
 Future<T> _callApi<T>(
   HttpsCallable _api,
   Map<String, dynamic> req, [
-  T Function(dynamic)? parser,
+  T Function(dynamic data)? parser,
 ]) async {
   final Map<String, dynamic> data;
   try {
@@ -143,16 +143,27 @@ class EditShopOnCloud {
 class BillingOnCloud {
   final _api = _cloudFunction.httpsCallable('billing');
 
-  Future<int> bill(
+  Future<Bill> bill(
     String stockID,
     String cashCounterID,
     Bill bill,
   ) {
-    return _callApi<int>(_api, {
-      "stockID": stockID,
-      "cashCounterID": cashCounterID,
-      "bill": bill.toJson(),
-    });
+    return _callApi<Bill>(
+      _api,
+      {
+        "stockID": stockID,
+        "cashCounterID": cashCounterID,
+        "bill": bill.toJson(),
+      },
+      (data) => Bill(
+        isWholeSell: bill.isWholeSell,
+        inCash: bill.inCash,
+        moneyGiven: bill.moneyGiven,
+        orders: [...bill.orders],
+        billNum: asInt(data).toString(),
+        uid: bill.uid,
+      ),
+    );
   }
 }
 

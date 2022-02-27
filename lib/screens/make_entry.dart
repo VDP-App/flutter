@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/main.dart';
+import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/widgets/make_entry/ui.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
@@ -81,6 +82,7 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
     if (stockID == null || cashCounterID == null) {
       return SelectLocationButton.fromLocation(location, "To Make an entry");
     }
+    final printBill = Provider.of<BlutoothProvider>(context).printBill;
     if (selectedType.isBilling) {
       if (selectedType == SelectedType.wholeSellBill) {
         return MultiProvider(
@@ -88,9 +90,10 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
             Provider<Widget Function(Auth auth)>(create: modeSelector),
             ChangeNotifierProxyProvider<Products, WholeSellBilling>(
               create: (context) =>
-                  WholeSellBilling(context, stockID, cashCounterID),
+                  WholeSellBilling(context, stockID, cashCounterID, printBill),
               update: (context, products, previous) {
-                previous ??= WholeSellBilling(context, stockID, cashCounterID);
+                previous ??= WholeSellBilling(
+                    context, stockID, cashCounterID, printBill);
                 final items = products.doc;
                 if (items != null) previous.update(items);
                 return previous;
@@ -105,9 +108,10 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
             Provider<Widget Function(Auth auth)>(create: modeSelector),
             ChangeNotifierProxyProvider<Products, RetailBilling>(
               create: (context) =>
-                  RetailBilling(context, stockID, cashCounterID),
+                  RetailBilling(context, stockID, cashCounterID, printBill),
               update: (context, products, previous) {
-                previous ??= RetailBilling(context, stockID, cashCounterID);
+                previous ??=
+                    RetailBilling(context, stockID, cashCounterID, printBill);
                 final items = products.doc;
                 if (items != null) previous.update(items);
                 return previous;

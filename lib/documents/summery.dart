@@ -73,7 +73,7 @@ class SummeryDoc {
       } else {
         for (changes in entry.stockChanges) {
           getProductReport(changes.itemID).addStockChanges(
-            changes.stockInc.val,
+            changes,
             i,
           );
         }

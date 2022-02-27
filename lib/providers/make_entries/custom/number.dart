@@ -81,8 +81,10 @@ class Number extends NumClass {
     final trailingNum = _trailingNum;
     if (trailingNum == null) {
       _text += digit;
-      _parse();
-      _formate();
+      if (_val != 0 || digit != "0") {
+        _parse();
+        _formate();
+      }
     } else if (trailingNum.length <= 3) {
       _text += digit;
       _parse();
@@ -121,6 +123,15 @@ class FixedNumber extends NumClass {
     if (val > 0) return "-" + text;
     if (val < 0) return text.substring(1);
     return "0";
+  }
+
+  String toIntl({bool p2 = true}) {
+    var _text = text;
+    final i = _text.indexOf(".");
+    if (i == -1) _text += ".";
+    _text += "00000";
+    _text = _text.substring(0, _text.indexOf(".") + (p2 ? 3 : 4));
+    return _text;
   }
 
   @override

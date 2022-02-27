@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/product.dart';
+import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/edit_item.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/utils/build_list_page.dart';
@@ -14,6 +15,8 @@ class ItemsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var items = Provider.of<Products>(context);
+    var auth = Provider.of<Auth>(context, listen: false);
+    var isAdmin = auth.claims?.isAdmin ?? false;
     var itemDoc = items.doc;
     if (itemDoc == null) return loadingWigit;
     var codeNumList = itemDoc.codeNums;
@@ -28,6 +31,7 @@ class ItemsPage extends StatelessWidget {
             item,
             itemDoc.collectionNames,
             codeNumList,
+            isAdmin,
           ),
           title: item.name,
           trailingWidgit: TrailingWidgit.text(P2(rs_ + item.rate1.toString())),
@@ -41,6 +45,7 @@ class ItemsPage extends StatelessWidget {
           null,
           itemDoc.collectionNames,
           codeNumList,
+          isAdmin,
         ),
         child: const Icon(Icons.add),
       ),
@@ -48,8 +53,13 @@ class ItemsPage extends StatelessWidget {
   }
 }
 
-void openEditItem(BuildContext context, Product? item,
-    Iterable<String> collectionNames, List<String> codeNums) {
+void openEditItem(
+  BuildContext context,
+  Product? item,
+  Iterable<String> collectionNames,
+  List<String> codeNums,
+  bool isAdmin,
+) {
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -57,7 +67,7 @@ void openEditItem(BuildContext context, Product? item,
         return ChangeNotifierProvider(
           create: (context) =>
               EditProduct(context, item, collectionNames, codeNums),
-          child: const EditItem(),
+          child: EditItem(isAdmin: isAdmin),
         );
       },
     ),

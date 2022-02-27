@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/providers/apis/auth.dart';
+import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/apis/pages.dart';
 import 'package:provider/provider.dart';
 import 'package:vdp/providers/doc/config.dart';
+import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
 
 class Layout extends StatelessWidget {
@@ -73,6 +75,69 @@ class Layout extends StatelessWidget {
     );
   }
 
+  Widget printer(BlutoothProvider blutoothProvider, BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        Navigator.pop(context);
+        blutoothProvider.selectDevice();
+      },
+      child: Row(
+        children: [
+          const Spacer(),
+          const Flexible(
+            flex: 2,
+            child: IconP3(Icons.print, color: Colors.deepPurpleAccent),
+          ),
+          const Spacer(),
+          Flexible(
+            flex: 6,
+            child: isTablet
+                ? P3(
+                    blutoothProvider.device ?? "No Device",
+                    color: blutoothProvider.device == null
+                        ? Colors.red
+                        : Colors.deepPurpleAccent,
+                  )
+                : P2(
+                    blutoothProvider.device ?? "No Device",
+                    color: blutoothProvider.device == null
+                        ? Colors.red
+                        : Colors.deepPurpleAccent,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget printerOption(
+    BlutoothProvider blutoothProvider,
+    BuildContext context,
+  ) {
+    return TextButton(
+      onPressed: () {
+        Navigator.pop(context);
+        blutoothProvider.changeOptions();
+      },
+      child: Row(
+        children: [
+          const Spacer(),
+          const Flexible(
+            flex: 2,
+            child: IconP3(Icons.settings, color: Colors.brown),
+          ),
+          const Spacer(),
+          Flexible(
+            flex: 6,
+            child: isTablet
+                ? const P3("Printer Options", color: Colors.brown)
+                : const P2("Printer Options", color: Colors.brown),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget locationInfo(String? title, void Function() onTap) {
     if (title == null) return const SizedBox();
     return TextButton(
@@ -104,6 +169,7 @@ class Layout extends StatelessWidget {
     var page = Provider.of<PageProvider>(context);
     var location = Provider.of<Location>(context);
     var auth = Provider.of<Auth>(context, listen: false);
+    var blutoothProvider = Provider.of<BlutoothProvider>(context);
     final claims = auth.claims!;
     const divider = Divider(thickness: 1.5, height: 30);
     return Scaffold(
@@ -138,6 +204,8 @@ class Layout extends StatelessWidget {
               listTile(context, Pages.users, page)
             ],
             divider,
+            printer(blutoothProvider, context),
+            printerOption(blutoothProvider, context),
             if (claims.hasAdminAuthorization)
               selectLocation(() {
                 Navigator.pop(context);
@@ -175,9 +243,14 @@ class Layout extends StatelessWidget {
                   ),
                 )
               ]
-            : null,
+            : [
+                TextButton(
+                  onPressed: blutoothProvider.selectDevice,
+                  child: const IconT3(Icons.print, color: Colors.white),
+                )
+              ],
       ),
-      body: page.currentPage.screen,
+      body: blutoothProvider.loading ? loadingWigit : page.currentPage.screen,
     );
   }
 }

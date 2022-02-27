@@ -1,3 +1,4 @@
+import 'package:vdp/documents/utils/stock_entry.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
@@ -10,7 +11,7 @@ class ProductReport {
   var totalStockRecive = 0;
   final retail = <int, int>{};
   final wholeSell = <int, int>{};
-  final stockChanges = <int, int>{};
+  final stockChanges = <int, StockChangesInEntry>{};
   final stockSend = <int, int>{};
   final stockRecive = <int, int>{};
   ProductReport();
@@ -25,8 +26,8 @@ class ProductReport {
     wholeSell[i] = x + (wholeSell[i] ?? 0);
   }
 
-  void addStockChanges(int x, int i) {
-    totalStockChanges += x;
+  void addStockChanges(StockChangesInEntry x, int i) {
+    totalStockChanges += x.stockInc.val;
     stockChanges[i] = x;
   }
 
@@ -49,7 +50,7 @@ class FixedProductReport {
   final FixedNumber totalStockRecive;
   final Map<FixedNumber, FixedNumber> retail;
   final Map<int, FixedNumber> wholeSell;
-  final Map<int, FixedNumber> stockChanges;
+  final Map<int, StockChangesInEntry> stockChanges;
   final Map<int, FixedNumber> stockSend;
   final Map<int, FixedNumber> stockRecive;
   final String itemId;
@@ -90,7 +91,7 @@ class FixedProductReport {
             MapEntry(FixedNumber.fromInt(key), FixedNumber.fromInt(value)),
       ),
       stockChanges: productReport.stockChanges.map(
-        (key, value) => MapEntry(key, FixedNumber.fromInt(value)),
+        (key, value) => MapEntry(key, value),
       ),
       stockRecive: productReport.stockRecive.map(
         (key, value) => MapEntry(key, FixedNumber.fromInt(value)),

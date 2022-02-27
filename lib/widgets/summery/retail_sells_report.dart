@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vdp/documents/product.dart';
+import 'package:vdp/documents/summery.dart';
 import 'package:vdp/documents/utils/product.dart';
-import 'package:vdp/documents/utils/report.dart';
-import 'package:vdp/layout.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/doc/summery.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
-import 'package:vdp/utils/display_table.dart';
 import 'package:vdp/utils/loading.dart';
-import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/summery/card_button.dart';
+import 'package:vdp/widgets/summery/display_table.dart';
 
 class RetailSellsReport extends StatelessWidget {
   const RetailSellsReport({
@@ -24,7 +22,6 @@ class RetailSellsReport extends StatelessWidget {
     final products = Provider.of<Products>(context);
     final productDoc = products.doc;
     final summeryDoc = summery.doc;
-    final productReports = summeryDoc?.productReports;
     final totalSold = summeryDoc?.totalRetailIncome;
     return CardButton(
       iconData: Icons.store,
@@ -33,9 +30,9 @@ class RetailSellsReport extends StatelessWidget {
       color: summeryDoc == null || totalSold?.val == 0
           ? Colors.grey
           : Colors.indigoAccent,
-      onTap: productReports == null || productDoc == null || totalSold?.val == 0
+      onTap: summeryDoc == null || productDoc == null || totalSold?.val == 0
           ? () {}
-          : () => openRetailSellsReport(context, productReports, productDoc),
+          : () => openRetailSellsReport(context, summeryDoc, productDoc),
       isLoading: summery.isEmpty == null || productDoc == null,
     );
   }
@@ -43,9 +40,10 @@ class RetailSellsReport extends StatelessWidget {
 
 void openRetailSellsReport(
   BuildContext context,
-  Map<String, FixedProductReport> productReports,
+  SummeryDoc summeryDoc,
   ProductDoc productDoc,
 ) {
+  final productReports = summeryDoc.productReports;
   void addRows(List<List<String>> _rows, Iterable<Product> products) {
     for (var item in products) {
       final retails = productReports[item.id]?.retail;
@@ -67,34 +65,43 @@ void openRetailSellsReport(
     if (products != null) addRows(rows, products);
     final rowsDeleted = <List<String>>[];
     addRows(rowsDeleted, productDoc.deleatedItems);
-    return Scaffold(
-      appBar: AppBar(
-        title: appBarTitle(isTablet ? "Retail Sells Report" : "Retail Rep."),
+    return TablePage.fromString(
+      pageTitle: isTablet ? "Retail Sells Report" : "Retail Rep.",
+      titleNames: const ["Name", "R", "Q", "A"],
+      data2D: Iterable.generate(
+        rows.length + (rowsDeleted.isEmpty ? 0 : (2 + rowsDeleted.length)) + 2,
+        (i) {
+          if (i < rows.length) return rows[i];
+          if (i == rows.length) return [" ", " ", " ", " "];
+          if (rowsDeleted.isNotEmpty) {
+            if (i == rows.length + 1) return ["DELETED ITEM", " ", " ", " "];
+            i -= rows.length + 2;
+            if (i < rowsDeleted.length) return rowsDeleted[i];
+          }
+          if (i == rows.length) return [" ", " ", " ", " "];
+          return [
+            "NET INCOME",
+            " ",
+            " ",
+            rs + summeryDoc.totalRetailIncome.text
+          ];
+        },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: rows.isEmpty
-            ? const NoData(text: "No Retail Sells")
-            : ListView(
-                children: [
-                  const SizedBox(height: 20),
-                  DisplayTable.fromString(
-                    titleNames: const ["Name", "R", "Q", "A"],
-                    data2D: rows,
-                  ),
-                  const SizedBox(height: 20),
-                  if (rowsDeleted.isNotEmpty) ...[
-                    const H1("Deleted Item"),
-                    const SizedBox(height: 20),
-                    DisplayTable.fromString(
-                      titleNames: const ["Name", "R", "Q", "A"],
-                      data2D: rowsDeleted,
-                      colorRow: Iterable.generate(
-                          rowsDeleted.length, (_) => Colors.red),
-                    ),
-                  ]
-                ],
-              ),
+      idWidth: idWidth,
+      rowCellWidth: [width4char, width5char, width8char],
+      colorRow: Iterable.generate(
+        rows.length + (rowsDeleted.isEmpty ? 0 : (2 + rowsDeleted.length)) + 2,
+        (i) {
+          if (i < rows.length) return null;
+          if (i == rows.length) return null;
+          if (rowsDeleted.isNotEmpty) {
+            if (i == rows.length + 1) return Colors.red;
+            i -= rows.length + 2;
+            if (i < rowsDeleted.length) return Colors.redAccent;
+          }
+          if (i == rows.length) return null;
+          return Colors.deepPurpleAccent;
+        },
       ),
     );
   }));

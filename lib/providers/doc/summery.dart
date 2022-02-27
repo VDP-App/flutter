@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/summery.dart';
 import 'package:vdp/utils/firestore_document.dart';
-import 'package:vdp/utils/modal.dart';
 import 'package:intl/intl.dart';
 
 String _path(String stockID, String date) => "stocks/$stockID/summery/$date";
@@ -15,15 +14,13 @@ final format = DateFormat("yyyy-MM-dd").format;
 String? formateDateTime(DateTime? dateTime) =>
     dateTime == null ? null : format(dateTime);
 
-class Summery extends Modal with ChangeNotifier {
+class Summery with ChangeNotifier {
   String? _stockID;
   DateTime? _date;
   SummeryDoc? _doc;
   bool? _isEmpty = false;
 
   static final _docs = <String, SummeryDoc?>{};
-
-  Summery(BuildContext context) : super(context);
 
   void update(String stockID) {
     if (stockID == _stockID) return;

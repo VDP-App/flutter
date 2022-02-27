@@ -110,8 +110,8 @@ class ModalButton extends StatelessWidget {
       child: TextButton(
         style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
         onPressed: () {
-          onPressed?.call();
           Navigator.pop(context, sendWithPop?.call());
+          onPressed?.call();
         },
         child: T3(text, color: Colors.black),
       ),
@@ -152,7 +152,7 @@ class Modal {
   Future<String?> selectOne<T extends ModalListElement>({
     required String title,
     required T? currentlySelected,
-    required List<T> modalListElement,
+    required Iterable<T> modalListElement,
     required void Function(T) onSelect,
   }) {
     return launchModal(

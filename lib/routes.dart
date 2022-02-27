@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/layout.dart';
 import 'package:vdp/providers/apis/auth.dart';
+import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/apis/pages.dart';
 import 'package:vdp/providers/doc/cash_counter.dart';
@@ -43,6 +44,8 @@ class RouteApp extends StatelessWidget {
       return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => PageProvider()),
+          ChangeNotifierProvider(
+              create: (context) => BlutoothProvider(context)),
           ChangeNotifierProvider<Config>(
             create: (_context) => Config(_context),
             lazy: false,
@@ -84,14 +87,14 @@ class RouteApp extends StatelessWidget {
             },
           ),
           ChangeNotifierProxyProvider<Location, Summery>(
-            create: (context) => Summery(context),
+            create: (context) => Summery(),
             update: (context, location, previous) {
-              previous ??= Summery(context);
+              previous ??= Summery();
               final stockID = location.stockID;
               if (stockID != null) previous.update(stockID);
               return previous;
             },
-          )
+          ),
         ],
         child: const Layout(),
       );

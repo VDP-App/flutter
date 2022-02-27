@@ -25,20 +25,18 @@ class ActionButton extends StatefulWidget {
 
 class _ActionButtonState extends State<ActionButton> {
   var loading = false;
-  var disable = false;
   @override
   Widget build(BuildContext context) {
     final modal = Modal(context);
     return FloatingActionButton(
       heroTag: widget.key,
       onPressed: () async {
-        if (loading || disable) return;
+        if (loading) return;
         if (!await modal.shouldProceed(widget.question)) return;
         setState(() => loading = true);
         await widget.action();
         setState(() {
           loading = false;
-          disable = true;
         });
       },
       backgroundColor: widget.color,

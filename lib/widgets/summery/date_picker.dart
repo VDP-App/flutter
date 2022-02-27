@@ -25,7 +25,7 @@ void _launchDatePicker(
   DateTime? initialDate,
   void Function(DateTime dateTime) onChange,
 ) {
-  final yesterday = DateTime.now().add(const Duration(days: -1));
+  final yesterday = DateTime.now().add(const Duration(days: -1, minutes: -10));
   showDatePicker(
     context: context,
     initialDate: initialDate ?? yesterday,

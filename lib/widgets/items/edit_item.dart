@@ -6,8 +6,11 @@ import 'package:vdp/widgets/items/get_collection.dart';
 import 'package:provider/provider.dart';
 
 class EditItem extends StatelessWidget {
-  const EditItem({Key? key}) : super(key: key);
-
+  const EditItem({
+    Key? key,
+    required this.isAdmin,
+  }) : super(key: key);
+  final bool isAdmin;
   @override
   Widget build(BuildContext context) {
     var editProduct = Provider.of<EditProduct>(context, listen: false);
@@ -56,7 +59,7 @@ class EditItem extends StatelessWidget {
           asInt: true,
         ),
       ],
-      floatingActionButton: item == null
+      floatingActionButton: item == null || !isAdmin
           ? const _ActionButton()
           : Column(
               mainAxisAlignment: MainAxisAlignment.end,

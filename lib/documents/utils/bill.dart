@@ -1,10 +1,9 @@
 import 'package:vdp/documents/utils/parsing.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/documents/utils/sorted_list.dart';
+import 'package:vdp/providers/apis/custom/gst_bill.dart';
 import 'package:vdp/providers/doc/products.dart';
-import 'package:vdp/providers/make_entries/custom/formate.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
-import 'package:vdp/utils/random.dart';
 
 class Bill extends CompareClass<Bill> {
   final bool isWholeSell;
@@ -37,12 +36,12 @@ class Bill extends CompareClass<Bill> {
     );
   }
 
-  String get totalMoneyInString {
+  FixedNumber get totalMoney {
     var i = 0;
     for (var order in orders) {
       i += order.amount.val;
     }
-    return formate(i / 1000);
+    return FixedNumber.fromInt(i);
   }
 
   Map<String, dynamic> toJson() {
@@ -57,6 +56,10 @@ class Bill extends CompareClass<Bill> {
   @override
   String toString() {
     return toJson().toString();
+  }
+
+  GSTBill toGstBill() {
+    return GSTBill(this);
   }
 
   @override
@@ -74,7 +77,6 @@ class Order {
   final FixedNumber quntity;
   final FixedNumber amount;
   final FixedNumber rate;
-  // late final String id;
 
   Product get item {
     final a = productDoc?[itemId];
@@ -82,20 +84,12 @@ class Order {
     return a;
   }
 
-  static final ids = <String>{};
-
-  Order({
+  const Order({
     required this.itemId,
     required this.amount,
     required this.quntity,
     required this.rate,
-  }) {
-    var a = randomString;
-    while (ids.contains(a)) {
-      a = randomString;
-    }
-    // id = a;
-  }
+  });
 
   Map<String, dynamic> toJson() {
     return {

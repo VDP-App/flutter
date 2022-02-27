@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/providers/apis/custom/gst_bill.dart';
 import 'package:vdp/widgets/make_entry/display/billing.dart';
 import 'package:vdp/widgets/make_entry/keybord/builder.dart';
 import 'package:vdp/widgets/selectors/select_order.dart';
@@ -14,6 +15,7 @@ import 'package:vdp/utils/modal.dart';
 abstract class Billing extends Modal with ChangeNotifier {
   final String _stockID;
   final String _cashCounterID;
+  final void Function(GSTBill gstBill) _printBill;
 
   var _focusedAt = Focuses.itemNum;
   var _inCash = true;
@@ -30,10 +32,8 @@ abstract class Billing extends Modal with ChangeNotifier {
   var _loading = false;
 
   Billing(
-    BuildContext context,
-    this._stockID,
-    this._cashCounterID,
-  ) : super(context);
+      BuildContext context, this._stockID, this._cashCounterID, this._printBill)
+      : super(context);
 
   Bill get bill;
   bool get loading => _loading;
@@ -46,7 +46,9 @@ abstract class Billing extends Modal with ChangeNotifier {
   void _bill() async {
     _loading = true;
     notifyListeners();
-    await handleCloudCall(_billingOnCloud.bill(_stockID, _cashCounterID, bill));
+    await handleCloudCall(_billingOnCloud
+        .bill(_stockID, _cashCounterID, bill)
+        .then((value) => _printBill(value.toGstBill())));
     _loading = false;
     notifyListeners();
   }
@@ -329,11 +331,9 @@ class RetailBilling extends Billing {
   var _useingRate2 = false;
   var _rate = "";
 
-  RetailBilling(
-    BuildContext context,
-    String stockID,
-    String cashCounterID,
-  ) : super(context, stockID, cashCounterID);
+  RetailBilling(BuildContext context, String stockID, String cashCounterID,
+      void Function(GSTBill gstBill) _printBill)
+      : super(context, stockID, cashCounterID, _printBill);
 
   void _updateRate(Product item) {
     _rate = formate(_useingRate2 ? item.rate2 : item.rate1);
@@ -446,11 +446,9 @@ class RetailBilling extends Billing {
 
 class WholeSellBilling extends Billing {
   final _rate = Number();
-  WholeSellBilling(
-    BuildContext context,
-    String stockID,
-    String cashCounterID,
-  ) : super(context, stockID, cashCounterID);
+  WholeSellBilling(BuildContext context, String stockID, String cashCounterID,
+      void Function(GSTBill gstBill) _printBill)
+      : super(context, stockID, cashCounterID, _printBill);
 
   @override
   void _onOrderSelect(Order order) {

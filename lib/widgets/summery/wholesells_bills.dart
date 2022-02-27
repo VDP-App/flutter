@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vdp/documents/utils/bill.dart';
-import 'package:vdp/layout.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/providers/doc/summery.dart';
-import 'package:vdp/utils/display_table.dart';
+import 'package:vdp/providers/make_entries/custom/formate.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/widgets/summery/card_button.dart';
+import 'package:vdp/widgets/summery/display_table.dart';
 
 class WholesellBills extends StatelessWidget {
   const WholesellBills({
@@ -33,6 +33,7 @@ class WholesellBills extends StatelessWidget {
 }
 
 void openWholeSellsReport(BuildContext context, List<Bill> bills) {
+  var netIncome = 0;
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     final rows = <List<String>>[];
     final colors = <Color?>[];
@@ -52,29 +53,21 @@ void openWholeSellsReport(BuildContext context, List<Bill> bills) {
         ]);
         colors.add(null);
       }
-      rows.add([" ", " ", "Total:", rs + bill.totalMoneyInString]);
+      netIncome += bill.totalMoney.val;
+      rows.add([" ", " ", "Total:", rs + bill.totalMoney.text]);
       colors.add(null);
       rows.add([" ", " ", " ", " "]);
       colors.add(null);
     }
-    rows.removeLast();
-    colors.removeLast();
-    return Scaffold(
-      appBar: AppBar(
-        title: appBarTitle(isTablet ? "Wholesell Summery Report" : "Wholesell"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: [
-            DisplayTable.fromString(
-              titleNames: const ["Name", "R", "Q", "A"],
-              data2D: rows,
-              colorRow: colors,
-            ),
-          ],
-        ),
-      ),
+    rows.add(["NET INCOME", " ", " ", rs + formate(netIncome / 1000)]);
+    colors.add(Colors.deepPurpleAccent);
+    return TablePage.fromString(
+      pageTitle: isTablet ? "Wholesell Summery Report" : "Wholesell",
+      titleNames: const ["Name", "R", "Q", "A"],
+      data2D: rows,
+      colorRow: colors,
+      idWidth: idWidth,
+      rowCellWidth: [width4char, width5char, width8char],
     );
   }));
 }

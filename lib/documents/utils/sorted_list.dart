@@ -6,7 +6,7 @@ abstract class CompareClass<X> {
 }
 
 class SortedList<E extends CompareClass<E>> {
-  final _list = <E>[];
+  final List<E> _list = [];
   final bool inAscending;
 
   SortedList({this.inAscending = true});
@@ -40,10 +40,10 @@ class SortedList<E extends CompareClass<E>> {
     }
   }
 
-  List<E> customAdd<X>(Iterable<X> itrator, E Function(X x) convertor) {
+  List<E> customAdd<X>(Iterable<X> itrator, E? Function(X x) convertor) {
     for (var x in itrator) {
       var e = convertor(x);
-      _list.insert(nearestIndexOf(e), e);
+      if (e != null) _list.insert(nearestIndexOf(e), e);
     }
     return [..._list];
   }

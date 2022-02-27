@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/bill.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/apis/bill_provider.dart';
+import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/doc/cash_counter.dart';
 import 'package:vdp/utils/build_list_page.dart';
@@ -24,6 +25,7 @@ class DisplayBills extends StatelessWidget {
       return SelectLocationButton.fromLocation(location, "To See bills");
     }
     var cashCounter = Provider.of<CashCounter>(context);
+    final printBill = Provider.of<BlutoothProvider>(context).printBill;
     final doc = cashCounter.doc;
     if (doc == null) return loadingWigit;
     return BuildListPage<Bill>(
@@ -41,17 +43,18 @@ class DisplayBills extends StatelessWidget {
         return ListTilePage(
           title: parseCode(bill.billNum),
           onClick: () => openBill(context, bill, stockID, cashCounterID),
-          preview: Preview.text(P3(rs_ + bill.totalMoneyInString)),
+          preview: Preview.text(P3(rs_ + bill.totalMoney.text)),
           leadingWidgit: LeadingWidgit.text(
             P2(bill.isWholeSell ? "( W )" : "( R )"),
           ),
           trailingWidgit: TrailingWidgit.actionButton(
-            question: "Cencle Bill?",
+            question: "Print Bill?",
             action: () {
-              return cashCounter.cancelBill(bill.billNum);
+              return printBill(bill.toGstBill(), true);
+              // return cashCounter.cancelBill(bill.billNum);
             },
-            color: Colors.red,
-            icon: const Icon(Icons.delete),
+            color: Colors.deepPurpleAccent,
+            icon: const Icon(Icons.print),
           ),
         );
       },
