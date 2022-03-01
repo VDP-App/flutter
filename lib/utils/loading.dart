@@ -11,9 +11,10 @@ class NoData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    final spaceHight = (MediaQuery.of(context).size.height) * 2 / 5;
+    return ListView(
       children: [
+        SizedBox(height: spaceHight),
         const IconX1(Icons.search_off_rounded, color: Colors.grey),
         SizedBox(
           width: double.infinity,

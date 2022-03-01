@@ -3,6 +3,16 @@ import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
 
+class WholeSellProductReport extends FixedNumber {
+  final String? note;
+  WholeSellProductReport(FixedNumber x, this.note) : super.copy(x);
+}
+
+class StockChangesProductReport extends StockChangesInEntry {
+  final String? note;
+  StockChangesProductReport(StockChangesInEntry x, this.note) : super.copy(x);
+}
+
 class ProductReport {
   var totalRetail = 0;
   var totalWholeSell = 0;
@@ -10,10 +20,10 @@ class ProductReport {
   var totalStockSend = 0;
   var totalStockRecive = 0;
   final retail = <int, int>{};
-  final wholeSell = <int, int>{};
-  final stockChanges = <int, StockChangesInEntry>{};
-  final stockSend = <int, int>{};
-  final stockRecive = <int, int>{};
+  final wholeSell = <int, WholeSellProductReport>{};
+  final stockChanges = <int, StockChangesProductReport>{};
+  final stockSend = <int, FixedNumber>{};
+  final stockRecive = <int, FixedNumber>{};
   ProductReport();
 
   void addRetail(int q, int r) {
@@ -21,23 +31,23 @@ class ProductReport {
     retail[r] = q + (retail[q] ?? 0);
   }
 
-  void addWholeSell(int x, int i) {
-    totalWholeSell += x;
-    wholeSell[i] = x + (wholeSell[i] ?? 0);
+  void addWholeSell(FixedNumber x, int i, String? note) {
+    totalWholeSell += x.val;
+    wholeSell[i] = WholeSellProductReport(x, note);
   }
 
-  void addStockChanges(StockChangesInEntry x, int i) {
+  void addStockChanges(StockChangesInEntry x, int i, String? note) {
     totalStockChanges += x.stockInc.val;
-    stockChanges[i] = x;
+    stockChanges[i] = StockChangesProductReport(x, note);
   }
 
-  void addStockSend(int x, int i) {
-    totalStockSend += x;
+  void addStockSend(FixedNumber x, int i) {
+    totalStockSend += x.val;
     stockSend[i] = x;
   }
 
-  void addStockRecive(int x, int i) {
-    totalStockRecive += x;
+  void addStockRecive(FixedNumber x, int i) {
+    totalStockRecive += x.val;
     stockRecive[i] = x;
   }
 }
@@ -49,8 +59,8 @@ class FixedProductReport {
   final FixedNumber totalStockSend;
   final FixedNumber totalStockRecive;
   final Map<FixedNumber, FixedNumber> retail;
-  final Map<int, FixedNumber> wholeSell;
-  final Map<int, StockChangesInEntry> stockChanges;
+  final Map<int, WholeSellProductReport> wholeSell;
+  final Map<int, StockChangesProductReport> stockChanges;
   final Map<int, FixedNumber> stockSend;
   final Map<int, FixedNumber> stockRecive;
   final String itemId;
@@ -93,20 +103,14 @@ class FixedProductReport {
       stockChanges: productReport.stockChanges.map(
         (key, value) => MapEntry(key, value),
       ),
-      stockRecive: productReport.stockRecive.map(
-        (key, value) => MapEntry(key, FixedNumber.fromInt(value)),
-      ),
-      stockSend: productReport.stockSend.map(
-        (key, value) => MapEntry(key, FixedNumber.fromInt(value)),
-      ),
+      stockRecive: productReport.stockRecive,
+      stockSend: productReport.stockSend,
       totalRetail: FixedNumber.fromInt(productReport.totalRetail),
       totalStockChanges: FixedNumber.fromInt(productReport.totalStockChanges),
       totalStockRecive: FixedNumber.fromInt(productReport.totalStockRecive),
       totalStockSend: FixedNumber.fromInt(productReport.totalStockSend),
       totalWholeSell: FixedNumber.fromInt(productReport.totalWholeSell),
-      wholeSell: productReport.wholeSell.map(
-        (key, value) => MapEntry(key, FixedNumber.fromInt(value)),
-      ),
+      wholeSell: productReport.wholeSell,
       itemId: itemId,
     );
   }

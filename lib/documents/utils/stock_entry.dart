@@ -11,6 +11,7 @@ class Entry extends CompareClass<Entry> {
   final String uid;
   final String? senderUid;
   final String entryNum;
+  final String? note;
 
   const Entry(
     this.senderUid,
@@ -19,6 +20,7 @@ class Entry extends CompareClass<Entry> {
     this.transferTo,
     this.uid,
     this.entryNum,
+    this.note,
   );
 
   String get preview {
@@ -43,6 +45,7 @@ class Entry extends CompareClass<Entry> {
       asNullOrString(data["tT"]),
       asString(data["uid"]),
       entryNum,
+      asNullOrString(data["n"]),
     );
   }
 
@@ -76,6 +79,12 @@ class StockChangesInEntry {
     this.stockInc,
     this.type,
   );
+
+  StockChangesInEntry.copy(StockChangesInEntry x)
+      : itemID = x.itemID,
+        stockAfter = x.stockAfter,
+        stockInc = x.stockInc,
+        type = x.type;
 
   FixedNumber get stockBefore {
     return FixedNumber.fromInt(stockAfter.val - stockInc.val);

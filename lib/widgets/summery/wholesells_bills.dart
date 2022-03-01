@@ -38,7 +38,12 @@ void openWholeSellsReport(BuildContext context, List<Bill> bills) {
     final rows = <List<String>>[];
     final colors = <Color?>[];
     for (var bill in bills) {
-      rows.add(["Bill Num: ${bill.billNum}", " ", " ", " "]);
+      rows.add([
+        "Bill Num: ${bill.billNum}",
+        " ",
+        bill.note != null ? "NOTE:" : " ",
+        bill.note != null ? bill.note ?? "--" : " "
+      ]);
       colors.add(Colors.blueAccent);
       for (var order in bill.orders) {
         rows.add([
@@ -66,7 +71,6 @@ void openWholeSellsReport(BuildContext context, List<Bill> bills) {
       titleNames: const ["Name", "R", "Q", "A"],
       data2D: rows,
       colorRow: colors,
-      idWidth: idWidth,
       rowCellWidth: [width4char, width5char, width8char],
     );
   }));

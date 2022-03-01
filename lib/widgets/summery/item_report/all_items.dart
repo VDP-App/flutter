@@ -54,7 +54,6 @@ class AllItems extends StatelessWidget {
         ];
       },
       length: allProducts.length,
-      idWidth: idWidth,
       rowCellWidth: [
         width5char,
         width5char,

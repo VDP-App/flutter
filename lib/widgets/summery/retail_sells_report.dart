@@ -87,7 +87,6 @@ void openRetailSellsReport(
           ];
         },
       ),
-      idWidth: idWidth,
       rowCellWidth: [width4char, width5char, width8char],
       colorRow: Iterable.generate(
         rows.length + (rowsDeleted.isEmpty ? 0 : (2 + rowsDeleted.length)) + 2,

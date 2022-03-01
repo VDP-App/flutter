@@ -38,7 +38,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
     notifyListeners();
   }
 
-  void _applyChanges();
+  void _applyChanges(String? note);
 
   void _updateCurrentQuntity() {
     _currentQuntity =
@@ -95,12 +95,20 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
       case KeybordKeyValue.enter:
         if (_lastKeyPressed == KeybordKeyValue.enter && !_itemCode.hasItem) {
           if (_changes.isNotEmpty) {
-            shouldProceed("Apply Changes").then((x) {
-              if (x) {
-                _applyChanges();
-                notifyListeners();
-              }
-            });
+            this is StockSetting
+                ? getName("Add a note to remember").then((note) {
+                    if (note == null) return;
+                    shouldProceed("Apply Changes").then((x) {
+                      if (!x) return;
+                      _applyChanges(note);
+                      notifyListeners();
+                    });
+                  })
+                : shouldProceed("Apply Changes").then((x) {
+                    if (!x) return;
+                    _applyChanges(null);
+                    notifyListeners();
+                  });
           }
         } else if (_focusedAt != Focuses.itemNum) {
           _addChanges();
@@ -252,13 +260,14 @@ class StockSetting extends Stocking<StockSettingChanges> {
   }
 
   @override
-  void _applyChanges() async {
+  void _applyChanges(String? note) async {
     _loading = true;
     notifyListeners();
     await handleCloudCall(
       _stockChangesOnCloud.makeChanges(StockChanges(
         [..._changes],
         _stockID,
+        note,
       )),
     );
     _changes.clear();
@@ -405,7 +414,7 @@ class TransferStock extends Stocking<TransferStockChanges> {
   }
 
   @override
-  void _applyChanges() async {
+  void _applyChanges(String? note) async {
     var stocks = _configDoc?.stocks;
     if (stocks == null) return;
     stocks = [...stocks];
@@ -424,7 +433,7 @@ class TransferStock extends Stocking<TransferStockChanges> {
     if (sendStockId != null) {
       await handleCloudCall(_transferStockOnCloud.sendTransfer(
         sendStockId,
-        StockChanges([..._changes], _stockID),
+        StockChanges([..._changes], _stockID, note),
       ));
     }
     _changes.clear();

@@ -34,7 +34,12 @@ void openStockChangesSummeryReport(BuildContext context, List<Entry> entries) {
     final rows = <List<String>>[];
     final colors = <Color?>[];
     for (var entry in entries) {
-      rows.add(["Entry Num: ${entry.entryNum}", " ", " ", " "]);
+      rows.add([
+        "Entry Num: ${entry.entryNum}",
+        " ",
+        entry.note != null ? "NOTE:" : " ",
+        entry.note != null ? entry.note ?? "--" : " ",
+      ]);
       colors.add(Colors.blueAccent);
       final transferFrom = getStockInfo(entry.transferFrom);
       final transferTo = getStockInfo(entry.transferTo);
@@ -72,7 +77,6 @@ void openStockChangesSummeryReport(BuildContext context, List<Entry> entries) {
       pageTitle: isTablet ? "Stock Changes" : "S. Changes",
       titleNames: const ["Name", "+Q", "Set", "To"],
       data2D: rows,
-      idWidth: idWidth,
       rowCellWidth: [width5char, width5char, width5char],
       colorRow: colors,
     );

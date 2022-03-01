@@ -30,12 +30,21 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
         DisplayCell(
           lable: "A",
           value: billing.price,
-          active: billing.focusedAt == Focuses.price,
-          onClick: billing.selectAmount,
+          active: T == WholeSellBilling
+              ? false
+              : billing.focusedAt == Focuses.price,
+          onClick: T == WholeSellBilling ? null : billing.selectAmount,
         ),
       ],
       [
-        DisplayCell(lable: "Rate", value: billing.rate),
+        DisplayCell(
+          lable: "Rate",
+          value: billing.rate,
+          active: T == WholeSellBilling
+              ? billing.focusedAt == Focuses.price
+              : false,
+          onClick: T == WholeSellBilling ? billing.selectAmount : null,
+        ),
         DisplayCell(lable: "Total", value: billing.total),
       ],
     ];

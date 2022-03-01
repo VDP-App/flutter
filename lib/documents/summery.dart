@@ -48,7 +48,8 @@ class SummeryDoc {
       bills.add(bill);
       for (order in bill.orders) {
         _totalIncome -= order.amount.val;
-        getProductReport(order.itemId).addWholeSell(order.quntity.val, i);
+        getProductReport(order.itemId)
+            .addWholeSell(order.quntity, i, bill.note);
       }
       i++;
     }
@@ -59,14 +60,14 @@ class SummeryDoc {
       if (entry.transferFrom != null) {
         for (changes in entry.stockChanges) {
           getProductReport(changes.itemID).addStockRecive(
-            changes.stockInc.val,
+            changes.stockInc,
             i,
           );
         }
       } else if (entry.transferTo != null) {
         for (changes in entry.stockChanges) {
           getProductReport(changes.itemID).addStockSend(
-            changes.stockInc.val,
+            changes.stockInc,
             i,
           );
         }
@@ -75,6 +76,7 @@ class SummeryDoc {
           getProductReport(changes.itemID).addStockChanges(
             changes,
             i,
+            entry.note,
           );
         }
       }

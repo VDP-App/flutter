@@ -5,12 +5,14 @@ import 'package:vdp/providers/make_entries/custom/number.dart';
 class StockChanges<T extends Changes> {
   final List<T> changes;
   final String stockID;
-  const StockChanges(this.changes, this.stockID);
+  final String? note;
+  const StockChanges(this.changes, this.stockID, this.note);
 
   Map<String, dynamic> toJson() {
     return {
       "stockID": stockID,
       "changes": changes.map((e) => e.toJson()).toList(),
+      "note": (note?.isEmpty ?? true) ? null : note,
     };
   }
 

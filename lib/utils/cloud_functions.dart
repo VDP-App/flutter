@@ -156,6 +156,7 @@ class BillingOnCloud {
         "bill": bill.toJson(),
       },
       (data) => Bill(
+        note: bill.note,
         isWholeSell: bill.isWholeSell,
         inCash: bill.inCash,
         moneyGiven: bill.moneyGiven,

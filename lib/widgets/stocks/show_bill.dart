@@ -26,6 +26,7 @@ class ShowBill extends StatelessWidget {
         InfoCell("Bill Type", bill.isWholeSell ? "WholeSell" : "Retail"),
         InfoCell("Created By", getUserInfo(bill.uid)?.name),
         InfoCell("Money Given", rs_ + bill.moneyGiven.text),
+        if (bill.note != null) InfoCell("NOTE", bill.note),
       ],
       trailing: [_BillOrderTable(orders: bill.orders)],
       floatingActionButton: isFixed ? null : const _DeleteButton(),

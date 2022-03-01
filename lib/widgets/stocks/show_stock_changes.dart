@@ -38,6 +38,7 @@ class ShowStockChanges extends StatelessWidget {
           InfoCell("Send From", getStockInfo(sendFrom)?.name),
         ],
         if (sendTo != null) InfoCell("Send To", getStockInfo(sendTo)?.name),
+        if (entry.note != null) InfoCell("NOTE", entry.note)
       ],
       trailing: [_StockChangesTable(changes: entry.stockChanges)],
       floatingActionButton: isFixed ||

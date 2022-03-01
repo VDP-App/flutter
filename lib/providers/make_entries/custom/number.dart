@@ -111,6 +111,10 @@ class FixedNumber extends NumClass {
   final int val;
   const FixedNumber({required this.text, required this.val});
 
+  FixedNumber.copy(FixedNumber x)
+      : text = x.text,
+        val = x.val;
+
   factory FixedNumber.fromDouble(double d) {
     return FixedNumber(text: formate(d), val: (d * 1000).toInt());
   }

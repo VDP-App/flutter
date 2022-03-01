@@ -28,7 +28,7 @@ class CardButton extends StatelessWidget {
       return Expanded(
         child: Card(
           elevation: 8,
-          color: color,
+          color: !isTablet && isLoading ? Colors.grey : color,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
@@ -38,7 +38,7 @@ class CardButton extends StatelessWidget {
                 child: Center(
                   child: Row(
                     children: [
-                      if (isLoading) loadingIconWigit,
+                      if (isLoading && isTablet) loadingIconWigit,
                       T3(title, color: Colors.white),
                     ],
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

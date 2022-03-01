@@ -35,7 +35,7 @@ abstract class Billing extends Modal with ChangeNotifier {
       BuildContext context, this._stockID, this._cashCounterID, this._printBill)
       : super(context);
 
-  Bill get bill;
+  Bill _toBill(String? note);
   bool get loading => _loading;
 
   void update(ProductDoc items) {
@@ -43,13 +43,26 @@ abstract class Billing extends Modal with ChangeNotifier {
     notifyListeners();
   }
 
-  void _bill() async {
+  void _gerenateBill() async {
     _loading = true;
     notifyListeners();
+    String? note;
+    if (this is WholeSellBilling) {
+      note = await getName("Add a note to remember");
+      if (note == null) {
+        _loading = false;
+        notifyListeners();
+        return;
+      }
+    }
     await handleCloudCall(_billingOnCloud
-        .bill(_stockID, _cashCounterID, bill)
+        .bill(_stockID, _cashCounterID, _toBill(note))
         .then((value) => _printBill(value.toGstBill())));
+
     _loading = false;
+    _orders.clear();
+    _fixedTotal.val = _total.val = 0;
+    _resetOrder();
     notifyListeners();
   }
 
@@ -181,10 +194,7 @@ abstract class Billing extends Modal with ChangeNotifier {
     switch (action) {
       case KeybordKeyValue.enter:
         if (_focusedAt == Focuses.transfer && _orders.isNotEmpty) {
-          _bill();
-          _orders.clear();
-          _fixedTotal.val = _total.val = 0;
-          _resetOrder();
+          _gerenateBill();
         } else {
           if (_itemCode.hasItem) {
             _addOrder();
@@ -340,7 +350,7 @@ class RetailBilling extends Billing {
   }
 
   @override
-  Bill get bill {
+  Bill _toBill(String? note) {
     return Bill(
       uid: "",
       billNum: "", // ? while sending request
@@ -348,6 +358,7 @@ class RetailBilling extends Billing {
       inCash: _inCash,
       moneyGiven: FixedNumber.fromInt(_transfer.val),
       orders: [..._orders],
+      note: note,
     );
   }
 
@@ -456,8 +467,26 @@ class WholeSellBilling extends Billing {
     super._onOrderSelect(order);
   }
 
+  // ! period press for rate
   @override
-  Bill get bill {
+  void _onPeriodPress() {
+    switch (focusedAt) {
+      case Focuses.quntity:
+        _quntity.periodPress();
+        break;
+      case Focuses.price:
+        _rate.periodPress();
+        break;
+      case Focuses.transfer:
+        _transfer.periodPress();
+        break;
+      case Focuses.itemNum:
+        break;
+    }
+  }
+
+  @override
+  Bill _toBill(String? note) {
     return Bill(
       uid: "",
       billNum: "", // ? while sending request
@@ -465,11 +494,14 @@ class WholeSellBilling extends Billing {
       inCash: _inCash,
       moneyGiven: FixedNumber.fromInt(_transfer.val),
       orders: [..._orders],
+      note: note,
     );
   }
 
   void _updateRate() {
-    _rate.val = _amount / _quntity;
+    // _rate.val = _amount / _quntity;
+    // ! update amount
+    _amount.val = _rate * _quntity;
   }
 
   @override
@@ -480,8 +512,15 @@ class WholeSellBilling extends Billing {
 
   @override
   void _changeAmountTo(String digit, {int? val}) {
-    super._changeAmountTo(digit, val: val);
+    // super._changeAmountTo(digit, val: val);
+    // ! changeRateTo
+    if (val == null) {
+      _rate.appendDigit(digit);
+    } else {
+      _rate.val = val;
+    }
     _updateRate();
+    _total.val = _fixedTotal + _amount;
   }
 
   @override

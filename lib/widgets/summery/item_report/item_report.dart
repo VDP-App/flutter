@@ -57,7 +57,17 @@ class FullItemReport extends StatelessWidget {
         colors.add(Colors.blueAccent);
         for (var item in productReport.stockChanges.entries) {
           rows.add([
-            emptyCell,
+            item.value.note != null
+                ? DisplayTableCell(
+                    "NOTE: ${item.value.note ?? "--"}",
+                    onTap: () => openEntry(
+                      context,
+                      summeryDoc.entries[item.key],
+                      currentStockID ?? "",
+                      true,
+                    ),
+                  )
+                : emptyCell,
             DisplayTableCell(
               "${item.key}",
               onTap: () => openEntry(

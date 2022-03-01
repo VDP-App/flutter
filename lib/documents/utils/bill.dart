@@ -12,6 +12,7 @@ class Bill extends CompareClass<Bill> {
   final List<Order> orders;
   final String billNum;
   final String uid;
+  final String? note;
   const Bill({
     required this.isWholeSell,
     required this.inCash,
@@ -19,6 +20,7 @@ class Bill extends CompareClass<Bill> {
     required this.orders,
     required this.billNum,
     required this.uid,
+    required this.note,
   });
 
   factory Bill.fromMapEntry(MapEntry<String, dynamic> e) {
@@ -28,11 +30,12 @@ class Bill extends CompareClass<Bill> {
   factory Bill.fromJson(Map<String, dynamic> data, String billNum) {
     return Bill(
       inCash: asBool(data["inC"]),
-      isWholeSell: asBool(data["inWS"]),
+      isWholeSell: asBool(data["isWS"]),
       moneyGiven: FixedNumber.fromInt(asInt(data["mG"])),
       orders: asList(data["o"]).map((e) => Order.fromJson(asMap(e))).toList(),
       billNum: billNum,
       uid: asString(data["uid"]),
+      note: asNullOrString(data["n"]),
     );
   }
 
@@ -46,6 +49,7 @@ class Bill extends CompareClass<Bill> {
 
   Map<String, dynamic> toJson() {
     return {
+      "n": (!isWholeSell || (note?.isEmpty ?? true)) ? null : note, //? note
       "isWS": isWholeSell, //? isWholeSell
       "inC": inCash, //? inCash
       "mG": moneyGiven.val, //? moneyGiven
