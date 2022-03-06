@@ -3,6 +3,7 @@ import 'package:vdp/documents/logs.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
+import 'package:vdp/screens/display_logs.dart';
 import 'package:vdp/utils/display_table.dart';
 import 'package:vdp/utils/page_utils.dart';
 import 'package:vdp/utils/loading.dart';
@@ -45,6 +46,17 @@ class ShowLogs extends StatelessWidget {
           _RemainingStockTable(remainingStock: map)
         ]
       ],
+      floatingActionButton: haveSeen(log)
+          ? null
+          : FloatingActionButton(
+              heroTag: "see",
+              onPressed: () {
+                addSeen(log);
+                Navigator.pop(context, "repaint");
+              },
+              backgroundColor: Colors.blueAccent,
+              child: const Icon(Icons.remove_red_eye_rounded),
+            ),
     );
   }
 

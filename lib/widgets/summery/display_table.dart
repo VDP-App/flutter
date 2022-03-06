@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:vdp/layout.dart';
@@ -7,10 +6,13 @@ import 'package:vdp/main.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
 
-final width4char = isTablet ? 100.0 : 80.0;
-final width5char = isTablet ? 150.0 : 100.0;
-final width6char = isTablet ? 150.0 : 110.0;
-final width8char = isTablet ? 200.0 : 120.0;
+final _widthColumnID = isTablet ? 260.0 : 200.0;
+final _widthColumn = isTablet ? 150.0 : 100.0;
+
+bool _isColumnAvalable(String id, int index) =>
+    sharedPreferences.getBool("column-$id-$index") ?? true;
+Future<void> _setColumnAvalable(String id, int index, bool val) =>
+    sharedPreferences.setBool("column-$id-$index", val);
 
 class TablePageCell {
   final String text;
@@ -27,21 +29,21 @@ class TablePageID {
 }
 
 class TablePage extends StatefulWidget {
+  final Iterable<String> titleNames;
+  final Iterable<TablePageCell> Function(int i) getRow;
   final String pageTitle;
-  final List<String> titleNames;
+  final String id;
   final TablePageID Function(int i) getID;
-  final List<TablePageCell> Function(int i) getRow;
   final int length;
-  final Iterable<double> rowCellWidth;
   final void Function(int i)? onTapRow;
   const TablePage({
     Key? key,
+    required this.id,
     required this.pageTitle,
     required this.titleNames,
     required this.getID,
     required this.getRow,
     required this.length,
-    required this.rowCellWidth,
     this.onTapRow,
   }) : super(key: key);
 
@@ -51,12 +53,12 @@ class TablePage extends StatefulWidget {
     required List<String> titleNames,
     required Iterable<Iterable<String>> data2D,
     Iterable<Color?>? colorRow,
-    required Iterable<double> rowCellWidth,
     void Function(int i)? onTapRow,
+    required String id,
   }) {
     return TablePage(
+      id: id,
       pageTitle: pageTitle,
-      rowCellWidth: rowCellWidth,
       titleNames: titleNames,
       onTapRow: onTapRow,
       getID: colorRow == null
@@ -82,30 +84,73 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
+  var titleNames = <String>[];
+  var getRow = ((int i) => <TablePageCell>[]);
+  var rowCellWidth = <double>[];
+  var mapColumn = <String, int>{};
+  var editMode = false;
+
+  @override
+  void initState() {
+    setState(() {
+      updateColumns();
+    });
+    super.initState();
+  }
+
+  void updateColumns() {
+    titleNames = [widget.titleNames.first];
+    rowCellWidth = [];
+    mapColumn = {};
+    final avalableColumn = List.generate(widget.titleNames.length - 1, (index) {
+      var a = _isColumnAvalable(widget.id, index);
+      if (a) {
+        final name = widget.titleNames.elementAt(index + 1);
+        titleNames.add(name);
+        mapColumn[name] = rowCellWidth.length;
+        rowCellWidth.add(
+            sharedPreferences.getDouble("columnWidth-${widget.id}-$name") ??
+                _widthColumn);
+      }
+      return a;
+    });
+    getRow = (index) {
+      final val = widget.getRow(index);
+      final _val = <TablePageCell>[];
+      for (var i = 0; i < avalableColumn.length; i++) {
+        if (avalableColumn[i]) _val.add(val.elementAt(i));
+      }
+      return _val;
+    };
+  }
+
   var idWidth =
       sharedPreferences.getDouble("idWidth") ?? (isTablet ? 325.0 : 225.0);
 
-  void incWidth() {
-    if (isTablet) {
-      if (idWidth >= 360) return;
-    } else {
-      if (idWidth >= 260) return;
-    }
+  void incIDWidth(double i) {
     setState(() {
-      idWidth += 5;
+      idWidth += i;
       sharedPreferences.setDouble("idWidth", idWidth);
+      if (idWidth > _widthColumnID + 100) {
+        idWidth = _widthColumnID + 100;
+      } else if (idWidth < _widthColumnID) {
+        idWidth = _widthColumnID;
+      }
     });
   }
 
-  void decWidth() {
-    if (isTablet) {
-      if (idWidth <= 300) return;
-    } else {
-      if (idWidth <= 200) return;
-    }
+  void incColumnWidth(double i, String name) {
+    final index = mapColumn[name];
+    if (index == null) return;
     setState(() {
-      idWidth -= 5;
-      sharedPreferences.setDouble("idWidth", idWidth);
+      rowCellWidth[index] += i;
+      sharedPreferences.setDouble(
+          "columnWidth-${widget.id}-$name", rowCellWidth[index]);
+      if (rowCellWidth[index] > _widthColumn + 75) {
+        rowCellWidth[index] = _widthColumn + 75;
+      } else if (rowCellWidth[index] < _widthColumn) {
+        rowCellWidth[index] = _widthColumn;
+      }
     });
   }
 
@@ -113,25 +158,45 @@ class _TablePageState extends State<TablePage> {
   Widget build(BuildContext context) {
     final rigthHandScreenWidth =
         MediaQuery.of(context).size.width - idWidth - 16;
-    final rigthHandWidth = widget.rowCellWidth.reduce((v, e) => v + e) +
+    final rigthHandWidth = rowCellWidth.reduce((v, e) => v + e) +
         (widget.onTapRow == null ? 0 : 16);
     return Scaffold(
-      appBar: AppBar(title: appBarTitle(widget.pageTitle, true), actions: [
-        TextButton(
-          onPressed: decWidth,
-          child: const Icon(
-            Icons.exposure_minus_1_rounded,
-            color: Colors.white,
+      appBar: AppBar(
+        title: appBarTitle(widget.pageTitle, short: true),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                editMode = !editMode;
+              });
+            },
+            child: Icon(
+              editMode ? Icons.check : Icons.swap_horiz_outlined,
+              color: Colors.white,
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: incWidth,
-          child: const Icon(
-            Icons.exposure_plus_1_rounded,
-            color: Colors.white,
-          ),
-        ),
-      ]),
+          PopupMenuButton(
+            itemBuilder: (context) {
+              final names = widget.titleNames;
+              final list = <PopupMenuItem>[];
+              for (var i = 0; i < widget.titleNames.length - 1; i++) {
+                list.add(PopupMenuItem(
+                  child: SelectColumn(
+                      columnName: names.elementAt(i + 1),
+                      id: widget.id,
+                      index: i,
+                      onSelect: () {
+                        setState(() {
+                          updateColumns();
+                        });
+                      }),
+                ));
+              }
+              return list;
+            },
+          )
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: widget.length == 0
@@ -157,7 +222,8 @@ class _TablePageState extends State<TablePage> {
   }
 
   Widget Function(BuildContext context, int i) _makeRowBuilder(
-      Widget Function(int i) builder) {
+    Widget Function(int i) builder,
+  ) {
     if (widget.onTapRow == null) {
       return (_, i) {
         return builder(i);
@@ -172,13 +238,13 @@ class _TablePageState extends State<TablePage> {
   }
 
   Widget _getRow(int i) {
-    final rowData = widget.getRow(i);
+    final rowData = getRow(i);
     final row = <Widget>[];
     for (var i = 0; i < rowData.length; i++) {
-      final cell = rowData[i];
+      final cell = rowData.elementAt(i);
       row.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 14),
-        width: widget.rowCellWidth.elementAt(i),
+        width: rowCellWidth.elementAt(i),
         height: 70,
         child: P3(
           cell.text,
@@ -208,16 +274,48 @@ class _TablePageState extends State<TablePage> {
       Container(
         color: Colors.deepPurple,
         width: idWidth,
-        child: T2(widget.titleNames.first, color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            T2(titleNames.first, color: Colors.white),
+            if (editMode)
+              GestureDetector(
+                onHorizontalDragUpdate: (details) =>
+                    incIDWidth(details.delta.dx),
+                child: const IconT3(
+                  Icons.swap_horizontal_circle_rounded,
+                  color: Colors.redAccent,
+                ),
+              ),
+          ],
+        ),
         padding: const EdgeInsets.all(7),
       ),
     ];
-    for (var i = 1; i < widget.titleNames.length; i++) {
+    for (var i = 1; i < titleNames.length; i++) {
+      final name = titleNames.elementAt(i);
       header.add(
         Container(
           color: Colors.deepPurpleAccent,
-          width: widget.rowCellWidth.elementAt(i - 1),
-          child: T2(widget.titleNames.elementAt(i), color: Colors.white),
+          width: rowCellWidth.elementAt(i - 1),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              T2(
+                editMode && name.length > 3 ? name.substring(0, 3) : name,
+                color: Colors.white,
+              ),
+              if (editMode)
+                GestureDetector(
+                  onHorizontalDragUpdate: (details) =>
+                      incColumnWidth(details.delta.dx, name),
+                  child: const IconT3(
+                    Icons.swap_horizontal_circle_rounded,
+                    color: Colors.redAccent,
+                  ),
+                ),
+            ],
+          ),
           padding: const EdgeInsets.all(7),
           margin:
               widget.onTapRow == null ? null : const EdgeInsets.only(left: 4),
@@ -225,5 +323,54 @@ class _TablePageState extends State<TablePage> {
       );
     }
     return header;
+  }
+}
+
+class SelectColumn extends StatefulWidget {
+  const SelectColumn({
+    Key? key,
+    required this.columnName,
+    required this.id,
+    required this.index,
+    required this.onSelect,
+  }) : super(key: key);
+  final String columnName;
+  final int index;
+  final String id;
+  final void Function() onSelect;
+  @override
+  State<SelectColumn> createState() => _SelectColumnState();
+}
+
+class _SelectColumnState extends State<SelectColumn> {
+  var isSelected = true;
+
+  @override
+  void initState() {
+    setState(() {
+      isSelected = _isColumnAvalable(widget.id, widget.index);
+    });
+    super.initState();
+  }
+
+  void onTap(bool? val) {
+    setState(() {
+      isSelected = val ?? !isSelected;
+      _setColumnAvalable(widget.id, widget.index, isSelected)
+          .whenComplete(() => widget.onSelect());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => onTap(null),
+      child: Row(
+        children: [
+          Checkbox(value: isSelected, onChanged: onTap),
+          Text(widget.columnName),
+        ],
+      ),
+    );
   }
 }

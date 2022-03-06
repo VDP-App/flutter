@@ -8,6 +8,8 @@ import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
 import 'package:vdp/widgets/stocks/show_stock_changes.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/widgets/summery/card_button.dart';
+import 'package:vdp/widgets/summery/stock_changes.dart';
 
 class DisplayStockChanges extends StatelessWidget {
   const DisplayStockChanges({Key? key}) : super(key: key);
@@ -27,6 +29,7 @@ class DisplayStockChanges extends StatelessWidget {
     if (entries == null) return loadingWigit;
     return BuildListPage<Entry>(
       wrapScaffold: true,
+      startWith: const [_StockChangesSummery()],
       buildChild: (context, entry) {
         return ListTilePage(
           leadingWidgit: LeadingWidgit.text(
@@ -56,6 +59,28 @@ class DisplayStockChanges extends StatelessWidget {
       },
       noDataText: "No Entries Found",
       list: entries,
+    );
+  }
+}
+
+class _StockChangesSummery extends StatelessWidget {
+  const _StockChangesSummery({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final stock = Provider.of<Stock>(context);
+    final entries = stock.doc?.entry;
+    return CardButton(
+      iconData: Icons.change_circle_sharp,
+      title: "Stock Changes",
+      subtitle: "${entries?.length} entries",
+      color:
+          entries == null || entries.isEmpty ? Colors.grey : Colors.pinkAccent,
+      onTap: entries == null || entries.isEmpty
+          ? () {}
+          : () => openStockChangesSummeryReport(context, entries, "TODAY"),
     );
   }
 }

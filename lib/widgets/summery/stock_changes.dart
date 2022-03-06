@@ -24,12 +24,14 @@ class StockChangesSummery extends StatelessWidget {
           entries == null || entries.isEmpty ? Colors.grey : Colors.pinkAccent,
       onTap: entries == null || entries.isEmpty
           ? () {}
-          : () => openStockChangesSummeryReport(context, entries),
+          : () => openStockChangesSummeryReport(
+              context, entries, summery.dateInShort),
     );
   }
 }
 
-void openStockChangesSummeryReport(BuildContext context, List<Entry> entries) {
+void openStockChangesSummeryReport(
+    BuildContext context, List<Entry> entries, String? date) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     final rows = <List<String>>[];
     final colors = <Color?>[];
@@ -74,10 +76,10 @@ void openStockChangesSummeryReport(BuildContext context, List<Entry> entries) {
       colors.add(null);
     }
     return TablePage.fromString(
-      pageTitle: isTablet ? "Stock Changes" : "S. Changes",
+      id: "3",
+      pageTitle: isTablet ? "Stock Changes ($date)" : "S. Changes ($date)",
       titleNames: const ["Name", "+Q", "Set", "To"],
       data2D: rows,
-      rowCellWidth: [width5char, width5char, width5char],
       colorRow: colors,
     );
   }));

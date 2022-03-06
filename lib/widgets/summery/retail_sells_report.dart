@@ -32,7 +32,8 @@ class RetailSellsReport extends StatelessWidget {
           : Colors.indigoAccent,
       onTap: summeryDoc == null || productDoc == null || totalSold?.val == 0
           ? () {}
-          : () => openRetailSellsReport(context, summeryDoc, productDoc),
+          : () => openRetailSellsReport(
+              context, summeryDoc, productDoc, summery.dateInShort),
       isLoading: summery.isEmpty == null || productDoc == null,
     );
   }
@@ -42,6 +43,7 @@ void openRetailSellsReport(
   BuildContext context,
   SummeryDoc summeryDoc,
   ProductDoc productDoc,
+  String? date,
 ) {
   final productReports = summeryDoc.productReports;
   void addRows(List<List<String>> _rows, Iterable<Product> products) {
@@ -66,7 +68,9 @@ void openRetailSellsReport(
     final rowsDeleted = <List<String>>[];
     addRows(rowsDeleted, productDoc.deleatedItems);
     return TablePage.fromString(
-      pageTitle: isTablet ? "Retail Sells Report" : "Retail Rep.",
+      id: "2",
+      pageTitle:
+          isTablet ? "Retail Sells Report ($date)" : "Retail Rep. ($date)",
       titleNames: const ["Name", "R", "Q", "A"],
       data2D: Iterable.generate(
         rows.length + (rowsDeleted.isEmpty ? 0 : (2 + rowsDeleted.length)) + 2,
@@ -87,7 +91,6 @@ void openRetailSellsReport(
           ];
         },
       ),
-      rowCellWidth: [width4char, width5char, width8char],
       colorRow: Iterable.generate(
         rows.length + (rowsDeleted.isEmpty ? 0 : (2 + rowsDeleted.length)) + 2,
         (i) {

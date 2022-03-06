@@ -152,6 +152,9 @@ class ListTilePage extends ListTile {
     TrailingWidgit? trailingWidgit,
     Color? color,
   }) : super(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
           key: key,
           tileColor: color,
           onTap: onClick,

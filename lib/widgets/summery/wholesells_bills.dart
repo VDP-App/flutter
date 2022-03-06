@@ -26,13 +26,15 @@ class WholesellBills extends StatelessWidget {
           : Colors.deepOrangeAccent,
       onTap: wholeSellBills == null || wholeSellBills.isEmpty
           ? () {}
-          : () => openWholeSellsReport(context, wholeSellBills),
+          : () => openWholeSellsReport(
+              context, wholeSellBills, summery.dateInShort),
       isLoading: summery.isEmpty == null,
     );
   }
 }
 
-void openWholeSellsReport(BuildContext context, List<Bill> bills) {
+void openWholeSellsReport(
+    BuildContext context, List<Bill> bills, String? date) {
   var netIncome = 0;
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     final rows = <List<String>>[];
@@ -67,11 +69,12 @@ void openWholeSellsReport(BuildContext context, List<Bill> bills) {
     rows.add(["NET INCOME", " ", " ", rs + formate(netIncome / 1000)]);
     colors.add(Colors.deepPurpleAccent);
     return TablePage.fromString(
-      pageTitle: isTablet ? "Wholesell Summery Report" : "Wholesell",
+      id: "4",
+      pageTitle:
+          isTablet ? "Wholesell Summery Report ($date)" : "Wholesell ($date)",
       titleNames: const ["Name", "R", "Q", "A"],
       data2D: rows,
       colorRow: colors,
-      rowCellWidth: [width4char, width5char, width8char],
     );
   }));
 }

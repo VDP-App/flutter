@@ -30,18 +30,18 @@ class SelectLocationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
+    final spaceHight = (MediaQuery.of(context).size.height) / 5;
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView(
         children: [
-          H2(title),
-          const SizedBox(height: 50),
+          SizedBox(height: spaceHight),
+          Center(child: H2(title)),
           ElevatedButton(
             child: H1(text),
             onPressed: action,
           ),
-          const SizedBox(height: 200),
         ],
-        mainAxisAlignment: MainAxisAlignment.center,
       ),
     );
   }

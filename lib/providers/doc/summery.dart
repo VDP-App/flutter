@@ -63,6 +63,8 @@ class Summery with ChangeNotifier {
 
   DateTime? get date => _date;
   String? get dateInString => formateDateTime(_date);
+  String? get dateInShort =>
+      formateDateTime(_date)?.substring(5).replaceFirst("-", "/");
   SummeryDoc? get doc => _doc;
   bool? get isEmpty => _isEmpty;
 

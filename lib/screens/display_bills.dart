@@ -9,10 +9,11 @@ import 'package:vdp/utils/build_list_page.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/bills/income_info.dart';
-import 'package:vdp/widgets/bills/stock_consumed.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
 import 'package:provider/provider.dart';
 import 'package:vdp/widgets/stocks/show_bill.dart';
+import 'package:vdp/widgets/summery/card_button.dart';
+import 'package:vdp/widgets/summery/summery.dart';
 
 class DisplayBills extends StatelessWidget {
   const DisplayBills({Key? key}) : super(key: key);
@@ -33,7 +34,7 @@ class DisplayBills extends StatelessWidget {
       noDataText: "No Bills Found",
       wrapScaffold: true,
       startWith: [
-        const StockConsumed(),
+        const _WholesellBills(),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           IncomeInfo(amount: doc.offlineIncome.text, cashIn: CashIn.offline),
           IncomeInfo(amount: doc.onlineIncome.text, cashIn: CashIn.online)
@@ -58,6 +59,32 @@ class DisplayBills extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _WholesellBills extends StatelessWidget {
+  const _WholesellBills({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var cashCounter = Provider.of<CashCounter>(context);
+    final bills = cashCounter.doc?.bills;
+    final wholeSellBills = <Bill>[];
+    for (var bill in bills ?? <Bill>[]) {
+      if (bill.isWholeSell) wholeSellBills.add(bill);
+    }
+    return CardButton(
+      iconData: Icons.account_balance_wallet_rounded,
+      title: "Wholesell Sells",
+      subtitle: "${wholeSellBills.length} bills",
+      color: bills == null || wholeSellBills.isEmpty
+          ? Colors.grey
+          : Colors.deepOrangeAccent,
+      onTap: bills == null || wholeSellBills.isEmpty
+          ? () {}
+          : () => openWholeSellsReport(context, wholeSellBills, "TODAY"),
+      isLoading: bills == null,
     );
   }
 }

@@ -13,9 +13,11 @@ class AllItems extends StatelessWidget {
     Key? key,
     required this.productDoc,
     required this.summeryDoc,
+    required this.date,
   }) : super(key: key);
   final ProductDoc productDoc;
   final SummeryDoc summeryDoc;
+  final String? date;
 
   Map<String, FixedProductReport> get productReports =>
       summeryDoc.productReports;
@@ -24,7 +26,8 @@ class AllItems extends StatelessWidget {
   Widget build(BuildContext context) {
     final allProducts = productDoc.allProducts;
     return TablePage(
-      pageTitle: "Items Table",
+      id: "1",
+      pageTitle: "Items Table ($date)",
       titleNames: const [
         "Name",
         "Start",
@@ -54,15 +57,6 @@ class AllItems extends StatelessWidget {
         ];
       },
       length: allProducts.length,
-      rowCellWidth: [
-        width5char,
-        width5char,
-        width5char,
-        width5char,
-        width5char,
-        width5char,
-        width5char
-      ],
       onTapRow: (i) => openItemReport(
         context,
         allProducts.elementAt(i),

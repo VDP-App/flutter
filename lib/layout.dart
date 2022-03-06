@@ -257,14 +257,13 @@ class Layout extends StatelessWidget {
 
 String? get currentStockID => sharedPreferences.getString("stockID");
 
-Widget appBarTitle(String string, [short = false]) {
-  if (string.length > 11 && !isTablet) return Text(string);
+Widget appBarTitle(String string, {short = false}) {
   var a = getStockInfo(currentStockID)?.name ?? "NONE";
-  if (short) a = a[0];
-  return Row(
-    children: [
-      Text(string + " - "),
-      Text(a, style: const TextStyle(color: Colors.amber)),
-    ],
-  );
+  return Text(string + "-" + a);
+  // return Row(
+  //   children: [
+  //     Text(string + " - "),
+  //     Text(a, style: const TextStyle(color: Colors.amber)),
+  //   ],
+  // );
 }

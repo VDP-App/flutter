@@ -36,7 +36,6 @@ class DisplayReport extends StatelessWidget {
           RetailSellsReport(),
           WholesellBills(),
           StockChangesSummery(),
-          StockSnapshot(),
         ],
       ),
     );

@@ -26,10 +26,7 @@ class ItemSummery extends StatelessWidget {
       onTap: summeryDoc == null || productDoc == null
           ? () {}
           : () => openItemSummeryReport(
-                context,
-                productDoc,
-                summeryDoc,
-              ),
+              context, productDoc, summeryDoc, summery.dateInShort),
       isLoading: summery.isEmpty == null || productDoc == null,
     );
   }
@@ -39,8 +36,9 @@ void openItemSummeryReport(
   BuildContext context,
   ProductDoc productDoc,
   SummeryDoc summeryDoc,
+  String? date,
 ) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return AllItems(productDoc: productDoc, summeryDoc: summeryDoc);
+    return AllItems(productDoc: productDoc, summeryDoc: summeryDoc, date: date);
   }));
 }

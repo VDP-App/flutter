@@ -42,7 +42,7 @@ class Login extends StatelessWidget {
         child: const T2('Login'),
         onPressed: () {
           auth.login(
-            email: emailController.text,
+            email: emailController.text.trim(),
             password: passwordController.text,
           );
         },
@@ -57,7 +57,7 @@ class Login extends StatelessWidget {
     return TextButton(
       onPressed: () {
         auth.forgotPassword(
-          email: emailController.text,
+          email: emailController.text.trim(),
         );
       },
       child: const P3('Forgot Password'),
@@ -65,18 +65,7 @@ class Login extends StatelessWidget {
   }
 
   Widget passwordField(TextEditingController passwordController) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-      child: TextField(
-        obscureText: true,
-        controller: passwordController,
-        style: TextStyle(fontSize: fontSizeOf.t2),
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Password',
-        ),
-      ),
-    );
+    return Password(passwordController: passwordController);
   }
 
   Widget emailField(TextEditingController emailController) {
@@ -101,6 +90,46 @@ class Login extends StatelessWidget {
         'Log in',
         color: Colors.deepPurple,
         fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+}
+
+class Password extends StatefulWidget {
+  const Password({Key? key, required this.passwordController})
+      : super(key: key);
+  final TextEditingController passwordController;
+  @override
+  State<Password> createState() => _PasswordState();
+}
+
+class _PasswordState extends State<Password> {
+  var showPassword = false;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: TextField(
+        obscureText: !showPassword,
+        controller: widget.passwordController,
+        style: TextStyle(fontSize: fontSizeOf.t2),
+        decoration: InputDecoration(
+          suffixIcon: TextButton(
+            onPressed: () {
+              setState(() {
+                showPassword = !showPassword;
+              });
+            },
+            child: IconT2(
+              showPassword
+                  ? Icons.remove_red_eye_outlined
+                  : Icons.remove_red_eye,
+              color: Colors.black,
+            ),
+          ),
+          border: const OutlineInputBorder(),
+          labelText: 'Password',
+        ),
       ),
     );
   }
