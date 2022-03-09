@@ -123,7 +123,7 @@ class SummerizeDoc {
     }
     final _stockSnapShot = asMap(parseJson(jsonList.last?["stockSnapShot"]));
     final totalProductReport = <String, TotalProductReport>{};
-    for (var itemID in itemIDs) {
+    for (var itemID in {...itemIDs, ..._stockSnapShot.keys}) {
       totalProductReport[itemID] = TotalProductReport(
         endStock: asInt(_stockSnapShot[itemID]),
         itemID: itemID,
