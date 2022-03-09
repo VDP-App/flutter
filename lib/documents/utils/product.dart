@@ -117,7 +117,7 @@ class Product {
   int quntityFor({required int amount, bool useingRate2 = false}) =>
       (amount * 1000) ~/ (useingRate2 ? _rate2 : _rate1);
 
-  // 1 <=> 1000 => 500500 <=> Rs. 500.50
+  // ! 1 <=> 1000 => 500500 <=> Rs. 500.50
   int amountFor({required int quntity, bool useingRate2 = false}) =>
       quntity * (useingRate2 ? _rate2 : _rate1) ~/ 1000;
 

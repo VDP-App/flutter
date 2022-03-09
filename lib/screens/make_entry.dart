@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/doc/config.dart';
-import 'package:vdp/widgets/make_entry/ui.dart';
+import 'package:vdp/widgets/make_entry/ui/ui.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
 import 'package:vdp/widgets/selectors/select_entry_mode.dart';
 import 'package:vdp/providers/apis/auth.dart';

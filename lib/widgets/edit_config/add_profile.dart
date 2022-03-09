@@ -52,7 +52,6 @@ class _ShowInfo extends StatelessWidget {
         ),
         elevation: 16,
         style: TextStyle(color: Colors.deepPurple, fontSize: fontSizeOf.h1),
-        // itemHeight: fontSizeOf.x1,
         onChanged: onChange,
         items: const [
           DropdownMenuItem(

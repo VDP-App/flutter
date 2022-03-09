@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vdp/providers/doc/summery.dart';
+import 'package:vdp/providers/doc/summerize.dart';
 import 'package:vdp/widgets/summery/card_button.dart';
 
 class PickDate extends StatelessWidget {
@@ -8,27 +8,36 @@ class PickDate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final summery = Provider.of<Summery>(context);
+    final summerize = Provider.of<Summerize>(context);
     return CardButton(
-      iconData: summery.date == null ? Icons.warning : Icons.date_range_rounded,
-      title: summery.dateInString ?? "Select Date!!",
+      iconData: summerize.dateTimeRange == null
+          ? Icons.warning
+          : Icons.date_range_rounded,
+      title: summerize.dateTimeRangeInShort ?? "Select Date!!",
       subtitle: "Tap to Change Date",
       color: Colors.black,
-      onTap: () => _launchDatePicker(context, summery.date, summery.changeDate),
-      isLoading: summery.isEmpty == null,
+      onTap: () => _launchDateRangePicker(
+        context,
+        summerize.dateTimeRange,
+        summerize.changeDate,
+      ),
     );
   }
 }
 
-void _launchDatePicker(
+void _launchDateRangePicker(
   BuildContext context,
-  DateTime? initialDate,
-  void Function(DateTime dateTime) onChange,
+  DateTimeRange? initialDateRange,
+  void Function(DateTimeRange dateTime) onChange,
 ) {
   final yesterday = DateTime.now().add(const Duration(days: -1, minutes: -10));
-  showDatePicker(
+  showDateRangePicker(
     context: context,
-    initialDate: initialDate ?? yesterday,
+    initialDateRange: initialDateRange ??
+        DateTimeRange(
+          start: yesterday,
+          end: yesterday,
+        ),
     firstDate: DateTime(2022, 02, 14),
     lastDate: yesterday,
   ).then((value) {

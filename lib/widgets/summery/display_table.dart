@@ -163,39 +163,47 @@ class _TablePageState extends State<TablePage> {
     return Scaffold(
       appBar: AppBar(
         title: appBarTitle(widget.pageTitle, short: true),
-        actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                editMode = !editMode;
-              });
-            },
-            child: Icon(
-              editMode ? Icons.check : Icons.swap_horiz_outlined,
-              color: Colors.white,
-            ),
-          ),
-          PopupMenuButton(
-            itemBuilder: (context) {
-              final names = widget.titleNames;
-              final list = <PopupMenuItem>[];
-              for (var i = 0; i < widget.titleNames.length - 1; i++) {
-                list.add(PopupMenuItem(
-                  child: SelectColumn(
-                      columnName: names.elementAt(i + 1),
-                      id: widget.id,
-                      index: i,
-                      onSelect: () {
-                        setState(() {
-                          updateColumns();
-                        });
-                      }),
-                ));
-              }
-              return list;
-            },
-          )
-        ],
+        actions: editMode
+            ? <Widget>[
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      editMode = false;
+                    });
+                  },
+                  child: const Icon(Icons.check, color: Colors.white),
+                ),
+                PopupMenuButton(
+                  itemBuilder: (context) {
+                    final names = widget.titleNames;
+                    final list = <PopupMenuItem>[];
+                    for (var i = 0; i < widget.titleNames.length - 1; i++) {
+                      list.add(PopupMenuItem(
+                        child: SelectColumn(
+                            columnName: names.elementAt(i + 1),
+                            id: widget.id,
+                            index: i,
+                            onSelect: () {
+                              setState(() {
+                                updateColumns();
+                              });
+                            }),
+                      ));
+                    }
+                    return list;
+                  },
+                )
+              ]
+            : <Widget>[
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      editMode = true;
+                    });
+                  },
+                  child: const Icon(Icons.settings, color: Colors.white),
+                ),
+              ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdp/widgets/make_entry/keybord/builder.dart';
+import 'package:vdp/widgets/make_entry/ui/builder.dart';
 import 'package:vdp/utils/cloud_functions.dart';
 import 'package:vdp/utils/modal.dart';
 

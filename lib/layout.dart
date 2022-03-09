@@ -83,7 +83,6 @@ class Layout extends StatelessWidget {
       },
       child: Row(
         children: [
-          const Spacer(),
           const Flexible(
             flex: 2,
             child: IconP3(Icons.print, color: Colors.deepPurpleAccent),
@@ -121,7 +120,6 @@ class Layout extends StatelessWidget {
       },
       child: Row(
         children: [
-          const Spacer(),
           const Flexible(
             flex: 2,
             child: IconP3(Icons.settings, color: Colors.brown),
@@ -194,18 +192,19 @@ class Layout extends StatelessWidget {
             if (claims.hasManagerAuthorization) ...[
               divider,
               listTile(context, Pages.items, page),
-              listTile(context, Pages.logs, page),
+              if (claims.isAdmin) listTile(context, Pages.logs, page),
               listTile(context, Pages.summery, page),
             ],
+            divider,
+            listTile(context, Pages.profile, page),
             if (claims.hasAdminAuthorization) ...[
-              divider,
-              listTile(context, Pages.profile, page),
               listTile(context, Pages.shop, page),
               listTile(context, Pages.users, page)
             ],
             divider,
             printer(blutoothProvider, context),
             printerOption(blutoothProvider, context),
+            divider,
             if (claims.hasAdminAuthorization)
               selectLocation(() {
                 Navigator.pop(context);
@@ -258,12 +257,6 @@ class Layout extends StatelessWidget {
 String? get currentStockID => sharedPreferences.getString("stockID");
 
 Widget appBarTitle(String string, {short = false}) {
-  var a = getStockInfo(currentStockID)?.name ?? "NONE";
-  return Text(string + "-" + a);
-  // return Row(
-  //   children: [
-  //     Text(string + " - "),
-  //     Text(a, style: const TextStyle(color: Colors.amber)),
-  //   ],
-  // );
+  var a = getStockInfo(currentStockID)?.name;
+  return Text(string + (a == null ? "" : "- $a"));
 }

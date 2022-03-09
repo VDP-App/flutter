@@ -25,10 +25,11 @@ class GridSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Padding(
       padding: isTablet ? const EdgeInsets.all(15) : const EdgeInsets.all(8),
       child: GridView.count(
-        crossAxisCount: 3,
+        crossAxisCount: size.width < size.height ? 3 : 5,
         mainAxisSpacing: isTablet ? 20 : 8,
         crossAxisSpacing: isTablet ? 20 : 8,
         children: List.generate(length, (index) {

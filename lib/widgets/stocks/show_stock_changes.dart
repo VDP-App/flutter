@@ -63,17 +63,21 @@ class _StockChangesTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DisplayTable(
-      titleNames: const ["Name", "B", "+Q", "A"],
+      titleNames: const ["Name", "+Q", "Set", "To"],
       data2D: changes.map(
         (e) => [
           DisplayTableCell(e.item.name),
-          DisplayTableCell(e.stockBefore.text),
           DisplayTableCell(
             e.stockInc.val.isNegative ? e.stockInc.text : "+" + e.stockInc.text,
             color: e.stockInc.val.isNegative ? Colors.red : Colors.green[700],
             fontWeight: FontWeight.w500,
           ),
-          DisplayTableCell(e.stockAfter.text),
+          DisplayTableCell(
+            e.type == StockSetType.setStock ? e.stockBefore.text : " ",
+          ),
+          DisplayTableCell(
+            e.type == StockSetType.setStock ? e.stockAfter.text : " ",
+          ),
         ],
       ),
     );

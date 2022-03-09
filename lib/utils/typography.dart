@@ -103,12 +103,21 @@ class T2 extends TypoText {
 }
 
 class T3 extends TypoText {
-  const T3(this.text, {Key? key, this.color}) : super(key: key);
+  const T3(this.text, {Key? key, this.color, this.fontFamily})
+      : super(key: key);
   final Color? color;
   final String text;
+  final String? fontFamily;
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: TextStyle(fontSize: fontSizeOf.t3, color: color));
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: fontSizeOf.t3,
+        color: color,
+        fontFamily: fontFamily,
+      ),
+    );
   }
 }
 

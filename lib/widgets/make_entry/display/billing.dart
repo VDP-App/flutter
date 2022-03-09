@@ -22,13 +22,13 @@ class BillingDisplay<T extends Billing> extends DisplayClass {
       [DisplayCell(lable: "Name", value: billing.name)],
       [
         DisplayCell(
-          lable: "Q",
+          lable: "Qty",
           value: billing.quntity,
           active: billing.focusedAt == Focuses.quntity,
           onClick: billing.selectQuntity,
         ),
         DisplayCell(
-          lable: "A",
+          lable: "Amount",
           value: billing.price,
           active: T == WholeSellBilling
               ? false

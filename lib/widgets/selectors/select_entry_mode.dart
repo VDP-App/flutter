@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/layout.dart';
+import 'package:vdp/main.dart';
 
 enum SelectedType { retailBill, wholeSellBill, setStock, transfer, cancleBill }
 
@@ -85,10 +86,13 @@ class SelectEntryMode extends StatelessWidget {
       ));
       arr.add(const Divider(thickness: 1));
     }
-    arr.add(Expanded(
-      child: Container(),
-      flex: arr.length ~/ 2,
-    ));
+    final size = MediaQuery.of(context).size;
+    if (size.width < size.height || isTablet) {
+      arr.add(Expanded(
+        child: Container(),
+        flex: arr.length ~/ 2,
+      ));
+    }
     return Scaffold(
       appBar: AppBar(title: appBarTitle("Select Mode")),
       body: Padding(

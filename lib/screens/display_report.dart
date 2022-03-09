@@ -6,10 +6,10 @@ import 'package:vdp/widgets/selectors/open_location_selector.dart';
 import 'package:vdp/widgets/summery/summery.dart';
 
 // ! previous Date
+// ?    item-report => Table
 // ?    retail-sells => Table
 // ?    whole-sells => List
 // ?    stockChanges => List
-// ?    stockAtEnd => Table
 
 class DisplayReport extends StatelessWidget {
   const DisplayReport({Key? key}) : super(key: key);

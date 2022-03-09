@@ -91,8 +91,8 @@ class DisplayCell extends StatelessWidget {
                   child: _widget,
                 )
               : GestureDetector(
-                  child: _widget,
                   onTap: onClick,
+                  child: _widget,
                 ),
     );
   }

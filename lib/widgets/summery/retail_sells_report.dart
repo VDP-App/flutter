@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vdp/documents/product.dart';
-import 'package:vdp/documents/summery.dart';
+import 'package:vdp/documents/summerize.dart';
 import 'package:vdp/documents/utils/product.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/providers/doc/products.dart';
-import 'package:vdp/providers/doc/summery.dart';
+import 'package:vdp/providers/doc/summerize.dart';
 import 'package:vdp/providers/make_entries/custom/number.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:vdp/widgets/summery/card_button.dart';
@@ -18,34 +18,34 @@ class RetailSellsReport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final summery = Provider.of<Summery>(context);
+    final summerize = Provider.of<Summerize>(context);
     final products = Provider.of<Products>(context);
     final productDoc = products.doc;
-    final summeryDoc = summery.doc;
-    final totalSold = summeryDoc?.totalRetailIncome;
+    final summerizeDoc = summerize.doc;
+    if (summerizeDoc == null || productDoc == null) return const SizedBox();
+    final totalSold = summerizeDoc.totalRetailIncome;
     return CardButton(
       iconData: Icons.store,
       title: "Retail Sells",
       subtitle: "Net Income $rs $totalSold",
-      color: summeryDoc == null || totalSold?.val == 0
-          ? Colors.grey
-          : Colors.indigoAccent,
-      onTap: summeryDoc == null || productDoc == null || totalSold?.val == 0
+      color: totalSold.val == 0 ? Colors.grey : Colors.indigoAccent,
+      onTap: totalSold.val == 0
           ? () {}
           : () => openRetailSellsReport(
-              context, summeryDoc, productDoc, summery.dateInShort),
-      isLoading: summery.isEmpty == null || productDoc == null,
+                context,
+                summerizeDoc,
+                productDoc,
+              ),
     );
   }
 }
 
 void openRetailSellsReport(
   BuildContext context,
-  SummeryDoc summeryDoc,
+  SummerizeDoc summerizeDoc,
   ProductDoc productDoc,
-  String? date,
 ) {
-  final productReports = summeryDoc.productReports;
+  final productReports = summerizeDoc.productReports;
   void addRows(List<List<String>> _rows, Iterable<Product> products) {
     for (var item in products) {
       final retails = productReports[item.id]?.retail;
@@ -69,8 +69,7 @@ void openRetailSellsReport(
     addRows(rowsDeleted, productDoc.deleatedItems);
     return TablePage.fromString(
       id: "2",
-      pageTitle:
-          isTablet ? "Retail Sells Report ($date)" : "Retail Rep. ($date)",
+      pageTitle: isTablet ? "Retail Sells Report" : "Retail Rep.",
       titleNames: const ["Name", "R", "Q", "A"],
       data2D: Iterable.generate(
         rows.length + (rowsDeleted.isEmpty ? 0 : (2 + rowsDeleted.length)) + 2,
@@ -87,7 +86,7 @@ void openRetailSellsReport(
             "NET INCOME",
             " ",
             " ",
-            rs + summeryDoc.totalRetailIncome.text
+            rs + summerizeDoc.totalRetailIncome.text
           ];
         },
       ),

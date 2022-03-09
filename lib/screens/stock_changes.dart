@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/stock_entry.dart';
+import 'package:vdp/documents/utils/summerize_report.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/doc/stock.dart';
 import 'package:vdp/utils/build_list_page.dart';
@@ -75,12 +76,15 @@ class _StockChangesSummery extends StatelessWidget {
     return CardButton(
       iconData: Icons.change_circle_sharp,
       title: "Stock Changes",
-      subtitle: "${entries?.length} entries",
+      subtitle: "Tap to see all changes",
       color:
           entries == null || entries.isEmpty ? Colors.grey : Colors.pinkAccent,
       onTap: entries == null || entries.isEmpty
           ? () {}
-          : () => openStockChangesSummeryReport(context, entries, "TODAY"),
+          : () => openStockChangesSummeryReport(
+                context,
+                [SummeryOf("Today", entries)]
+              ),
     );
   }
 }

@@ -64,7 +64,6 @@ class TransferStockChanges extends Changes {
   Map<String, dynamic> toJson() {
     return {
       "iId": itemId,
-      // !
       "send": sendQuntity.val,
     };
   }

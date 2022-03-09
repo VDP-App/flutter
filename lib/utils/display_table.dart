@@ -117,7 +117,6 @@ class DisplayTable extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              // dividerThickness: 1,
               columns: columns2,
               rows: rows2,
               border: TableBorder.all(borderRadius: BorderRadius.circular(5)),

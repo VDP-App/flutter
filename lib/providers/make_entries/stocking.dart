@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/widgets/make_entry/display/stock.dart';
-import 'package:vdp/widgets/make_entry/keybord/builder.dart';
+import 'package:vdp/widgets/make_entry/ui/builder.dart';
 import 'package:vdp/widgets/selectors/select_stock_changes.dart';
 import 'package:vdp/documents/config.dart';
 import 'package:vdp/documents/product.dart';

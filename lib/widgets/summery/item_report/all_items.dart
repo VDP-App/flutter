@@ -1,86 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/product.dart';
-import 'package:vdp/documents/summery.dart';
-import 'package:vdp/documents/utils/product.dart';
-import 'package:vdp/documents/utils/report.dart';
+import 'package:vdp/documents/summerize.dart';
+import 'package:vdp/documents/utils/summerize_report.dart';
 import 'package:vdp/layout.dart';
-import 'package:vdp/providers/make_entries/custom/number.dart';
 import 'package:vdp/widgets/summery/display_table.dart';
 import 'package:vdp/widgets/summery/item_report/item_report.dart';
 
 class AllItems extends StatelessWidget {
-  const AllItems({
-    Key? key,
-    required this.productDoc,
-    required this.summeryDoc,
-    required this.date,
-  }) : super(key: key);
+  const AllItems(
+      {Key? key, required this.productDoc, required this.summerizeDoc})
+      : super(key: key);
   final ProductDoc productDoc;
-  final SummeryDoc summeryDoc;
-  final String? date;
+  final SummerizeDoc summerizeDoc;
 
   Map<String, FixedProductReport> get productReports =>
-      summeryDoc.productReports;
+      summerizeDoc.productReports;
 
   @override
   Widget build(BuildContext context) {
     final allProducts = productDoc.allProducts;
     return TablePage(
       id: "1",
-      pageTitle: "Items Table ($date)",
+      pageTitle: "Items Table",
       titleNames: const [
         "Name",
         "Start",
+        "Recive",
+        "+Int.",
+        "-Int.",
         "Retail",
         "Whole",
-        "Int.",
         "Send",
-        "Recive",
+        "Err.",
         "End",
       ],
       getID: (i) => TablePageID(allProducts.elementAt(i).name),
       getRow: (i) {
         final item = allProducts.elementAt(i);
-        final itemReport = productReports[item.id];
-        final endStock =
-            summeryDoc.stockAtEnd[item.id] ?? FixedNumber.fromInt(0);
-        final startStock = FixedNumber.fromInt(
-            endStock.val - (itemReport?.netQuntityChange ?? 0));
+        final productOverview = summerizeDoc.getTotalReportOf(item);
         return [
-          TablePageCell(startStock.text, color: Colors.red),
-          TablePageCell(itemReport?.totalRetail.negateText ?? "--"),
-          TablePageCell(itemReport?.totalWholeSell.negateText ?? "--"),
-          TablePageCell(itemReport?.totalStockChanges.text ?? "--"),
-          TablePageCell(itemReport?.totalStockSend.text ?? "--"),
-          TablePageCell(itemReport?.totalStockRecive.text ?? "--"),
-          TablePageCell(endStock.text, color: Colors.red),
+          TablePageCell(productOverview?.startStock.text ?? "--",
+              color: Colors.red),
+          TablePageCell(productOverview?.totalStockRecive.text ?? "--"),
+          TablePageCell(productOverview?.totalStockInternalyAdded.text ?? "--"),
+          TablePageCell(
+              productOverview?.totalStockInternalyRemoved.text ?? "--"),
+          TablePageCell(productOverview?.totalRetail.negateText ?? "--"),
+          TablePageCell(productOverview?.totalWholeSell.negateText ?? "--"),
+          TablePageCell(productOverview?.totalStockSend.text ?? "--"),
+          TablePageCell(productOverview?.totalStockInternalErr.text ?? "--"),
+          TablePageCell(productOverview?.endStock.text ?? "--",
+              color: Colors.red),
         ];
       },
       length: allProducts.length,
-      onTapRow: (i) => openItemReport(
-        context,
-        allProducts.elementAt(i),
-        summeryDoc,
-      ),
+      onTapRow: (i) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return Scaffold(
+              appBar: AppBar(title: appBarTitle("Item Report")),
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FullItemReport(
+                  product: allProducts.elementAt(i),
+                  summerizeDoc: summerizeDoc,
+                ),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
-}
-
-void openItemReport(
-  BuildContext context,
-  Product item,
-  SummeryDoc summeryDoc,
-) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) {
-      return Scaffold(
-        appBar: AppBar(title: appBarTitle("Item Report")),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FullItemReport(product: item, summeryDoc: summeryDoc),
-        ),
-      );
-    }),
-  );
 }

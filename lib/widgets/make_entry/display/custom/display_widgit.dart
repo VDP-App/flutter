@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/providers/apis/auth.dart';
 import 'package:provider/provider.dart';
+import 'package:vdp/utils/typography.dart';
 import 'custom.dart';
 
 class DisplayText extends StatelessWidget {
@@ -10,16 +11,24 @@ class DisplayText extends StatelessWidget {
   final Text text;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: double.infinity,
-      child: FittedBox(
-        fit: BoxFit.fill,
-        child: Container(
-          color: bgColor,
-          child: text,
-        ),
+    return Container(
+      color: bgColor,
+      child: T3(
+        text.data ?? " ",
+        color: text.style?.color,
+        fontFamily: text.style?.fontFamily,
       ),
     );
+    // return SizedBox(
+    //   height: double.infinity,
+    //   child: FittedBox(
+    //     fit: BoxFit.fill,
+    //     child: Container(
+    //       color: bgColor,
+    //       child: text,
+    //     ),
+    //   ),
+    // );
   }
 }
 

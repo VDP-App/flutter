@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/utils/bill.dart';
 import 'package:vdp/documents/utils/product.dart';
+import 'package:vdp/documents/utils/summerize_report.dart';
 import 'package:vdp/providers/apis/bill_provider.dart';
 import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/apis/location.dart';
@@ -52,7 +53,6 @@ class DisplayBills extends StatelessWidget {
             question: "Print Bill?",
             action: () {
               return printBill(bill.toGstBill(), true);
-              // return cashCounter.cancelBill(bill.billNum);
             },
             color: Colors.deepPurpleAccent,
             icon: const Icon(Icons.print),
@@ -83,7 +83,8 @@ class _WholesellBills extends StatelessWidget {
           : Colors.deepOrangeAccent,
       onTap: bills == null || wholeSellBills.isEmpty
           ? () {}
-          : () => openWholeSellsReport(context, wholeSellBills, "TODAY"),
+          : () => openWholeSellsReport(
+              context, [SummeryOf("Today", wholeSellBills)]),
       isLoading: bills == null,
     );
   }

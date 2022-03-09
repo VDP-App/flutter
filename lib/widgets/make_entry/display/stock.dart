@@ -30,14 +30,14 @@ class StockDisplay<T extends Stocking> extends DisplayClass {
           DisplayCell(
             lable: T == TransferStock
                 ? "Send"
-                : stocking.focusedAt == Focuses.addQuntity
-                    ? "Add"
-                    : "Change",
+                : stocking.focusedAt == Focuses.setQuntity
+                    ? "Err"
+                    : "Add",
             value: stocking.addedQuntity,
             active: stocking.focusedAt == Focuses.addQuntity,
           ),
           DisplayCell(
-            lable: stocking.focusedAt == Focuses.setQuntity ? "Set" : "Final",
+            lable: stocking.focusedAt == Focuses.setQuntity ? "Set" : "End",
             value: stocking.setQuntity,
             active: stocking.focusedAt == Focuses.setQuntity,
           ),
