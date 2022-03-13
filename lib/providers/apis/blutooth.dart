@@ -11,9 +11,11 @@ import 'package:vdp/utils/typography.dart';
 import 'package:intl/intl.dart';
 
 bool get _spaceInOrder => sharedPreferences.getBool("bill-space-item") ?? true;
+bool get _biggerPage => sharedPreferences.getBool("bill-bigger-page") ?? false;
 // bool get _spaceInGst => sharedPreferences.getBool("bill-sapce-gst") ?? true;
 void _setSpaceInOrder(bool c) =>
     sharedPreferences.setBool("bill-space-item", c);
+void _setBiggerPage(bool c) => sharedPreferences.setBool("bill-bigger-page", c);
 // void _setSpaceInGst(bool c) => sharedPreferences.setBool("bill-sapce-gst", c);
 
 final dateFormat = DateFormat("dd/MM/yyyy").format;
@@ -25,77 +27,148 @@ extension on BlueThermalPrinter {
   }
 
   Future<void> printInit(String billNum, bool isCopy) async {
-    await printNewLine();
-    await printCustom("VARDAIYINI DAIRY PRODUCTS", 3, 1);
-    await printCustom("VINAYAK COMPLEX BAREJA 382425", 1, 1);
-    await printLeftRight("DIST.AHMEDABAD", "MO.7201925410", 1);
-    await printLeftRight("", "9898021278", 1);
-    await printCustom("GSTIN 244ADEPP4838L127", 1, 0);
-    await printDivider();
-    if (isCopy) {
-      final now = DateTime.now();
-      await printLeftRight("BILL NO: -${parseCode(billNum)}", "**COPY**", 1);
-      await printCustom("DATE:${dateFormat(now)}", 1, 0);
+    if (_biggerPage) {
+      await printCustom("VARDAIYINI DAIRY PRODUCTS", 3, 1);
+      await printCustom("VINAYAK COMPLEX BAREJA 382425", 1, 1);
+      await printLeftRight("DIST.AHMEDABAD", "MO.7201925410", 1);
+      await printCustom("GSTIN 244ADEPP4838L127 9898021278", 1, 1);
+      await printDivider();
+      if (isCopy) {
+        final now = DateTime.now();
+        await printLeftRight("BILL NO: -${parseCode(billNum)}", "**COPY**", 1);
+        await printLeftRight("DATE:${dateFormat(now)}", "", 1);
+      } else {
+        final now = DateTime.now();
+        await printLeftRight("BILL NO: -${parseCode(billNum)}", "", 1);
+        await printLeftRight(
+            "DATE:${dateFormat(now)}", "TIME: ${timeFormate(now)}", 1);
+      }
+      await printDivider();
+      await print3Column("ITEM  QTY", "RATE", "AMOUNT", 1);
+      await printDivider();
     } else {
-      final now = DateTime.now();
-      await printCustom("BILL NO: -${parseCode(billNum)}", 1, 0);
-      await printLeftRight(
-          "DATE:${dateFormat(now)}", "TIME: ${timeFormate(now)}", 1);
+      await printNewLine();
+      await printCustom("VARDAIYINI DAIRY PRODUCTS", 3, 1);
+      await printCustom("VINAYAK COMPLEX BAREJA 382425", 1, 1);
+      await printLeftRight("DIST.AHMEDABAD", "MO.7201925410", 1);
+      await printLeftRight("", "9898021278", 1);
+      await printCustom("GSTIN 244ADEPP4838L127", 1, 0);
+      await printDivider();
+      if (isCopy) {
+        final now = DateTime.now();
+        await printLeftRight("BILL NO: -${parseCode(billNum)}", "**COPY**", 1);
+        await printCustom("DATE:${dateFormat(now)}", 1, 0);
+      } else {
+        final now = DateTime.now();
+        await printCustom("BILL NO: -${parseCode(billNum)}", 1, 0);
+        await printLeftRight(
+            "DATE:${dateFormat(now)}", "TIME: ${timeFormate(now)}", 1);
+      }
+      await printDivider();
+      await print3Column("ITEM  QTY", "RATE", "AMOUNT", 1,
+          format: "%-10s %10s %10s");
+      await printDivider();
     }
-    await printDivider();
-    await print3Column("ITEM  QTY", "RATE", "AMOUNT", 1,
-        format: "%-10s %10s %10s");
-    await printDivider();
   }
 
   Future<void> printOrder(GSTBill gstBill) async {
-    final space = _spaceInOrder;
-    final formate = space ? "%-10s %10s %10s %n" : "%-10s %10s %10s";
-    for (var order in gstBill.bill.orders) {
-      await printCustom(order.item.name, 3, 0);
-      await print3Column(
-        order.quntity.toIntl(p2: false),
-        order.rate.toIntl(),
-        order.amount.toIntl(),
-        3,
-        format: formate,
-      );
-      if (!space) await printNewLine();
+    if (_biggerPage) {
+      for (var order in gstBill.bill.orders) {
+        await printCustom(
+            ("".padLeft(8)) + order.item.name.padRight(40).substring(0, 40),
+            3,
+            0);
+        await print3Column(
+          order.quntity.toIntl(p2: false),
+          order.rate.toIntl(),
+          order.amount.toIntl(),
+          3,
+        );
+      }
+      await printDivider();
+      await printLeftRight("SUB TOTAL", gstBill.totalAmount.toIntl(), 3);
+    } else {
+      final space = _spaceInOrder;
+      final formate = space ? "%-10s %10s %10s %n" : "%-10s %10s %10s";
+      for (var order in gstBill.bill.orders) {
+        await printCustom(order.item.name, 3, 0);
+        await print3Column(
+          order.quntity.toIntl(p2: false),
+          order.rate.toIntl(),
+          order.amount.toIntl(),
+          3,
+          format: formate,
+        );
+        if (!space) await printNewLine();
+      }
+      await printDivider();
+      await printLeftRight("SUB TOTAL", gstBill.totalAmount.toIntl(), 3);
     }
-    await printDivider();
-    await printLeftRight("SUB TOTAL", gstBill.totalAmount.toIntl(), 3);
   }
 
   Future<void> printTaxes(GSTBill gstBill) async {
-    // final space = _spaceInGst;
-    // final formate = space ? "%5s %5s %-10s %4s %n" : "%5s %6s %-8s %4s";
-    await printLeftRight("TAXABLE RS", gstBill.totalTaxable.toIntl(), 1);
-    await printNewLine();
-    for (var gst in gstBill.gst.toList()) {
-      await print4Column(
-        gst.type.name,
-        "@ ${gst.gst}",
-        gst.taxableAmount.toIntl(),
-        gst.tax.toIntl(),
-        1,
-        // format: formate,
-        format: "%5s %5s %-10s %4s %n",
-      );
+    if (_biggerPage) {
+      await printLeftRight("TAXABLE RS", gstBill.totalTaxable.toIntl(), 1);
+      await printNewLine();
+      for (var gst in gstBill.gst.toList()) {
+        await print4Column(
+          gst.type.name,
+          "@ ${gst.gst}",
+          gst.taxableAmount.toIntl(),
+          gst.tax.toIntl(),
+          1,
+          // format: formate,
+          format: "%5s %-7s %-10s %4s %n",
+        );
+      }
+      await printDivider();
+      await printLeftRight("TOTAL TAX", gstBill.totalTax.toIntl(), 1);
+    } else {
+      // final space = _spaceInGst;
+      // final formate = space ? "%5s %5s %-10s %4s %n" : "%5s %6s %-8s %4s";
+      await printLeftRight("TAXABLE RS", gstBill.totalTaxable.toIntl(), 1);
+      await printNewLine();
+      for (var gst in gstBill.gst.toList()) {
+        await print4Column(
+          gst.type.name,
+          "@ ${gst.gst}",
+          gst.taxableAmount.toIntl(),
+          gst.tax.toIntl(),
+          1,
+          // format: formate,
+          format: "%5s %5s %-10s %4s %n",
+        );
+      }
+      await printDivider();
+      await printLeftRight("TOTAL TAX", gstBill.totalTax.toIntl(), 1);
     }
-    await printDivider();
-    await printLeftRight("TOTAL TAX", gstBill.totalTax.toIntl(), 1);
   }
 
   Future<void> printSummery(GSTBill gstBill) async {
-    await printCustom("ITEMS: ${gstBill.bill.orders.length}", 1, 0);
-    await printDivider();
-    await printLeftRight(gstBill.bill.inCash ? "CASH" : "G-PAY",
-        gstBill.bill.moneyGiven.toIntl(), 1);
-    await printLeftRight("TOTAL Rs", gstBill.bill.totalMoney.toIntl(), 3);
-    await printNewLine();
-    if (gstBill.bill.moneyGiven.val > gstBill.totalAmount.val) {
+    if (_biggerPage) {
+      await printLeftRight("ITEMS: ${gstBill.bill.orders.length}", "", 1);
       await printDivider();
-      await printLeftRight("RETURN: ", gstBill.totalAmountReturned.toIntl(), 3);
+      await printLeftRight(gstBill.bill.inCash ? "CASH" : "G-PAY",
+          gstBill.bill.moneyGiven.toIntl(), 1);
+      await printLeftRight("TOTAL Rs", gstBill.bill.totalMoney.toIntl(), 3);
+      await printNewLine();
+      if (gstBill.bill.moneyGiven.val > gstBill.totalAmount.val) {
+        await printDivider();
+        await printLeftRight(
+            "RETURN: ", gstBill.totalAmountReturned.toIntl(), 3);
+      }
+    } else {
+      await printCustom("ITEMS: ${gstBill.bill.orders.length}", 1, 0);
+      await printDivider();
+      await printLeftRight(gstBill.bill.inCash ? "CASH" : "G-PAY",
+          gstBill.bill.moneyGiven.toIntl(), 1);
+      await printLeftRight("TOTAL Rs", gstBill.bill.totalMoney.toIntl(), 3);
+      await printNewLine();
+      if (gstBill.bill.moneyGiven.val > gstBill.totalAmount.val) {
+        await printDivider();
+        await printLeftRight(
+            "RETURN: ", gstBill.totalAmountReturned.toIntl(), 3);
+      }
     }
   }
 
@@ -115,11 +188,14 @@ extension on BlueThermalPrinter {
     await printNewLine();
   }
 
-  Future<void> printGreatings(GSTBill gstBill) async {
-    await printCustom("THANK YOU", 1, 1);
-    await printNewLine();
-    await printNewLine();
-    await paperCut();
+  Future<void> printGreatings() async {
+    if (_biggerPage) {
+      await printCustom("THANK YOU", 1, 1);
+    } else {
+      await printCustom("THANK YOU", 1, 1);
+      await printNewLine();
+      await printNewLine();
+    }
   }
 }
 
@@ -253,7 +329,8 @@ class BlutoothProvider extends Modal with ChangeNotifier {
     await bluetooth.printOrder(gstBill);
     await bluetooth.printTaxes(gstBill);
     await bluetooth.printSummery(gstBill);
-    await bluetooth.printGreatings(gstBill);
+    await bluetooth.printGreatings();
+    await bluetooth.paperCut();
   }
 
   void selectDevice() async {
@@ -298,6 +375,7 @@ class _Options extends StatefulWidget {
 
 class _OptionsState extends State<_Options> {
   var spaceInOrder = _spaceInOrder;
+  var biggerPage = _biggerPage;
   // var spaceInGst = _spaceInGst;
 
   void setSpaceInOrder(bool c) {
@@ -305,6 +383,13 @@ class _OptionsState extends State<_Options> {
       spaceInOrder = c;
     });
     _setSpaceInOrder(c);
+  }
+
+  void setBiggerPage(bool c) {
+    setState(() {
+      biggerPage = c;
+    });
+    _setBiggerPage(c);
   }
 
   // void setSpaceInGst(bool c) {
@@ -318,10 +403,15 @@ class _OptionsState extends State<_Options> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const T1("New Line in Order Section"),
-        Switch(value: spaceInOrder, onChanged: setSpaceInOrder),
+        const T1("Bigger Page Size"),
+        Switch(value: biggerPage, onChanged: setBiggerPage),
         const SizedBox(height: 10),
-        // const Divider(),
+        if (!biggerPage) ...[
+          const Divider(),
+          const T1("New Line in Order Section"),
+          Switch(value: spaceInOrder, onChanged: setSpaceInOrder),
+          const SizedBox(height: 10),
+        ]
         // const SizedBox(height: 10),
         // const T1("Space in Gst Section"),
         // Switch(value: spaceInGst, onChanged: setSpaceInGst)

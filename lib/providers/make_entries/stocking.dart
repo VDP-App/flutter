@@ -81,9 +81,12 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   }
 
   void openItemSelector() {
-    _itemCode
-        .openItemSelector(context, _reset)
-        .then((value) => notifyListeners());
+    _itemCode.openItemSelector(context, _reset).whenComplete(_onItemSelect);
+  }
+
+  void _onItemSelect() {
+    _updateCurrentQuntity();
+    notifyListeners();
   }
 
   void _addChanges() {

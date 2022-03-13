@@ -106,7 +106,7 @@ abstract class Billing extends Modal with ChangeNotifier {
     if (focusedAt != Focuses.transfer) {
       _itemCode
           .openItemSelector(context, _resetOrder)
-          .then((value) => _onItemSelect());
+          .whenComplete(_onItemSelect);
     }
   }
 
