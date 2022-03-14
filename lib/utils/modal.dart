@@ -7,16 +7,16 @@ Future<String?> launchModal(
   BuildContext context,
   Widget title,
   Widget content,
-  List<ModalButton> actionButtons, [
+  List<ModalButton> actionButtons, {
   bool asBootomDrawer = false,
   bool isScrollControlled = false,
-]) {
+}) {
   if (asBootomDrawer) {
     return showModalBottomSheet<String>(
       isScrollControlled: isScrollControlled,
       context: context,
       builder: (context) {
-        var height = MediaQuery.of(context).size.height / (isTablet ? 2.3 : 3);
+        var height = MediaQuery.of(context).size.height;
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListView(
@@ -35,7 +35,11 @@ Future<String?> launchModal(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 padding: const EdgeInsets.all(10),
-                height: height - (isTablet ? 50 : 10),
+                height: isScrollControlled
+                    ? height - fontSizeOf.t3 - fontSizeOf.h2 - 60 - 55
+                    : isTablet
+                        ? (height / 2.3) - 50
+                        : (height / 3) - 10,
                 child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: content,
@@ -77,7 +81,7 @@ void launchWidgit(BuildContext context, String title, Widget content) {
     H2(title),
     content,
     const [ModalButton('Done!')],
-    true,
+    asBootomDrawer: true,
   );
 }
 
@@ -124,7 +128,22 @@ class Modal {
 
   Modal(this.context);
 
-  Future<String?> getName(String title, [String? defaultName]) {
+  Future<void> buildWidgit(
+    String title,
+    Widget Function(BuildContext context) builder,
+  ) {
+    return launchModal(
+      context,
+      H2(title),
+      builder(context),
+      [const ModalButton("Done")],
+      asBootomDrawer: true,
+      isScrollControlled: true,
+    );
+  }
+
+  Future<String?> getName(String title,
+      [String? defaultName, String label = "Name"]) {
     final controller = TextEditingController(text: defaultName);
     return launchModal(
       context,
@@ -132,9 +151,9 @@ class Modal {
       TextField(
         controller: controller,
         style: TextStyle(fontSize: isTablet ? fontSizeOf.t2 : fontSizeOf.t1),
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Name",
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: label,
         ),
       ),
       [
@@ -144,8 +163,8 @@ class Modal {
         ),
         const ModalButton("Back"),
       ],
-      true,
-      true,
+      asBootomDrawer: true,
+      isScrollControlled: true,
     );
   }
 
@@ -185,7 +204,7 @@ class Modal {
         ),
       ),
       const [ModalButton("Back")],
-      true,
+      asBootomDrawer: true,
     );
   }
 

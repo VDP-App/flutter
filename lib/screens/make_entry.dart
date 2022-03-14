@@ -153,7 +153,7 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
         ],
         child: const StockUI<TransferStock>(),
       );
-    } else {
+    } else if (selectedType == SelectedType.setStock) {
       return MultiProvider(
         providers: [
           Provider<Widget Function(Auth auth)>(create: modeSelector),
@@ -173,5 +173,23 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
         child: const StockUI<StockSetting>(),
       );
     }
+    return MultiProvider(
+      providers: [
+        Provider<Widget Function(Auth auth)>(create: modeSelector),
+        ChangeNotifierProxyProvider2<Products, Stock, ProduceStock>(
+          create: (context) => ProduceStock(context, stockID),
+          update: (context, products, stock, previous) {
+            previous ??= ProduceStock(context, stockID);
+            final stockDoc = stock.doc;
+            final items = products.doc;
+            if (stockDoc != null && items != null) {
+              previous.update(stockDoc, items);
+            }
+            return previous;
+          },
+        ),
+      ],
+      child: const StockUI<ProduceStock>(),
+    );
   }
 }

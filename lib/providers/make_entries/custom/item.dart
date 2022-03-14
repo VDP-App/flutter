@@ -5,13 +5,13 @@ import 'package:vdp/documents/utils/product.dart';
 
 class ItemCode {
   var _code = "";
-  ProductDoc? _items;
+  ProductDoc? productDoc;
   Product? _selectedItem;
 
   ItemCode();
 
   void update(ProductDoc items) {
-    _items = items;
+    productDoc = items;
   }
 
   String get code => _code;
@@ -22,7 +22,7 @@ class ItemCode {
 
   void changeCodeTo(String code) {
     if (code.length < 5) {
-      _selectedItem = _items?.getItemBy(code: code);
+      _selectedItem = productDoc?.getItemBy(code: code);
       _code = code;
     }
   }
@@ -38,7 +38,7 @@ class ItemCode {
     BuildContext context,
     void Function(Product item) onSelect,
   ) async {
-    await selectItem(context, _items, (Product item) {
+    await selectItem(context, productDoc, (Product item) {
       changeItemTo(item);
       onSelect(item);
     });

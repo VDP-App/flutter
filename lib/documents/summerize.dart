@@ -11,6 +11,7 @@ class SummerizeDoc {
   final Map<String, FixedProductReport> productReports;
   final Map<String, TotalProductReport> totalProductReport;
   final FixedNumber totalRetailIncome;
+  final FixedNumber totalCancledIncome;
   final FixedNumber totalWholeSellIncome;
 
   SummerizeDoc({
@@ -18,6 +19,7 @@ class SummerizeDoc {
     required this.entries,
     required this.productReports,
     required this.totalRetailIncome,
+    required this.totalCancledIncome,
     required this.totalProductReport,
     required this.totalWholeSellIncome,
   });
@@ -52,6 +54,7 @@ class SummerizeDoc {
     final productReports = <String, ProductReport>{};
     var totalRetailIncome = 0;
     var totalWholeSellIncome = 0;
+    var totalCancledIncome_1K = 0;
     var itemIDs = <String>{};
     for (var json in jsonList) {
       if (json == null) continue;
@@ -74,6 +77,12 @@ class SummerizeDoc {
         for (var _v in asList(e.value)) {
           final v = asMap(_v);
           getProductReport(e.key).addRetail(asInt(v["q"]), asInt(v["r"]));
+        }
+      }
+      for (var e in asMap(parseJson(json["cancledStock"])).entries) {
+        for (var _v in asList(e.value)) {
+          final v = asMap(_v);
+          getProductReport(e.key).addCancled(asInt(v["q"]), asInt(v["r"]));
         }
       }
       var i = 0;
@@ -124,12 +133,17 @@ class SummerizeDoc {
     final _stockSnapShot = asMap(parseJson(jsonList.last?["stockSnapShot"]));
     final totalProductReport = <String, TotalProductReport>{};
     for (var itemID in {...itemIDs, ..._stockSnapShot.keys}) {
+      for (var a in productReports[itemID]?.cancled.entries ??
+          const Iterable<MapEntry<int, int>>.empty()) {
+        totalCancledIncome_1K += a.key * a.value;
+      }
       totalProductReport[itemID] = TotalProductReport(
         endStock: asInt(_stockSnapShot[itemID]),
         itemID: itemID,
       );
     }
     return SummerizeDoc(
+      totalCancledIncome: FixedNumber.fromInt(totalCancledIncome_1K ~/ 1000),
       totalProductReport: totalProductReport,
       productReports: productReports.map((key, value) =>
           MapEntry(key, FixedProductReport.fromProductReport(value, key))),

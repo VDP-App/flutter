@@ -32,6 +32,7 @@ class ProductReport {
   static var totalStockRecive = <String, int>{};
 
   final retail = <int, int>{};
+  final cancled = <int, int>{};
   final wholeSell = <SummerizeWith<FixedNumber>>[];
   final stockInternalyAdded = <SummerizeWith<StockChangesInEntry>>[];
   final stockInternalyRemoved = <SummerizeWith<StockChangesInEntry>>[];
@@ -48,7 +49,11 @@ class ProductReport {
 
   void addRetail(int q, int r) {
     totalRetail[itemID] = q + (totalRetail[itemID] ?? 0);
-    retail[r] = q + (retail[q] ?? 0);
+    retail[r] = q + (retail[r] ?? 0);
+  }
+
+  void addCancled(int q, int r) {
+    cancled[r] = q + (cancled[r] ?? 0);
   }
 
   void addWholeSell(FixedNumber x, int i, String? note) {
@@ -126,6 +131,7 @@ class TotalProductReport {
 
 class FixedProductReport {
   final Map<FixedNumber, FixedNumber> retail;
+  final Map<FixedNumber, FixedNumber> cancled;
   final List<SummerizeWith<FixedNumber>> wholeSell;
   final List<SummerizeWith<StockChangesInEntry>> stockInternalyAdded;
   final List<SummerizeWith<StockChangesInEntry>> stockInternalyRemoved;
@@ -135,6 +141,7 @@ class FixedProductReport {
   final String itemId;
   const FixedProductReport({
     required this.retail,
+    required this.cancled,
     required this.stockInternalyAdded,
     required this.stockInternalErr,
     required this.stockInternalyRemoved,
@@ -155,6 +162,10 @@ class FixedProductReport {
     String itemId,
   ) {
     return FixedProductReport(
+      cancled: productReports.cancled.map(
+        (key, value) =>
+            MapEntry(FixedNumber.fromInt(key), FixedNumber.fromInt(value)),
+      ),
       retail: productReports.retail.map(
         (key, value) =>
             MapEntry(FixedNumber.fromInt(key), FixedNumber.fromInt(value)),

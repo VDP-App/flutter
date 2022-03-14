@@ -29,14 +29,14 @@ class StockChanges<T extends Changes> {
 class StockSettingChanges extends Changes {
   final bool isSetStock;
   final FixedNumber addedQuntity;
-  final FixedNumber setQuntity;
+  final FixedNumber finalQuntity;
 
   const StockSettingChanges({
     required String itemId,
     required FixedNumber currentQuntity,
     required this.isSetStock,
     required this.addedQuntity,
-    required this.setQuntity,
+    required this.finalQuntity,
   }) : super(itemId: itemId, currentQuntity: currentQuntity);
 
   @override
@@ -44,7 +44,7 @@ class StockSettingChanges extends Changes {
     return {
       "iId": itemId,
       "type": isSetStock ? "set" : "increment",
-      "val": isSetStock ? setQuntity.val : addedQuntity.val,
+      "val": isSetStock ? finalQuntity.val : addedQuntity.val,
     };
   }
 }

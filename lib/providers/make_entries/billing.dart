@@ -48,7 +48,7 @@ abstract class Billing extends Modal with ChangeNotifier {
     notifyListeners();
     String? note;
     if (this is WholeSellBilling) {
-      note = await getName("Add a note to remember");
+      note = await getName("Add a note to remember", null, "Note");
       if (note == null) {
         _loading = false;
         notifyListeners();

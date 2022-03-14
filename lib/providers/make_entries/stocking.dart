@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vdp/utils/default_stock_list.dart';
+import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/make_entry/display/stock.dart';
 import 'package:vdp/widgets/make_entry/ui/builder.dart';
 import 'package:vdp/widgets/selectors/select_stock_changes.dart';
@@ -29,10 +31,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
 
   Stocking(BuildContext context, this._stockID) : super(context);
 
-  void update(
-    StockDoc stockDoc,
-    ProductDoc items,
-  ) {
+  void update(StockDoc stockDoc, ProductDoc items) {
     _itemCode.update(items);
     _stockDoc = stockDoc;
     notifyListeners();
@@ -41,8 +40,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   void _applyChanges(String? note);
 
   void _updateCurrentQuntity() {
-    _currentQuntity =
-        (_stockDoc as StockDoc).currentStock[_itemCode.item?.id] ?? _fN0;
+    _currentQuntity = _stockDoc?.currentStock[_itemCode.item?.id] ?? _fN0;
   }
 
   void _onStockChangeSelect(T stockChanges) {
@@ -99,7 +97,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
         if (_lastKeyPressed == KeybordKeyValue.enter && !_itemCode.hasItem) {
           if (_changes.isNotEmpty) {
             this is StockSetting
-                ? getName("Add a note to remember").then((note) {
+                ? getName("Add a note to remember", null, "Note").then((note) {
                     if (note == null) return;
                     shouldProceed("Apply Changes").then((x) {
                       if (!x) return;
@@ -118,17 +116,17 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
         }
         break;
       case KeybordKeyValue.esc:
-        if (_itemCode.isEmpty) {
-          if (_changes.isNotEmpty) {
-            shouldProceed("Clear all Changes").then((x) {
-              if (x) {
-                _changes.clear();
-                notifyListeners();
-              }
-            });
-          }
+        if (_itemCode.isEmpty && _changes.isNotEmpty) {
+          shouldProceed("Clear all Changes").then((x) {
+            if (x) {
+              _changes.clear();
+              _reset();
+              notifyListeners();
+            }
+          });
+        } else {
+          _reset();
         }
-        _reset();
         break;
       case KeybordKeyValue.action1:
         _onAction1Press();
@@ -154,7 +152,7 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   bool _onNumberPress(String number) {
     if (_focusedAt != Focuses.itemNum) return false;
     _itemCode.changeCodeTo(_itemCode + number);
-    if (_itemCode.hasItem) _updateCurrentQuntity();
+    _updateCurrentQuntity();
     return true;
   }
 
@@ -218,15 +216,15 @@ class StockSetting extends Stocking<StockSettingChanges> {
         if (change.isSetStock) {
           _changes[i] = StockSettingChanges(
             addedQuntity:
-                FixedNumber.fromInt(change.setQuntity - newCurrentQuntity),
+                FixedNumber.fromInt(change.finalQuntity - newCurrentQuntity),
             currentQuntity: newCurrentQuntity,
             isSetStock: true,
             itemId: change.itemId,
-            setQuntity: change.setQuntity,
+            finalQuntity: change.finalQuntity,
           );
         } else {
           _changes[i] = StockSettingChanges(
-            setQuntity:
+            finalQuntity:
                 FixedNumber.fromInt(change.addedQuntity + newCurrentQuntity),
             currentQuntity: newCurrentQuntity,
             isSetStock: false,
@@ -288,7 +286,7 @@ class StockSetting extends Stocking<StockSettingChanges> {
   void _onStockChangeSelect(StockSettingChanges stockChanges) {
     super._onStockChangeSelect(stockChanges);
     _addedQuntity.assign(stockChanges.addedQuntity);
-    _setQuntity.assign(stockChanges.setQuntity);
+    _setQuntity.assign(stockChanges.finalQuntity);
     _focusedAt =
         stockChanges.isSetStock ? Focuses.setQuntity : Focuses.addQuntity;
   }
@@ -309,7 +307,7 @@ class StockSetting extends Stocking<StockSettingChanges> {
       itemId: item.id,
       addedQuntity: _addedQuntity.toFixedNumber(),
       currentQuntity: _currentQuntity,
-      setQuntity: _setQuntity.toFixedNumber(),
+      finalQuntity: _setQuntity.toFixedNumber(),
     ));
     super._addChanges();
   }
@@ -368,6 +366,38 @@ class StockSetting extends Stocking<StockSettingChanges> {
 
   @override
   String get setQuntity => _setQuntity.text;
+}
+
+class ProduceStock extends StockSetting {
+  ProduceStock(BuildContext context, String stockID) : super(context, stockID);
+
+  @override
+  void _processAction_2_3() async {
+    super._processAction_2_3();
+    if (_changes.isEmpty && _itemCode.hasItem) {
+      final mapConsumed = <String, double>{};
+      await buildWidgit(
+        "Stock Used",
+        (_) => DefaultStockList(
+          products: _itemCode.productDoc?.above1k ?? [],
+          consumption: mapConsumed,
+        ),
+      );
+      mapConsumed.forEach((key, value) {
+        if (value == 0) return;
+        final removedQty = FixedNumber.fromDouble(-value);
+        final currentQty = _stockDoc?.currentStock[key] ?? _fN0;
+        _changes.add(StockSettingChanges(
+          itemId: key,
+          currentQuntity: currentQty,
+          isSetStock: false,
+          addedQuntity: removedQty,
+          finalQuntity: FixedNumber.fromInt(currentQty + removedQty),
+        ));
+      });
+      notifyListeners();
+    }
+  }
 }
 
 class TransferStock extends Stocking<TransferStockChanges> {

@@ -45,7 +45,7 @@ class ShowStockChanges<T extends Changes> extends StatelessWidget {
                       [
                           change.currentQuntity.text,
                           change.addedQuntity.text,
-                          change.setQuntity.text
+                          change.finalQuntity.text
                         ])
                   : const Preview.empty(),
           trailingWidgit: change is StockSettingChanges

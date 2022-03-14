@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
+import 'package:vdp/widgets/summery/cancled_bill_report.dart';
 import 'package:vdp/widgets/summery/summery.dart';
 
 // ! previous Date
@@ -36,6 +37,7 @@ class DisplayReport extends StatelessWidget {
           RetailSellsReport(),
           WholesellBills(),
           StockChangesSummery(),
+          CancledBillReport(),
         ],
       ),
     );

@@ -32,13 +32,12 @@ extension on KeyAction {
 }
 
 class StockUI<T extends Stocking> extends StatelessWidget {
-  const StockUI({
-    Key? key,
-  }) : super(key: key);
+  const StockUI({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     var stocking = Provider.of<T>(context, listen: false);
     final isStocking = T == StockSetting;
+    final isProduce = T == ProduceStock;
     return UIBuilder(
       child: StockDisplay<T>(),
       act: stocking.onClick,
@@ -47,7 +46,7 @@ class StockUI<T extends Stocking> extends StatelessWidget {
             .keyBordKey(act: stocking.onClick, text: "±M", color: Colors.pink),
         KeyAction.addQuntity.keyBordKey(
           act: stocking.onClick,
-          text: isStocking ? "Add" : "Send",
+          text: isStocking || isProduce ? "Add" : "Send",
           color: Colors.blue,
           flex: isStocking ? 1 : 2,
         ),

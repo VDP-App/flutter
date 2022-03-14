@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:vdp/layout.dart';
 import 'package:vdp/main.dart';
 
-enum SelectedType { retailBill, wholeSellBill, setStock, transfer, cancleBill }
+enum SelectedType {
+  retailBill,
+  wholeSellBill,
+  setStock,
+  transfer,
+  cancleBill,
+  produce
+}
 
 const _allType = [
   SelectedType.retailBill,
@@ -10,6 +17,7 @@ const _allType = [
   SelectedType.cancleBill,
   SelectedType.setStock,
   SelectedType.transfer,
+  SelectedType.produce,
 ];
 const _accountentType = [
   SelectedType.retailBill,
