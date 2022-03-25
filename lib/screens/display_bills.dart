@@ -36,6 +36,7 @@ class DisplayBills extends StatelessWidget {
       wrapScaffold: true,
       startWith: [
         const _WholesellBills(),
+        const RetailConsumption(),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           IncomeInfo(amount: doc.offlineIncome.text, cashIn: CashIn.offline),
           IncomeInfo(amount: doc.onlineIncome.text, cashIn: CashIn.online)

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vdp/documents/cash_counter.dart';
 import 'package:vdp/utils/cloud_functions.dart';
@@ -21,25 +20,28 @@ class CashCounter extends Modal with ChangeNotifier {
 
   CashCounter(BuildContext context) : super(context);
 
+  void refresh() {
+    final stockID = _stockID, cashCounterID = _cashCounterID;
+    if (stockID == null || cashCounterID == null) return;
+    getDoc(
+      docPath: _docPath(stockID, cashCounterID),
+      converter: _computeFn,
+      getDocFrom: GetDocFrom.serverIfNotThenCache,
+    ).then((value) {
+      _doc = value;
+      notifyListeners();
+    }).onError((error, stackTrace) {
+      openModal(error.toString(), stackTrace.toString());
+    });
+  }
+
   void update(String stockID, String cashCounterID) {
     if (stockID == _stockID && cashCounterID == _cashCounterID) return;
     _stockID = stockID;
     _cashCounterID = cashCounterID;
     _cancel?.call();
     _doc = null;
-    _cancel = FirestoreDoc<CashCounterDoc>(
-      documentPath: _docPath(stockID, cashCounterID),
-      converter: (doc) {
-        return compute<Map<String, dynamic>, CashCounterDoc>(_computeFn, doc);
-      },
-    ).stream.listen(
-      (event) {
-        _doc = event;
-        notifyListeners();
-      },
-      cancelOnError: false,
-      onError: (e) => openModal("Error Occured", e.toString()),
-    ).cancel;
+    refresh();
     notifyListeners();
   }
 

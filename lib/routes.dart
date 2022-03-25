@@ -4,11 +4,9 @@ import 'package:vdp/providers/apis/auth.dart';
 import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/apis/location.dart';
 import 'package:vdp/providers/apis/pages.dart';
-import 'package:vdp/providers/doc/cash_counter.dart';
 import 'package:vdp/providers/doc/config.dart';
 import 'package:vdp/providers/doc/products.dart';
 import 'package:vdp/providers/doc/stock.dart';
-import 'package:vdp/providers/doc/summerize.dart';
 import 'package:vdp/screens/login.dart';
 import 'package:vdp/utils/loading.dart';
 import 'package:provider/provider.dart';
@@ -72,27 +70,6 @@ class RouteApp extends StatelessWidget {
                 _stock.update(_stockID, isNotManager: !isManager);
               }
               return _stock;
-            },
-          ),
-          ChangeNotifierProxyProvider<Location, CashCounter>(
-            create: (context) => CashCounter(context),
-            update: (context, location, previous) {
-              previous ??= CashCounter(context);
-              final stockID = location.stockID,
-                  cashCounterID = location.cashCounterID;
-              if (stockID != null && cashCounterID != null) {
-                previous.update(stockID, cashCounterID);
-              }
-              return previous;
-            },
-          ),
-          ChangeNotifierProxyProvider<Location, Summerize>(
-            create: (_) => Summerize(),
-            update: (_, location, previous) {
-              previous ??= Summerize();
-              final stockID = location.stockID;
-              if (stockID != null) previous.update(stockID);
-              return previous;
             },
           ),
         ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vdp/utils/default_stock_list.dart';
-import 'package:vdp/utils/typography.dart';
 import 'package:vdp/widgets/make_entry/display/stock.dart';
 import 'package:vdp/widgets/make_entry/ui/builder.dart';
 import 'package:vdp/widgets/selectors/select_stock_changes.dart';
