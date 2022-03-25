@@ -33,6 +33,7 @@ class DisplayReport extends StatelessWidget {
           if (stockID != null) previous.update(stockID);
           return previous;
         },
+        lazy: false,
         child: ListView(
           children: const [
             Center(child: H2("Today's Stock")),

@@ -40,7 +40,7 @@ class Logs extends Modal with ChangeNotifier {
         converter: _computeFn,
         getDocFrom: GetDocFrom.cacheIfNotThenServer,
       );
-      if (doc == null || doc.logs.length < _maxLogsInDoc) {
+      if ((doc?.logs.length ?? 0) < _maxLogsInDoc) {
         doc = await getDoc(
           docPath: "$_collectionPath/$pageNum",
           converter: _computeFn,

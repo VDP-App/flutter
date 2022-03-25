@@ -12,7 +12,6 @@ CashCounterDoc _computeFn(Map<String, dynamic> data) {
 }
 
 class CashCounter extends Modal with ChangeNotifier {
-  void Function()? _cancel;
   String? _stockID;
   String? _cashCounterID;
   CashCounterDoc? _doc;
@@ -39,7 +38,6 @@ class CashCounter extends Modal with ChangeNotifier {
     if (stockID == _stockID && cashCounterID == _cashCounterID) return;
     _stockID = stockID;
     _cashCounterID = cashCounterID;
-    _cancel?.call();
     _doc = null;
     refresh();
     notifyListeners();
@@ -59,11 +57,5 @@ class CashCounter extends Modal with ChangeNotifier {
       stockID,
       cashCounterID,
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _cancel?.call();
   }
 }

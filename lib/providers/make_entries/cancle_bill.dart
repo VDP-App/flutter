@@ -6,14 +6,14 @@ import 'package:vdp/utils/modal.dart';
 class CancleBill extends Modal with ChangeNotifier {
   final _cancleEntryOnCloud = CancleEntryOnCloud();
   String _billNum = "";
-  final String stockID;
-  final String cashCounterID;
+  String _stockID;
+  String _cashCounterID;
   var _loading = false;
 
   CancleBill(
     BuildContext context,
-    this.stockID,
-    this.cashCounterID,
+    this._stockID,
+    this._cashCounterID,
   ) : super(context);
 
   void _cancleBill() async {
@@ -21,13 +21,19 @@ class CancleBill extends Modal with ChangeNotifier {
     _loading = true;
     notifyListeners();
     await handleCloudCall(
-      _cancleEntryOnCloud.cancleBill(_billNum, stockID, cashCounterID),
+      _cancleEntryOnCloud.cancleBill(_billNum, _stockID, _cashCounterID),
       (value) {
         openModal("Bill was deleted", "$_billNum was successfully deleted");
       },
     );
     _loading = false;
     _billNum = "";
+    notifyListeners();
+  }
+
+  void update(String stockID, String cashCounterID) {
+    _stockID = stockID;
+    _cashCounterID = cashCounterID;
     notifyListeners();
   }
 

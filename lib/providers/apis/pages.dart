@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vdp/main.dart';
-import 'package:vdp/providers/apis/location.dart';
-import 'package:vdp/providers/doc/cash_counter.dart';
 import 'package:vdp/screens/screen.dart';
 
 enum Pages {
@@ -38,20 +35,7 @@ extension Screen on Pages {
       case Pages.changes:
         return const DisplayStockChanges();
       case Pages.bills:
-        return ChangeNotifierProxyProvider<Location, CashCounter>(
-          create: (context) => CashCounter(context),
-          update: (context, location, previous) {
-            previous ??= CashCounter(context);
-            final stockID = location.stockID,
-                cashCounterID = location.cashCounterID;
-            if (stockID != null && cashCounterID != null) {
-              previous.update(stockID, cashCounterID);
-            }
-            return previous;
-          },
-          child: const DisplayBills(),
-        );
-
+        return const DisplayBills();
       case Pages.notifications:
         return const TransferList();
     }

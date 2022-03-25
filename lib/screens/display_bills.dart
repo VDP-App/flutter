@@ -21,6 +21,28 @@ class DisplayBills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProxyProvider<Location, CashCounter>(
+      create: (context) => CashCounter(context),
+      update: (context, location, previous) {
+        previous ??= CashCounter(context);
+        final stockID = location.stockID,
+            cashCounterID = location.cashCounterID;
+        if (stockID != null && cashCounterID != null) {
+          previous.update(stockID, cashCounterID);
+        }
+        return previous;
+      },
+      lazy: false,
+      child: const _DisplayBills(),
+    );
+  }
+}
+
+class _DisplayBills extends StatelessWidget {
+  const _DisplayBills({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     final location = Provider.of<Location>(context);
     final stockID = location.stockID, cashCounterID = location.cashCounterID;
     if (stockID == null || cashCounterID == null) {

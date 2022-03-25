@@ -19,10 +19,12 @@ class CurrentStock extends StatelessWidget {
     final stock = Provider.of<Stock>(context);
     final currentStock = stock.doc?.currentStock;
     return CardButton(
+      iconData: Icons.inventory,
       title: "Current",
+      subtitle: "Stock In Inventory",
       color: Colors.blueAccent,
       onTap: () => displayStockSnapshot(context, currentStock!, productsDoc!),
-      isInfo: true,
+      // isInfo: true,
       isLoading: currentStock == null || productsDoc == null,
     );
   }

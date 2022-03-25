@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdp/main.dart';
 import 'package:vdp/providers/apis/blutooth.dart';
 import 'package:vdp/providers/doc/config.dart';
+import 'package:vdp/utils/loading.dart';
 import 'package:vdp/widgets/make_entry/ui/ui.dart';
 import 'package:vdp/widgets/selectors/open_location_selector.dart';
 import 'package:vdp/widgets/selectors/select_entry_mode.dart';
@@ -88,14 +89,16 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
         return MultiProvider(
           providers: [
             Provider<Widget Function(Auth auth)>(create: modeSelector),
-            ChangeNotifierProxyProvider<Products, WholeSellBilling>(
+            ChangeNotifierProxyProvider2<Products, Location, WholeSellBilling>(
               create: (context) =>
                   WholeSellBilling(context, stockID, cashCounterID, printBill),
-              update: (context, products, previous) {
+              update: (context, products, _, previous) {
                 previous ??= WholeSellBilling(
                     context, stockID, cashCounterID, printBill);
                 final items = products.doc;
-                if (items != null) previous.update(items);
+                if (items != null) {
+                  previous.update(items, stockID, cashCounterID);
+                }
                 return previous;
               },
             ),
@@ -106,14 +109,16 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
         return MultiProvider(
           providers: [
             Provider<Widget Function(Auth auth)>(create: modeSelector),
-            ChangeNotifierProxyProvider<Products, RetailBilling>(
+            ChangeNotifierProxyProvider2<Products, Location, RetailBilling>(
               create: (context) =>
                   RetailBilling(context, stockID, cashCounterID, printBill),
-              update: (context, products, previous) {
+              update: (context, products, _, previous) {
                 previous ??=
                     RetailBilling(context, stockID, cashCounterID, printBill);
                 final items = products.doc;
-                if (items != null) previous.update(items);
+                if (items != null) {
+                  previous.update(items, stockID, cashCounterID);
+                }
                 return previous;
               },
             ),
@@ -121,31 +126,38 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
           child: const BillingUI<RetailBilling>(),
         );
       }
-    }
-    if (selectedType == SelectedType.cancleBill) {
+    } else if (selectedType == SelectedType.cancleBill) {
       return MultiProvider(
         providers: [
           Provider<Widget Function(Auth auth)>(create: modeSelector),
-          ChangeNotifierProvider<CancleBill>(
+          ChangeNotifierProxyProvider<Location, CancleBill>(
             create: (context) => CancleBill(context, stockID, cashCounterID),
+            update: (context, location, previous) {
+              previous ??= CancleBill(context, stockID, cashCounterID);
+              previous.update(stockID, cashCounterID);
+              return previous;
+            },
           ),
         ],
         child: const CancleBillUI(),
       );
     }
+    final stock = Provider.of<Stock>(context);
+    final stockDoc = stock.doc;
+    if (stockDoc == null) return loadingWigit;
     if (selectedType == SelectedType.transfer) {
       return MultiProvider(
         providers: [
           Provider<Widget Function(Auth auth)>(create: modeSelector),
-          ChangeNotifierProxyProvider3<Products, Stock, Config, TransferStock>(
+          ChangeNotifierProxyProvider4<Products, Stock, Config, Location,
+              TransferStock>(
             create: (context) => TransferStock(context, stockID),
-            update: (context, products, stock, config, previous) {
+            update: (context, products, __, config, _, previous) {
               previous ??= TransferStock(context, stockID);
-              final stockDoc = stock.doc;
               final items = products.doc;
               final configDoc = config.doc;
-              if (stockDoc != null && items != null && configDoc != null) {
-                previous.updateTransfer(stockDoc, items, configDoc);
+              if (items != null && configDoc != null) {
+                previous.updateTransfer(stockDoc, items, configDoc, stockID);
               }
               return previous;
             },
@@ -157,14 +169,13 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
       return MultiProvider(
         providers: [
           Provider<Widget Function(Auth auth)>(create: modeSelector),
-          ChangeNotifierProxyProvider2<Products, Stock, StockSetting>(
+          ChangeNotifierProxyProvider3<Products, Stock, Location, StockSetting>(
             create: (context) => StockSetting(context, stockID),
-            update: (context, products, stock, previous) {
+            update: (context, products, __, _, previous) {
               previous ??= StockSetting(context, stockID);
-              final stockDoc = stock.doc;
               final items = products.doc;
-              if (stockDoc != null && items != null) {
-                previous.update(stockDoc, items);
+              if (items != null) {
+                previous.update(stockDoc, items, stockID);
               }
               return previous;
             },
@@ -172,24 +183,24 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
         ],
         child: const StockUI<StockSetting>(),
       );
+    } else {
+      return MultiProvider(
+        providers: [
+          Provider<Widget Function(Auth auth)>(create: modeSelector),
+          ChangeNotifierProxyProvider3<Products, Stock, Location, ProduceStock>(
+            create: (context) => ProduceStock(context, stockID),
+            update: (context, products, __, _, previous) {
+              previous ??= ProduceStock(context, stockID);
+              final items = products.doc;
+              if (items != null) {
+                previous.update(stockDoc, items, stockID);
+              }
+              return previous;
+            },
+          ),
+        ],
+        child: const StockUI<ProduceStock>(),
+      );
     }
-    return MultiProvider(
-      providers: [
-        Provider<Widget Function(Auth auth)>(create: modeSelector),
-        ChangeNotifierProxyProvider2<Products, Stock, ProduceStock>(
-          create: (context) => ProduceStock(context, stockID),
-          update: (context, products, stock, previous) {
-            previous ??= ProduceStock(context, stockID);
-            final stockDoc = stock.doc;
-            final items = products.doc;
-            if (stockDoc != null && items != null) {
-              previous.update(stockDoc, items);
-            }
-            return previous;
-          },
-        ),
-      ],
-      child: const StockUI<ProduceStock>(),
-    );
   }
 }

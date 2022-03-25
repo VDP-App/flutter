@@ -13,8 +13,8 @@ import 'package:vdp/utils/cloud_functions.dart';
 import 'package:vdp/utils/modal.dart';
 
 abstract class Billing extends Modal with ChangeNotifier {
-  final String _stockID;
-  final String _cashCounterID;
+  String _stockID;
+  String _cashCounterID;
   final void Function(GSTBill gstBill) _printBill;
 
   var _focusedAt = Focuses.itemNum;
@@ -38,7 +38,9 @@ abstract class Billing extends Modal with ChangeNotifier {
   Bill _toBill(String? note);
   bool get loading => _loading;
 
-  void update(ProductDoc items) {
+  void update(ProductDoc items, String stockID, String cashCounterID) {
+    _stockID = stockID;
+    _cashCounterID = cashCounterID;
     _itemCode.update(items);
     notifyListeners();
   }

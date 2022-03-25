@@ -18,7 +18,7 @@ const _fN0 = FixedNumber(text: "", val: 0);
 
 abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
   StockDoc? _stockDoc;
-  final String _stockID;
+  String _stockID;
 
   var _focusedAt = Focuses.itemNum;
   var _lastKeyPressed = KeybordKeyValue.enter;
@@ -30,8 +30,9 @@ abstract class Stocking<T extends Changes> extends Modal with ChangeNotifier {
 
   Stocking(BuildContext context, this._stockID) : super(context);
 
-  void update(StockDoc stockDoc, ProductDoc items) {
+  void update(StockDoc stockDoc, ProductDoc items, String stockID) {
     _itemCode.update(items);
+    _stockID = stockID;
     _stockDoc = stockDoc;
     notifyListeners();
   }
@@ -192,7 +193,7 @@ class StockSetting extends Stocking<StockSettingChanges> {
   StockSetting(BuildContext context, String stockID) : super(context, stockID);
 
   @override
-  void update(StockDoc stockDoc, ProductDoc items) {
+  void update(StockDoc stockDoc, ProductDoc items, String stockID) {
     final product = _itemCode.item;
     if (product != null) {
       final p = items.getItemBy(id: product.id);
@@ -234,7 +235,7 @@ class StockSetting extends Stocking<StockSettingChanges> {
       }
       i++;
     }
-    super.update(stockDoc, items);
+    super.update(stockDoc, items, stockID);
   }
 
   void _updateSetQuntity(String digit, [int? val, bool negat = false]) {
@@ -410,13 +411,14 @@ class TransferStock extends Stocking<TransferStockChanges> {
     StockDoc stockDoc,
     ProductDoc items,
     ConfigDoc configDoc,
+    String stockID,
   ) {
     _configDoc = configDoc;
-    update(stockDoc, items);
+    update(stockDoc, items, stockID);
   }
 
   @override
-  void update(StockDoc stockDoc, ProductDoc items) {
+  void update(StockDoc stockDoc, ProductDoc items, String stockID) {
     final product = _itemCode.item;
     if (product != null) {
       final p = items.getItemBy(id: product.id);
@@ -442,7 +444,7 @@ class TransferStock extends Stocking<TransferStockChanges> {
       }
       i++;
     }
-    super.update(stockDoc, items);
+    super.update(stockDoc, items, stockID);
   }
 
   @override

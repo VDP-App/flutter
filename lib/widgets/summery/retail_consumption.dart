@@ -21,10 +21,11 @@ class RetailConsumption extends StatelessWidget {
     final cashCounterDoc = cashCounter.doc;
     return CardButton(
       title: "Consumed",
+      subtitle: "Stock Sold in Retail",
+      iconData: Icons.store_mall_directory_sharp,
       color: Colors.redAccent,
       onTap: () =>
           openRetailConsumptionTable(context, cashCounterDoc!, productsDoc!),
-      isInfo: true,
       isLoading: cashCounterDoc == null || productsDoc == null,
     );
   }
