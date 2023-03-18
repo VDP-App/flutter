@@ -65,7 +65,7 @@ abstract class DisplayClass extends StatelessWidget {
       widget: ElevatedButton(
         onPressed: showOrders,
         style: ElevatedButton.styleFrom(
-          primary: Colors.black,
+          backgroundColor: Colors.black,
         ),
         child: DisplayText(Text(length.toString())),
       ),

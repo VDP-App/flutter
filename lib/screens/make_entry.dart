@@ -55,7 +55,7 @@ class _MakeEntryPageState extends State<MakeEntryPage> {
       return TextButton(
         onPressed: () => selectMode(auth.claims?.isAccountent ?? false),
         style: TextButton.styleFrom(
-          primary: Colors.black,
+          foregroundColor: Colors.black,
           backgroundColor: Colors.grey[300],
         ),
         child: isTablet

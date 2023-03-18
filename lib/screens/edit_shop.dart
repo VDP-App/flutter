@@ -68,7 +68,7 @@ class EditShop extends StatelessWidget {
         onPressed: () => config.createCashCounter(stock),
         style: ElevatedButton.styleFrom(
           fixedSize: const Size.fromHeight(50),
-          primary: Colors.blue,
+          backgroundColor: Colors.blue,
         ),
         icon: const Icon(Icons.add),
         label: const T1("Add Cash Counter"),
@@ -93,7 +93,7 @@ class EditShop extends StatelessWidget {
       onPressed: config.createStock,
       style: ElevatedButton.styleFrom(
         fixedSize: const Size.fromHeight(50),
-        primary: Colors.green,
+        backgroundColor: Colors.green,
       ),
       icon: const Icon(Icons.add),
       label: const T1("Add Stock"),

@@ -51,6 +51,7 @@ class FirestoreDoc<T> {
     required this.documentPath,
     required this.converter,
   }) {
+    print('FirestoreDoc(documentPath: "$documentPath")');
     _controller.onListen = () => _streamSubscription = _setSubscription();
     _controller.onPause = () => _streamSubscription?.pause();
     _controller.onResume = () => _streamSubscription?.pause();
@@ -61,14 +62,19 @@ class FirestoreDoc<T> {
   }
 
   StreamSubscription _setSubscription() {
+    print('_setSubscription(documentPath: "$documentPath")');
+    print('apiKey = ' + FirebaseFirestore.instance.app.options.apiKey);
     return FirebaseFirestore.instance.doc(documentPath).snapshots().listen(
       (events) {
+        print(
+            'listened(documentPath: "$documentPath", isFromCache: ${events.metadata.isFromCache}, event: ${events.data()})');
         final value = events.data();
         if (value != null) {
           _parseData(value);
         }
       },
       onError: (error) {
+        print('onError(documentPath: "$documentPath", error: $error)');
         _controller.sink.addError(error, StackTrace.current);
       },
       cancelOnError: false,

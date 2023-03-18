@@ -5,11 +5,13 @@ import 'package:vdp/providers/make_entries/custom/number.dart';
 
 class CashCounterDoc {
   final List<Bill> bills;
+  final List<Bill> cancledBills;
   final FixedNumber onlineIncome;
   final FixedNumber offlineIncome;
   final Map<String, FixedNumber> stockConsumed;
   const CashCounterDoc(
     this.bills,
+    this.cancledBills,
     this.offlineIncome,
     this.onlineIncome,
     this.stockConsumed,
@@ -22,6 +24,12 @@ class CashCounterDoc {
         inAscending: false,
       ).customAdd<MapEntry<String, dynamic>>(
         asMap(data["bills"]).entries,
+        (x) => Bill.fromMapEntry(x),
+      ),
+      SortedList<Bill>(
+        inAscending: false,
+      ).customAdd<MapEntry<String, dynamic>>(
+        asMap(data["cancledBill"]).entries,
         (x) => Bill.fromMapEntry(x),
       ),
       FixedNumber.fromInt(asInt(income["offline"])),

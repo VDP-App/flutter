@@ -37,7 +37,7 @@ class GridSelector extends StatelessWidget {
           return SizedBox.expand(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: gridItem.color ?? color,
+                backgroundColor: gridItem.color ?? color,
               ),
               child: FractionallySizedBox(
                 child: isTablet

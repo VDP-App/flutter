@@ -58,6 +58,7 @@ class Auth extends Modal with ChangeNotifier {
         try {
           final res = await _user?.getIdTokenResult();
           final claims = res?.claims;
+          print('claims = ${_claims?.claims}');
           if (claims != null) _claims = Claims(claims);
         } catch (_) {}
         notifyListeners();

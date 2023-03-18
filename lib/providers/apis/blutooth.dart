@@ -9,6 +9,7 @@ import 'package:vdp/utils/modal.dart';
 import 'package:vdp/utils/random.dart';
 import 'package:vdp/utils/typography.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 bool get _spaceInOrder => sharedPreferences.getBool("bill-space-item") ?? true;
 bool get _biggerPage => sharedPreferences.getBool("bill-bigger-page") ?? false;
@@ -52,7 +53,7 @@ extension on BlueThermalPrinter {
       await printCustom("VINAYAK COMPLEX BAREJA 382425", 1, 1);
       await printLeftRight("DIST.AHMEDABAD", "MO.7201925410", 1);
       await printLeftRight("", "9898021278", 1);
-      await printCustom("GSTIN 244ADEPP4838L127", 1, 0);
+      await printCustom("GSTIN 24ADEPP4838L1Z7", 1, 0);
       await printDivider();
       if (isCopy) {
         final now = DateTime.now();
@@ -228,7 +229,42 @@ class BlutoothProvider extends Modal with ChangeNotifier {
   }
 
   BlutoothProvider(BuildContext context) : super(context) {
-    initPlatformState();
+    _getPermission();
+  }
+
+  void _getPermission() async {
+    final req = [
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan
+    ];
+    if ((await Future.wait(req.map((e) => e.status)))
+        .any((e) => e != PermissionStatus.granted)) {
+      final permissionStatus = await req.request();
+      if (req
+          .map((e) => permissionStatus[e] ?? PermissionStatus.limited)
+          .every((e) => e == PermissionStatus.granted)) {
+        // if (!mounted) return;
+        // setState(() {
+        //   _permition = true;
+        //   _loading = false;
+        // });
+        initPlatformState();
+      } else {
+        // if (!mounted) return;
+        // setState(() {
+        //   _loading = false;
+        //   _permition = false;
+        // });
+      }
+    } else {
+      // if (!mounted) return;
+      // setState(() {
+      //   _loading = false;
+      //   _permition = true;
+      // });
+      initPlatformState();
+    }
   }
 
   Future<void> initPlatformState() async {
